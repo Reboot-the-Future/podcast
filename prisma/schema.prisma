@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id            Int      @id @default(autoincrement())
+  name          String
+  email         String   @unique
+  password_hash String
+  role          String   @default("admin")
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+}
+
+model Episode {
+  id                    Int         @id @default(autoincrement())
+  title                 String
+  slug                  String      @unique
+  date_published        DateTime
+  excerpt               String
+  content               String?
+  duration              Int
+  tags                  Json        @default("[]")
+  hero_image_url        String?
+  thumb_image_url       String?
+  audio_url             String?
+  spotify_url           String?
+  apple_url             String?
+  webplayer_url         String?
+  is_hero               Boolean     @default(false)
+  status                String      @default("draft")
+  created_at            DateTime    @default(now())
+  updated_at            DateTime    @updatedAt
+  buzzsprout_episode_id String?     @db.VarChar(255)
+  play_events           PlayEvent[]
+
+  @@index([slug])
+  @@index([date_published])
+  @@index([is_hero])
+}
+
+model PlayEvent {
+  id              Int      @id @default(autoincrement())
+  episode_id      Int
+  user_session_id String
+  event_type      String
+  duration_played Int?
+  timestamp       DateTime @default(now())
+  episode         Episode  @relation(fields: [episode_id], references: [id], onDelete: Cascade)
+
+  @@index([episode_id])
+  @@index([user_session_id])
+  @@index([timestamp])
+}
+
+model RadioPlaylist {
+  id         Int       @id @default(autoincrement())
+  title      String
+  artist     String
+  source_url String?
+  start_time DateTime?
+  created_at DateTime  @default(now())
+}
+
+model GlobalSettings {
+  id         Int      @id @default(autoincrement())
+  key        String   @unique
+  value      String
+  updated_at DateTime @updatedAt
+}
+model Blog {
+  id        Int     @id @default(autoincrement())
+  title     String  @db.VarChar(500)
+  excerpt   String  @db.Text
+  date      String  @db.VarChar(50)
+  tags      String  @db.Text
+  link      String  @db.VarChar(1000)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([createdAt])
+}
+
