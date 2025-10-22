@@ -22,8 +22,8 @@ import {
 // ============================================================================
 // CONSTANTS
 // ============================================================================
-const BUZZSPROUT_PODCAST_ID = process.env.NEXT_PUBLIC_BUZZSPROUT_ID || '2068911';
-const EPISODES_PER_PAGE = 5;
+const BUZZSPROUT_PODCAST_ID = process.env.NEXT_PUBLIC_BUZZSPROUT_ID;
+const EPISODES_PER_PAGE = 1;
 const BLOG_EXCERPT_LIMIT = 150;
 const MAX_VISIBLE_TAGS = 3;
 
