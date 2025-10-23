@@ -9,11 +9,10 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const [totalEpisodes, published, heroEpisodes, totalPlays, recentEpisodes] = await Promise.all([
+    const [totalEpisodes, published, heroEpisodes, recentEpisodes] = await Promise.all([
       prisma.episode.count(),
       prisma.episode.count({ where: { status: 'published' } }),
       prisma.episode.count({ where: { is_hero: true } }),
-      prisma.playEvent.count({ where: { event_type: 'play' } }),
       prisma.episode.findMany({
         orderBy: { date_published: 'desc' },
         take: 5,
@@ -31,7 +30,6 @@ export async function GET(request: NextRequest) {
       totalEpisodes,
       published,
       heroEpisodes,
-      totalPlays,
       recentEpisodes,
     });
   } catch (error) {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { 
+import {
   Save, Upload, Music,
   CheckCircle, AlertCircle
 } from "lucide-react";
@@ -21,7 +21,7 @@ export default function AdminSettings() {
   const [settings, setSettings] = useState<Settings>({
     trailer_audio_url: "",
   });
-  
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -121,11 +121,11 @@ export default function AdminSettings() {
         throw new Error(errorData.error || `Server error: ${res.status}`);
       }
 
-      const message = settings.trailer_audio_url.trim() 
-        ? 'Trailer settings saved successfully!' 
+      const message = settings.trailer_audio_url.trim()
+        ? 'Trailer settings saved successfully!'
         : 'Trailer removed successfully!';
       showAlert('success', message);
-      
+
       // Refresh settings to confirm save
       await fetchSettings();
     } catch (error) {
@@ -138,17 +138,17 @@ export default function AdminSettings() {
 
   const AlertComponent = ({ alert }: { alert: Alert }) => {
     const config = {
-      success: { 
-        bg: 'bg-green-500/20', 
-        border: 'border-green-500/50', 
+      success: {
+        bg: 'bg-green-500/20',
+        border: 'border-green-500/50',
         text: 'text-green-400',
-        icon: CheckCircle 
+        icon: CheckCircle
       },
-      error: { 
-        bg: 'bg-red-500/20', 
-        border: 'border-red-500/50', 
+      error: {
+        bg: 'bg-red-500/20',
+        border: 'border-red-500/50',
         text: 'text-red-400',
-        icon: AlertCircle 
+        icon: AlertCircle
       },
     };
 

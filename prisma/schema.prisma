@@ -37,34 +37,10 @@ model Episode {
   created_at            DateTime    @default(now())
   updated_at            DateTime    @updatedAt
   buzzsprout_episode_id String?     @db.VarChar(255)
-  play_events           PlayEvent[]
 
   @@index([slug])
   @@index([date_published])
   @@index([is_hero])
-}
-
-model PlayEvent {
-  id              Int      @id @default(autoincrement())
-  episode_id      Int
-  user_session_id String
-  event_type      String
-  duration_played Int?
-  timestamp       DateTime @default(now())
-  episode         Episode  @relation(fields: [episode_id], references: [id], onDelete: Cascade)
-
-  @@index([episode_id])
-  @@index([user_session_id])
-  @@index([timestamp])
-}
-
-model RadioPlaylist {
-  id         Int       @id @default(autoincrement())
-  title      String
-  artist     String
-  source_url String?
-  start_time DateTime?
-  created_at DateTime  @default(now())
 }
 
 model GlobalSettings {

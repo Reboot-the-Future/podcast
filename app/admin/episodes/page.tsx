@@ -68,7 +68,7 @@ export default function AdminEpisodes() {
       });
       if (!res.ok) throw new Error("Failed to fetch episodes");
       const data = await res.json();
-      
+
       const processedEpisodes = (data.episodes || []).map((episode: any) => {
         let tags = [];
         try {
@@ -86,7 +86,7 @@ export default function AdminEpisodes() {
           buzzsprout_episode_id: episode.buzzsprout_episode_id || "",
         };
       });
-      
+
       setEpisodes(processedEpisodes);
     } catch {
       showAlert("error", "Failed to load episodes.");
@@ -260,11 +260,10 @@ export default function AdminEpisodes() {
     <div className="p-4 md:p-8 space-y-6 pb-20">
       {alert && (
         <div
-          className={`fixed top-4 right-4 z-[100] bg-gray-800 border rounded-xl p-4 shadow-lg ${
-            alert.type === "error"
-              ? "border-red-500 text-red-400"
-              : "border-green-500 text-green-400"
-          }`}
+          className={`fixed top-4 right-4 z-[100] bg-gray-800 border rounded-xl p-4 shadow-lg ${alert.type === "error"
+            ? "border-red-500 text-red-400"
+            : "border-green-500 text-green-400"
+            }`}
         >
           {alert.message}
         </div>
@@ -321,240 +320,238 @@ export default function AdminEpisodes() {
       </div>
 
       {/* Modal Form */}
-{showForm && (
-  <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4 overflow-y-auto">
-    <div className="bg-gradient-to-br from-[#1a2828] to-[#0f1c1c] rounded-3xl p-8 max-w-3xl w-full border border-[#ffa9fc]/20 shadow-2xl my-8">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-[#ffa9fc]">
-          {editingEpisode ? "Edit Episode" : "New Episode"}
-        </h2>
-        <button
-          onClick={() => setShowForm(false)}
-          className="text-gray-400 hover:text-white transition-colors"
-        >
-          <X size={24} />
-        </button>
-      </div>
-
-      {/* Progress Indicator */}
-      <div className="flex items-center justify-center gap-2 mb-8">
-        {[1, 2].map((step) => (
-          <div key={step} className="flex items-center">
-            <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${
-                currentStep >= step
-                  ? "bg-[#ffa9fc] text-[#0f1c1c]"
-                  : "bg-[#2a3838] text-gray-400"
-              }`}
-            >
-              {step}
+      {showForm && (
+        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-gradient-to-br from-[#1a2828] to-[#0f1c1c] rounded-3xl p-8 max-w-3xl w-full border border-[#ffa9fc]/20 shadow-2xl my-8">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-[#ffa9fc]">
+                {editingEpisode ? "Edit Episode" : "New Episode"}
+              </h2>
+              <button
+                onClick={() => setShowForm(false)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <X size={24} />
+              </button>
             </div>
-            {step < 2 && (
-              <div
-                className={`w-12 h-1 mx-2 rounded-full ${
-                  currentStep > step ? "bg-[#ffa9fc]" : "bg-[#2a3838]"
-                }`}
-              />
+
+            {/* Progress Indicator */}
+            <div className="flex items-center justify-center gap-2 mb-8">
+              {[1, 2].map((step) => (
+                <div key={step} className="flex items-center">
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${currentStep >= step
+                      ? "bg-[#ffa9fc] text-[#0f1c1c]"
+                      : "bg-[#2a3838] text-gray-400"
+                      }`}
+                  >
+                    {step}
+                  </div>
+                  {step < 2 && (
+                    <div
+                      className={`w-12 h-1 mx-2 rounded-full ${currentStep > step ? "bg-[#ffa9fc]" : "bg-[#2a3838]"
+                        }`}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Step 1: Basic Info */}
+            {currentStep === 1 && (
+              <div className="space-y-5">
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-300">
+                    Episode Title *
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.title}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        title: e.target.value,
+                        slug: generateSlug(e.target.value),
+                      })
+                    }
+                    placeholder="Enter episode title"
+                    className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-300">
+                    Slug *
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.slug}
+                    onChange={(e) =>
+                      setFormData({ ...formData, slug: e.target.value })
+                    }
+                    placeholder="episode-slug"
+                    className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-300">
+                    Full Description *
+                  </label>
+                  <textarea
+                    value={formData.excerpt}
+                    onChange={(e) =>
+                      setFormData({ ...formData, excerpt: e.target.value })
+                    }
+                    placeholder="Full description of the episode"
+                    className="w-full px-4 py-3 h-32 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc] resize-none"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold mb-2 text-gray-300">
+                      Duration (minutes)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value={formData.duration}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          duration: parseFloat(e.target.value) || 0,
+                        })
+                      }
+                      className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
+                      placeholder="45"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold mb-2 text-gray-300">
+                      Publish Date *
+                    </label>
+                    <input
+                      type="date"
+                      value={formData.date_published}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          date_published: e.target.value,
+                        })
+                      }
+                      className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
+                    />
+                  </div>
+                </div>
+              </div>
             )}
-          </div>
-        ))}
-      </div>
 
-      {/* Step 1: Basic Info */}
-      {currentStep === 1 && (
-        <div className="space-y-5">
-          <div>
-            <label className="block text-sm font-semibold mb-2 text-gray-300">
-              Episode Title *
-            </label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  title: e.target.value,
-                  slug: generateSlug(e.target.value),
-                })
-              }
-              placeholder="Enter episode title"
-              className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
-            />
-          </div>
+            {/* Step 2: Tags, Buzzsprout ID & Status */}
+            {currentStep === 2 && (
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-300">
+                    Tags (comma separated)
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.tags.join(", ")}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        tags: e.target.value
+                          .split(",")
+                          .map((t) => t.trim())
+                          .filter(Boolean),
+                      })
+                    }
+                    placeholder="Technology, Leadership, Innovation"
+                    className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
+                  />
+                  <p className="text-xs text-gray-400 mt-2">
+                    Separate tags with commas
+                  </p>
+                </div>
 
-          <div>
-            <label className="block text-sm font-semibold mb-2 text-gray-300">
-              Slug *
-            </label>
-            <input
-              type="text"
-              value={formData.slug}
-              onChange={(e) =>
-                setFormData({ ...formData, slug: e.target.value })
-              }
-              placeholder="episode-slug"
-              className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
-            />
-          </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-300">
+                    Buzzsprout Episode ID
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.buzzsprout_episode_id}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        buzzsprout_episode_id: e.target.value,
+                      })
+                    }
+                    placeholder="Enter Buzzsprout episode ID"
+                    className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
+                  />
+                  <p className="text-xs text-gray-400 mt-2">
+                    Optional: Link to Buzzsprout episode
+                  </p>
+                </div>
 
-          <div>
-            <label className="block text-sm font-semibold mb-2 text-gray-300">
-              Full Description *
-            </label>
-            <textarea
-              value={formData.excerpt}
-              onChange={(e) =>
-                setFormData({ ...formData, excerpt: e.target.value })
-              }
-              placeholder="Full description of the episode"
-              className="w-full px-4 py-3 h-32 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc] resize-none"
-            />
-          </div>
+                <div className="flex items-center justify-between p-6 bg-[#0f1c1c] rounded-xl border border-[#2a3838]">
+                  <div>
+                    <label className="text-lg font-semibold text-gray-300 block mb-1">
+                      Publication Status
+                    </label>
+                    <p className="text-sm text-gray-400">
+                      Choose whether to publish immediately or save as draft
+                    </p>
+                  </div>
+                  <select
+                    value={formData.status}
+                    onChange={(e) =>
+                      setFormData({ ...formData, status: e.target.value })
+                    }
+                    className="px-6 py-3 bg-[#1a2828] border border-[#2a3838] rounded-xl text-white font-semibold focus:outline-none focus:border-[#ffa9fc]"
+                  >
+                    <option value="draft">Draft</option>
+                    <option value="published">Published</option>
+                  </select>
+                </div>
+              </div>
+            )}
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-semibold mb-2 text-gray-300">
-                Duration (minutes)
-              </label>
-              <input
-                type="number"
-                min="0"
-                step="0.1"
-                value={formData.duration}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    duration: parseFloat(e.target.value) || 0,
-                  })
-                }
-                className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
-                placeholder="45"
-              />
-            </div>
+            {/* Navigation Buttons */}
+            <div className="flex justify-between mt-8 pt-6 border-t border-[#2a3838]">
+              {currentStep > 1 ? (
+                <button
+                  onClick={() => setCurrentStep(currentStep - 1)}
+                  className="px-6 py-3 bg-[#2a3838] hover:bg-[#3a4848] rounded-xl font-semibold transition-all"
+                >
+                  Back
+                </button>
+              ) : (
+                <div />
+              )}
 
-            <div>
-              <label className="block text-sm font-semibold mb-2 text-gray-300">
-                Publish Date *
-              </label>
-              <input
-                type="date"
-                value={formData.date_published}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    date_published: e.target.value,
-                  })
-                }
-                className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
-              />
+              {currentStep < 2 ? (
+                <button
+                  onClick={() => setCurrentStep(currentStep + 1)}
+                  className="px-8 py-3 bg-gradient-to-r from-[#ffa9fc] to-[#ff8df7] rounded-xl font-bold text-[#0f1c1c] hover:scale-105 transition-all shadow-lg"
+                >
+                  Next Step
+                </button>
+              ) : (
+                <button
+                  onClick={handleSubmit}
+                  className="px-8 py-3 bg-gradient-to-r from-[#ffa9fc] to-[#ff8df7] rounded-xl font-bold text-[#0f1c1c] hover:scale-105 transition-all shadow-lg"
+                >
+                  {editingEpisode ? "Update Episode" : "Create Episode"}
+                </button>
+              )}
             </div>
           </div>
         </div>
       )}
-
-      {/* Step 2: Tags, Buzzsprout ID & Status */}
-      {currentStep === 2 && (
-        <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-semibold mb-2 text-gray-300">
-              Tags (comma separated)
-            </label>
-            <input
-              type="text"
-              value={formData.tags.join(", ")}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  tags: e.target.value
-                    .split(",")
-                    .map((t) => t.trim())
-                    .filter(Boolean),
-                })
-              }
-              placeholder="Technology, Leadership, Innovation"
-              className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
-            />
-            <p className="text-xs text-gray-400 mt-2">
-              Separate tags with commas
-            </p>
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold mb-2 text-gray-300">
-              Buzzsprout Episode ID
-            </label>
-            <input
-              type="text"
-              value={formData.buzzsprout_episode_id}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  buzzsprout_episode_id: e.target.value,
-                })
-              }
-              placeholder="Enter Buzzsprout episode ID"
-              className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
-            />
-            <p className="text-xs text-gray-400 mt-2">
-              Optional: Link to Buzzsprout episode
-            </p>
-          </div>
-
-          <div className="flex items-center justify-between p-6 bg-[#0f1c1c] rounded-xl border border-[#2a3838]">
-            <div>
-              <label className="text-lg font-semibold text-gray-300 block mb-1">
-                Publication Status
-              </label>
-              <p className="text-sm text-gray-400">
-                Choose whether to publish immediately or save as draft
-              </p>
-            </div>
-            <select
-              value={formData.status}
-              onChange={(e) =>
-                setFormData({ ...formData, status: e.target.value })
-              }
-              className="px-6 py-3 bg-[#1a2828] border border-[#2a3838] rounded-xl text-white font-semibold focus:outline-none focus:border-[#ffa9fc]"
-            >
-              <option value="draft">Draft</option>
-              <option value="published">Published</option>
-            </select>
-          </div>
-        </div>
-      )}
-
-      {/* Navigation Buttons */}
-      <div className="flex justify-between mt-8 pt-6 border-t border-[#2a3838]">
-        {currentStep > 1 ? (
-          <button
-            onClick={() => setCurrentStep(currentStep - 1)}
-            className="px-6 py-3 bg-[#2a3838] hover:bg-[#3a4848] rounded-xl font-semibold transition-all"
-          >
-            Back
-          </button>
-        ) : (
-          <div />
-        )}
-
-        {currentStep < 2 ? (
-          <button
-            onClick={() => setCurrentStep(currentStep + 1)}
-            className="px-8 py-3 bg-gradient-to-r from-[#ffa9fc] to-[#ff8df7] rounded-xl font-bold text-[#0f1c1c] hover:scale-105 transition-all shadow-lg"
-          >
-            Next Step
-          </button>
-        ) : (
-          <button
-            onClick={handleSubmit}
-            className="px-8 py-3 bg-gradient-to-r from-[#ffa9fc] to-[#ff8df7] rounded-xl font-bold text-[#0f1c1c] hover:scale-105 transition-all shadow-lg"
-          >
-            {editingEpisode ? "Update Episode" : "Create Episode"}
-          </button>
-        )}
-      </div>
-    </div>
-  </div>
-)}
 
 
       {/* Episodes Grid */}
@@ -592,11 +589,10 @@ export default function AdminEpisodes() {
 
             <div className="flex flex-wrap gap-2">
               <span
-                className={`text-xs px-3 py-1 rounded-full ${
-                  episode.status === "published"
-                    ? "bg-green-500/20 text-green-400 border border-green-500/30"
-                    : "bg-gray-500/20 text-gray-400 border border-gray-500/30"
-                }`}
+                className={`text-xs px-3 py-1 rounded-full ${episode.status === "published"
+                  ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                  : "bg-gray-500/20 text-gray-400 border border-gray-500/30"
+                  }`}
               >
                 {episode.status === "published" ? (
                   <Star size={12} className="inline-block mr-1" />

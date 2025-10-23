@@ -298,10 +298,10 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
         </h3>
         <Waves
           className={`w-5 h-5 ${isPlaying
-              ? 'text-[#d97ac8] animate-pulse'
-              : isDark
-                ? 'text-gray-500'
-                : 'text-gray-400'
+            ? 'text-[#d97ac8] animate-pulse'
+            : isDark
+              ? 'text-gray-500'
+              : 'text-gray-400'
             }`}
         />
       </div>
@@ -311,12 +311,12 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
           onClick={togglePlay}
           disabled={isLoading}
           className={`w-14 h-14 rounded-full flex items-center justify-center transition-all relative ${isPlaying
-              ? isDark
-                ? 'bg-[#d97ac8] shadow-[#d97ac8]/50 shadow-lg hover:bg-[#c84a8a]'
-                : 'bg-[#d97ac8]/90 shadow-[#d97ac8]/30 shadow-lg hover:bg-[#c84a8a]/90'
-              : isDark
-                ? 'bg-[#d97ac8] hover:bg-[#c84a8a] hover:shadow-lg hover:shadow-pink-500/50'
-                : 'bg-[#d97ac8]/90 hover:bg-[#c84a8a]/90 hover:shadow-lg hover:shadow-pink-500/30'
+            ? isDark
+              ? 'bg-[#d97ac8] shadow-[#d97ac8]/50 shadow-lg hover:bg-[#c84a8a]'
+              : 'bg-[#d97ac8]/90 shadow-[#d97ac8]/30 shadow-lg hover:bg-[#c84a8a]/90'
+            : isDark
+              ? 'bg-[#d97ac8] hover:bg-[#c84a8a] hover:shadow-lg hover:shadow-pink-500/50'
+              : 'bg-[#d97ac8]/90 hover:bg-[#c84a8a]/90 hover:shadow-lg hover:shadow-pink-500/30'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           title="Click to play/pause (or press Space)"
           aria-label={isPlaying ? 'Pause' : 'Play'}
@@ -410,8 +410,8 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           className={`fixed bottom-20 md:bottom-6 right-4 sm:right-6 w-12 h-12 rounded-full ${isDark
-              ? 'bg-[#d97ac8] hover:bg-[#c84a8a]'
-              : 'bg-[#d97ac8]/90 hover:bg-[#c84a8a]/90'
+            ? 'bg-[#d97ac8] hover:bg-[#c84a8a]'
+            : 'bg-[#d97ac8]/90 hover:bg-[#c84a8a]/90'
             } text-white flex items-center justify-center shadow-lg shadow-pink-500/30 transition-all hover:scale-110 z-40`}
           aria-label="Scroll to top"
         >
@@ -1137,10 +1137,10 @@ export default function PodcastSite() {
                     key={i}
                     onClick={() => setCurrentPage(i + 1)}
                     className={`w-2 h-2 rounded-full transition-all ${currentPage === i + 1
-                        ? 'bg-[#d97ac8] w-6'
-                        : isDark
-                          ? 'bg-[#0F1C1C]/20'
-                          : 'bg-gray-200'
+                      ? 'bg-[#d97ac8] w-6'
+                      : isDark
+                        ? 'bg-[#0F1C1C]/20'
+                        : 'bg-gray-200'
                       }`}
                     aria-label={`Go to page ${i + 1}`}
                   />
