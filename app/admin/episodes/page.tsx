@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Plus, Edit, Trash2, X, Search, Filter, Star, EyeOff, ExternalLink, Info,
+  Plus, Edit, Trash2, X, Search, Filter, Star, EyeOff, ExternalLink, Info, Settings, Eye,
+  CheckCircle, AlertCircle, AlertTriangle, InfoIcon,
 } from "lucide-react";
 
 interface Episode {
@@ -26,6 +27,13 @@ interface Alert {
   message: string;
 }
 
+interface ComingSoon {
+  id: number;
+  title: string;
+  description?: string;
+  is_visible: boolean;
+}
+
 export default function AdminEpisodes() {
   const router = useRouter();
   const [episodes, setEpisodes] = useState<Episode[]>([]);
@@ -37,6 +45,20 @@ export default function AdminEpisodes() {
   const [alert, setAlert] = useState<Alert | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [comingSoon, setComingSoon] = useState<ComingSoon | null>(null);
+  const [showComingSoonForm, setShowComingSoonForm] = useState(false);
+  const [comingSoonForm, setComingSoonForm] = useState({
+    title: "",
+    description: "",
+    is_visible: false,
+  });
+
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  } | null>(null);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -53,7 +75,12 @@ export default function AdminEpisodes() {
   });
 
   useEffect(() => {
+    document.title = "Episodes › Reboot Admin";
+  }, []);
+
+  useEffect(() => {
     fetchEpisodes();
+    fetchComingSoon();
   }, []);
 
   useEffect(() => {
@@ -203,19 +230,27 @@ export default function AdminEpisodes() {
   };
 
   const handleDelete = async (episode: Episode) => {
-    if (!confirm(`Delete episode "${episode.title}"?`)) return;
-    try {
-      const token = localStorage.getItem("admin_token");
-      const res = await fetch(`/api/admin/episodes/${episode.id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("Delete failed");
-      await fetchEpisodes();
-      showAlert("success", `Episode "${episode.title}" deleted.`);
-    } catch {
-      showAlert("error", "Failed to delete episode.");
-    }
+    setConfirmDialog({
+      isOpen: true,
+      title: "Delete Episode",
+      message: `Are you sure you want to delete "${episode.title}"? This action cannot be undone.`,
+      onConfirm: async () => {
+        try {
+          const token = localStorage.getItem("admin_token");
+          const res = await fetch(`/api/admin/episodes/${episode.id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!res.ok) throw new Error("Delete failed");
+          await fetchEpisodes();
+          showAlert("success", `Episode "${episode.title}" deleted.`);
+        } catch {
+          showAlert("error", "Failed to delete episode.");
+        } finally {
+          setConfirmDialog(null);
+        }
+      }
+    });
   };
 
   const startEdit = (episode: Episode) => {
@@ -239,12 +274,213 @@ export default function AdminEpisodes() {
   const generateSlug = (title: string) =>
     title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
+  const fetchComingSoon = async () => {
+    try {
+      const token = localStorage.getItem("admin_token");
+      const res = await fetch("/api/admin/coming-soon", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setComingSoon(data.comingSoon);
+        if (data.comingSoon) {
+          setComingSoonForm({
+            title: data.comingSoon.title,
+            description: data.comingSoon.description || "",
+            is_visible: data.comingSoon.is_visible,
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching coming soon:", error);
+    }
+  };
+
+  const handleComingSoonSubmit = async () => {
+    if (!comingSoonForm.title.trim()) {
+      showAlert("error", "Title is required");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("admin_token");
+      const res = await fetch("/api/admin/coming-soon", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(comingSoonForm),
+      });
+
+      if (!res.ok) throw new Error("Failed to save coming soon section");
+
+      await fetchComingSoon();
+      setShowComingSoonForm(false);
+      showAlert("success", "Coming Soon section saved successfully!");
+    } catch (error: any) {
+      showAlert("error", error.message || "Failed to save coming soon section");
+    }
+  };
+
+  const toggleComingSoonVisibility = async () => {
+    if (!comingSoon) return;
+
+    try {
+      const token = localStorage.getItem("admin_token");
+      const res = await fetch("/api/admin/coming-soon", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          ...comingSoonForm,
+          is_visible: !comingSoon.is_visible,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to update visibility");
+
+      await fetchComingSoon();
+      showAlert("success", `Coming Soon section ${!comingSoon.is_visible ? "shown" : "hidden"}`);
+    } catch (error: any) {
+      showAlert("error", error.message || "Failed to update visibility");
+    }
+  };
+
+  const handleDeleteComingSoon = async () => {
+    if (!comingSoon) return;
+
+    setConfirmDialog({
+      isOpen: true,
+      title: "Delete Coming Soon Section",
+      message: `Are you sure you want to delete "${comingSoon.title}"? This action cannot be undone.`,
+      onConfirm: async () => {
+        try {
+          const token = localStorage.getItem("admin_token");
+          const res = await fetch("/api/admin/coming-soon", {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!res.ok) throw new Error("Failed to delete coming soon section");
+
+          // Reset form after deletion
+          setComingSoonForm({
+            title: "",
+            description: "",
+            is_visible: false,
+          });
+
+          await fetchComingSoon();
+          showAlert("success", "Coming Soon section deleted successfully!");
+        } catch (error: any) {
+          showAlert("error", error.message || "Failed to delete coming soon section");
+        } finally {
+          setConfirmDialog(null);
+        }
+      }
+    });
+  };
+
+  const AlertComponent = ({ alert }: { alert: Alert }) => {
+    const config = {
+      success: {
+        bg: 'bg-green-500/20',
+        border: 'border-green-500/50',
+        text: 'text-green-400',
+        icon: CheckCircle
+      },
+      error: {
+        bg: 'bg-red-500/20',
+        border: 'border-red-500/50',
+        text: 'text-red-400',
+        icon: AlertCircle
+      },
+      warning: {
+        bg: 'bg-yellow-500/20',
+        border: 'border-yellow-500/50',
+        text: 'text-yellow-400',
+        icon: AlertTriangle
+      },
+      info: {
+        bg: 'bg-blue-500/20',
+        border: 'border-blue-500/50',
+        text: 'text-blue-400',
+        icon: InfoIcon
+      },
+    };
+
+    const { bg, border, text, icon: Icon } = config[alert.type];
+
+    return (
+      <div className={`fixed top-4 right-4 z-[100] ${bg} ${border} border rounded-xl p-4 shadow-2xl min-w-[300px] max-w-md animate-in slide-in-from-top-5 fade-in duration-300`}>
+        <div className="flex items-start gap-3">
+          <Icon className={`${text} flex-shrink-0 mt-0.5`} size={20} />
+          <p className={`${text} font-semibold text-sm flex-1`}>{alert.message}</p>
+        </div>
+      </div>
+    );
+  };
+
+  const ConfirmDialog = () => {
+    if (!confirmDialog?.isOpen) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[200] flex items-center justify-center p-4 animate-in fade-in duration-200">
+        <div className="bg-gradient-to-br from-[#1a2828] to-[#0f1c1c] rounded-2xl border border-[#2a3838] shadow-2xl max-w-md w-full animate-in zoom-in-95 duration-200">
+          <div className="p-6 space-y-4">
+            {/* Header */}
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-red-500/20 rounded-xl">
+                <AlertTriangle size={24} className="text-red-400" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-white mb-1">{confirmDialog.title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{confirmDialog.message}</p>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={() => setConfirmDialog(null)}
+                className="flex-1 px-4 py-3 bg-[#2a3838] hover:bg-[#3a4848] text-white rounded-xl font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  confirmDialog.onConfirm();
+                }}
+                className="flex-1 px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-red-500/30"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-[#0f1c1c] to-[#1a2828]">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-[#ffa9fc]/30 border-t-[#ffa9fc] rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading episodes...</p>
+          <div className="relative mb-6">
+            <div className="w-16 h-16 border-4 border-[#ffa9fc]/30 border-t-[#ffa9fc] rounded-full animate-spin mx-auto"></div>
+            <div className="absolute inset-0 animate-pulse rounded-full w-16 h-16 border border-[#ffa9fc]/20 mx-auto"></div>
+          </div>
+          <p className="text-gray-400 font-medium mb-2">Loading episodes...</p>
+          <div className="flex justify-center space-x-1">
+            <div className="w-2 h-2 bg-[#ffa9fc] rounded-full animate-bounce"></div>
+            <div className="w-2 h-2 bg-[#ffa9fc] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+            <div className="w-2 h-2 bg-[#ffa9fc] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+          </div>
         </div>
       </div>
     );
@@ -258,16 +494,8 @@ export default function AdminEpisodes() {
 
   return (
     <div className="p-4 md:p-8 space-y-6 pb-20">
-      {alert && (
-        <div
-          className={`fixed top-4 right-4 z-[100] bg-gray-800 border rounded-xl p-4 shadow-lg ${alert.type === "error"
-            ? "border-red-500 text-red-400"
-            : "border-green-500 text-green-400"
-            }`}
-        >
-          {alert.message}
-        </div>
-      )}
+      {alert && <AlertComponent alert={alert} />}
+      <ConfirmDialog />
 
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -280,11 +508,81 @@ export default function AdminEpisodes() {
             resetForm();
             setShowForm(true);
           }}
-          className="px-6 py-3 bg-gradient-to-r from-[#ffa9fc] to-[#ff8df7] text-[#0f1c1c] rounded-xl font-bold flex items-center gap-2 transition-all hover:scale-105 shadow-lg"
+          className="px-6 py-3 bg-gradient-to-r from-[#ffa9fc] to-[#ff8df7] text-[#0f1c1c] rounded-xl font-bold flex items-center gap-2 transition-all hover:scale-105 shadow-lg focus:outline-none focus:ring-2 focus:ring-[#ffa9fc] focus:ring-offset-2"
+          aria-label="Create new episode"
         >
           <Plus size={20} />
           New Episode
         </button>
+      </div>
+
+      {/* Coming Soon Section */}
+      <div className="bg-gradient-to-br from-[#1a2828] to-[#0f1c1c] rounded-2xl border border-[#2a3838] p-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+          <div>
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <Settings size={20} />
+              Coming Soon Section
+            </h2>
+            <p className="text-gray-400 text-sm">
+              Manage the "Coming Soon" section displayed on the homepage
+            </p>
+          </div>
+          <div className="flex gap-2">
+            {comingSoon && (
+              <button
+                onClick={toggleComingSoonVisibility}
+                className={`px-4 py-2 rounded-xl font-semibold flex items-center gap-2 transition-all ${
+                  comingSoon.is_visible
+                    ? "bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30"
+                    : "bg-gray-500/20 text-gray-400 border border-gray-500/30 hover:bg-gray-500/30"
+                }`}
+              >
+                <Eye size={16} />
+                {comingSoon.is_visible ? "Visible" : "Hidden"}
+              </button>
+            )}
+            <button
+              onClick={() => setShowComingSoonForm(true)}
+              className="px-4 py-2 bg-[#ffa9fc]/20 text-[#ffa9fc] border border-[#ffa9fc]/30 rounded-xl font-semibold hover:bg-[#ffa9fc]/30 transition-all"
+            >
+              {comingSoon ? "Edit" : "Create"}
+            </button>
+            {comingSoon && (
+              <button
+                onClick={handleDeleteComingSoon}
+                className="px-4 py-2 bg-red-500/20 text-red-400 border border-red-500/30 rounded-xl font-semibold hover:bg-red-500/30 transition-all flex items-center gap-2"
+              >
+                <Trash2 size={16} />
+                Delete
+              </button>
+            )}
+          </div>
+        </div>
+
+        {comingSoon ? (
+          <div className="bg-[#0f1c1c] rounded-xl p-4 border border-[#2a3838]">
+            <h3 className="text-lg font-semibold text-white mb-2">{comingSoon.title}</h3>
+            {comingSoon.description && (
+              <p className="text-gray-400 text-sm mb-3">{comingSoon.description}</p>
+            )}
+            <div className="flex items-center gap-2 text-xs">
+              <span className={`px-2 py-1 rounded-full ${
+                comingSoon.is_visible 
+                  ? "bg-green-500/20 text-green-400" 
+                  : "bg-gray-500/20 text-gray-400"
+              }`}>
+                {comingSoon.is_visible ? "Visible on homepage" : "Hidden from homepage"}
+              </span>
+            </div>
+          </div>
+        ) : (
+          <div className="text-center py-8 text-gray-400">
+            <Settings size={48} className="mx-auto mb-4 opacity-50" />
+            <p>No Coming Soon section configured</p>
+            <p className="text-sm">Create one to show on the homepage</p>
+          </div>
+        )}
       </div>
 
       {/* Search + Filter */}
@@ -553,6 +851,92 @@ export default function AdminEpisodes() {
         </div>
       )}
 
+      {/* Coming Soon Form Modal */}
+      {showComingSoonForm && (
+        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-gradient-to-br from-[#1a2828] to-[#0f1c1c] rounded-3xl p-8 max-w-2xl w-full border border-[#ffa9fc]/20 shadow-2xl my-8">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-[#ffa9fc]">
+                {comingSoon ? "Edit Coming Soon" : "Create Coming Soon"}
+              </h2>
+              <button
+                onClick={() => setShowComingSoonForm(false)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-gray-300">
+                  Title *
+                </label>
+                <input
+                  type="text"
+                  value={comingSoonForm.title}
+                  onChange={(e) =>
+                    setComingSoonForm({ ...comingSoonForm, title: e.target.value })
+                  }
+                  placeholder="Enter coming soon title"
+                  className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-gray-300">
+                  Description (Optional)
+                </label>
+                <textarea
+                  value={comingSoonForm.description}
+                  onChange={(e) =>
+                    setComingSoonForm({ ...comingSoonForm, description: e.target.value })
+                  }
+                  placeholder="Enter description (optional)"
+                  className="w-full px-4 py-3 h-24 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc] resize-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-between p-4 bg-[#0f1c1c] rounded-xl border border-[#2a3838]">
+                <div>
+                  <label className="text-lg font-semibold text-gray-300 block mb-1">
+                    Visibility
+                  </label>
+                  <p className="text-sm text-gray-400">
+                    Show this section on the homepage
+                  </p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={comingSoonForm.is_visible}
+                    onChange={(e) =>
+                      setComingSoonForm({ ...comingSoonForm, is_visible: e.target.checked })
+                    }
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#ffa9fc]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#ffa9fc]"></div>
+                </label>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-4 mt-8 pt-6 border-t border-[#2a3838]">
+              <button
+                onClick={() => setShowComingSoonForm(false)}
+                className="px-6 py-3 bg-[#2a3838] hover:bg-[#3a4848] rounded-xl font-semibold transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleComingSoonSubmit}
+                className="px-8 py-3 bg-gradient-to-r from-[#ffa9fc] to-[#ff8df7] rounded-xl font-bold text-[#0f1c1c] hover:scale-105 transition-all shadow-lg"
+              >
+                {comingSoon ? "Update" : "Create"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Episodes Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -55,6 +55,17 @@ CREATE TABLE "Blog" (
     CONSTRAINT "Blog_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "ComingSoon" (
+    "id" SERIAL NOT NULL,
+    "title" VARCHAR(500) NOT NULL,
+    "description" TEXT,
+    "is_visible" BOOLEAN NOT NULL DEFAULT false,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+    CONSTRAINT "ComingSoon_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "Admin_email_key" ON "Admin"("email");
 

@@ -62,3 +62,12 @@ model Blog {
   @@index([createdAt])
 }
 
+model ComingSoon {
+  id          Int      @id @default(autoincrement())
+  title        String   @db.VarChar(500)
+  description  String?  @db.Text
+  is_visible   Boolean  @default(false)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+}
+

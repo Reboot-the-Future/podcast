@@ -29,6 +29,11 @@ export default function AdminBlogsPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string; details?: string[] } | null>(null);
 
+  // Set document title
+  useEffect(() => {
+    document.title = "Blogs › Reboot Admin";
+  }, []);
+
   // Check authentication on mount
   useEffect(() => {
     const storedToken = localStorage.getItem("admin_token");
@@ -220,10 +225,18 @@ export default function AdminBlogsPage() {
 
   if (loading) {
     return (
-      <div className="p-6 md:p-10 flex items-center justify-center min-h-screen bg-[#0f1c1c]">
+      <div className="p-6 md:p-10 flex items-center justify-center min-h-screen bg-gradient-to-br from-[#0f1c1c] to-[#1a2828]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ffa9fc] mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading blogs...</p>
+          <div className="relative mb-6">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ffa9fc] mx-auto"></div>
+            <div className="absolute inset-0 animate-pulse rounded-full h-12 w-12 border border-[#ffa9fc]/30 mx-auto"></div>
+          </div>
+          <p className="text-gray-400 font-medium mb-2">Loading blogs...</p>
+          <div className="flex justify-center space-x-1">
+            <div className="w-2 h-2 bg-[#ffa9fc] rounded-full animate-bounce"></div>
+            <div className="w-2 h-2 bg-[#ffa9fc] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+            <div className="w-2 h-2 bg-[#ffa9fc] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+          </div>
         </div>
       </div>
     );
@@ -241,7 +254,8 @@ export default function AdminBlogsPage() {
             </div>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all"
+              className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#0f1c1c]"
+              aria-label="Logout from admin panel"
             >
               <LogOut size={18} />
               Logout

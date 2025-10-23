@@ -28,6 +28,10 @@ export default function AdminSettings() {
   const [alert, setAlert] = useState<Alert | null>(null);
 
   useEffect(() => {
+    document.title = "Trailer › Reboot Admin";
+  }, []);
+
+  useEffect(() => {
     fetchSettings();
   }, []);
 
@@ -155,7 +159,7 @@ export default function AdminSettings() {
     const { bg, border, text, icon: Icon } = config[alert.type];
 
     return (
-      <div className={`fixed top-4 right-4 z-[100] ${bg} ${border} border rounded-xl p-4 shadow-2xl min-w-[300px] max-w-md`}>
+      <div className={`fixed top-4 right-4 z-[100] ${bg} ${border} border rounded-xl p-4 shadow-2xl min-w-[300px] max-w-md animate-in slide-in-from-top-5 fade-in duration-300`}>
         <div className="flex items-start gap-3">
           <Icon className={`${text} flex-shrink-0 mt-0.5`} size={20} />
           <p className={`${text} font-semibold text-sm flex-1`}>{alert.message}</p>

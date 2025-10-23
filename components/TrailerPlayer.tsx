@@ -185,7 +185,7 @@ export default function TrailerPlayer({ trailerUrl }: TrailerPlayerProps) {
   }
 
   return (
-    <div className="bg-gradient-to-br from-[#1a2828] to-[#0f1c1c] rounded-2xl p-6 border border-[#ffa9fc]/30 shadow-xl hover:shadow-2xl hover:shadow-pink-500/10 transition-all duration-300">
+    <div className="bg-gradient-to-br from-[#1a2828] to-[#0f1c1c] rounded-2xl p-6 border border-[#ffa9fc]/30 shadow-xl hover:shadow-2xl hover:shadow-pink-500/10 transition-all duration-300 focus-within:ring-2 focus-within:ring-[#ffa9fc] focus-within:ring-offset-2">
       <audio ref={audioRef} preload="metadata" />
       
       {error && (
@@ -242,7 +242,8 @@ export default function TrailerPlayer({ trailerUrl }: TrailerPlayerProps) {
           <button
             onClick={togglePlay}
             disabled={!hasTrailer || isBuffering}
-            className="w-12 h-12 rounded-full bg-[#ffa9fc] hover:bg-[#ff8df7] flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-pink-500/30 flex-shrink-0"
+            className="w-12 h-12 rounded-full bg-[#ffa9fc] hover:bg-[#ff8df7] flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-pink-500/30 flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-[#ffa9fc] focus:ring-offset-2"
+            aria-label={isPlaying ? "Pause trailer" : "Play trailer"}
           >
             {isBuffering ? (
               <div className="animate-spin rounded-full h-5 w-5 border-2 border-[#0f1c1c] border-t-transparent"></div>
@@ -257,7 +258,8 @@ export default function TrailerPlayer({ trailerUrl }: TrailerPlayerProps) {
           <div className="flex items-center gap-2 flex-1">
             <button
               onClick={toggleMute}
-              className="p-2 rounded-lg hover:bg-white/5 transition-colors active:scale-95"
+              className="p-2 rounded-lg hover:bg-white/5 transition-colors active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#ffa9fc] focus:ring-offset-2"
+              aria-label={isMuted ? "Unmute trailer" : "Mute trailer"}
             >
               {isMuted || volume === 0 ? (
                 <VolumeX size={18} className="text-gray-400" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Lock, Mail, Eye, EyeOff, AlertCircle, ArrowRight, Shield } from "lucide-react";
 
@@ -12,6 +12,10 @@ export default function AdminLogin() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
+
+  useEffect(() => {
+    document.title = "Login › Reboot Admin";
+  }, []);
 
   interface LoginResponse {
     token?: string;
@@ -136,7 +140,8 @@ export default function AdminLogin() {
           <button
             onClick={handleSubmit}
             disabled={loading || !isFormValid}
-            className="w-full py-3.5 bg-gradient-to-r from-[#ffa9fc] to-[#ff8df7] hover:from-[#ff8df7] hover:to-[#ffa9fc] text-[#0f1c1c] font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#ffa9fc]/20 hover:shadow-[#ffa9fc]/40 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 group"
+            className="w-full py-3.5 bg-gradient-to-r from-[#ffa9fc] to-[#ff8df7] hover:from-[#ff8df7] hover:to-[#ffa9fc] text-[#0f1c1c] font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#ffa9fc]/20 hover:shadow-[#ffa9fc]/40 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 group focus:outline-none focus:ring-2 focus:ring-[#ffa9fc] focus:ring-offset-2"
+            aria-label={loading ? "Logging in" : "Login to dashboard"}
           >
             {loading ? (
               <>

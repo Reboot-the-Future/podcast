@@ -278,7 +278,7 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
           } rounded-3xl p-6`}
         style={isDark ? {} : { border: '1px solid rgba(229, 231, 235, 0.5)' }}
       >
-        <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{error}</p>
+        <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'}`}>{error}</p>
       </div>
     );
   }
@@ -291,7 +291,7 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
     >
       <div className="flex justify-between items-center mb-5">
         <h3
-          className={`font-semibold text-lg ${isDark ? 'text-white' : 'text-gray-900'
+          className={`font-semibold text-lg ${isDark ? 'text-white' : 'text-[#0F1C1C]'
             } flex items-center gap-2`}
         >
           <Sparkles className="text-[#d97ac8]" size={18} /> Podcast Trailer
@@ -300,7 +300,7 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
           className={`w-5 h-5 ${isPlaying
             ? 'text-[#d97ac8] animate-pulse'
             : isDark
-              ? 'text-gray-500'
+              ? 'text-[#0F1C1C]/50'
               : 'text-gray-400'
             }`}
         />
@@ -336,6 +336,11 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
               className="absolute top-0 left-0 h-full bg-[#d97ac8] transition-all rounded-full"
               style={{ width: `${progress}%` }}
             />
+            {/* Progress indicator circle */}
+            <div
+              className={`absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-[#d97ac8] rounded-full shadow-lg border-2 transition-all hover:scale-110 ${isDark ? 'border-[#0F1C1C]' : 'border-white'}`}
+              style={{ left: `calc(${progress}% - 6px)` }}
+            />
           </div>
           <input
             type="range"
@@ -349,7 +354,7 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
             aria-label="Seek"
           />
           <div
-            className={`flex justify-between text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'
+            className={`flex justify-between text-xs ${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'
               } mt-1`}
           >
             <span>{formatDuration(currentTime)}</span>
@@ -370,9 +375,9 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
             aria-label={isMuted ? 'Unmute' : 'Mute'}
           >
             {isMuted ? (
-              <VolumeX size={18} className="text-gray-600" />
+              <VolumeX size={18} className={isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'} />
             ) : (
-              <Volume2 size={18} className="text-gray-600" />
+              <Volume2 size={18} className={isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'} />
             )}
           </button>
           <input
@@ -391,7 +396,7 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
         </div>
 
         <div
-          className={`flex items-center gap-2 text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'
+          className={`flex items-center gap-2 text-xs ${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'
             }`}
         >
           <div
@@ -444,13 +449,13 @@ const BlogSidebar = ({ blogs, currentPage, isDark }: { blogs: BlogItem[]; curren
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#d97ac8] to-[#c84a8a] flex items-center justify-center shadow-lg">
               <Sparkles size={18} className="text-white" />
             </div>
-            <h2 className={`text-2xl sm:text-3xl font-rozha font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            <h2 className={`text-2xl sm:text-3xl font-rozha font-bold ${isDark ? 'text-white' : 'text-[#0F1C1C]'}`}>
               Latest Insights
             </h2>
           </div>
 
           {blogs.length === 0 ? (
-            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'}`}>
               No insights available yet.
             </p>
           ) : (
@@ -495,7 +500,7 @@ const BlogSidebar = ({ blogs, currentPage, isDark }: { blogs: BlogItem[]; curren
                       ))}
                     </div>
 
-                    <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'} leading-relaxed`}>
+                    <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-[#0F1C1C]/80'} leading-relaxed`}>
                       {displayedText}
                     </p>
 
@@ -509,7 +514,7 @@ const BlogSidebar = ({ blogs, currentPage, isDark }: { blogs: BlogItem[]; curren
                     )}
 
                     <div
-                      className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'} flex items-center gap-2 mt-1`}
+                      className={`text-xs ${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'} flex items-center gap-2 mt-1`}
                     >
                       <Calendar size={12} />
                       {formatDate(blog.date)}
@@ -562,7 +567,7 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
     return () => {
       script.remove();
     };
-  }, [episode.buzzsprout_episode_id, episode.id, isDark]);
+  }, [episode.buzzsprout_episode_id, episode.id]);
 
   return (
     <div
@@ -583,13 +588,13 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
               </span>
             ))}
             {tags.length > MAX_VISIBLE_TAGS && (
-              <span className={`text-xs px-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+              <span className={`text-xs px-2 ${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'}`}>
                 +{tags.length - MAX_VISIBLE_TAGS}
               </span>
             )}
           </div>
           <h3
-            className={`font-bold mb-2 hover:text-[#d97ac8] transition-colors leading-tight text-3xl ${isDark ? 'text-white' : 'text-gray-900'
+            className={`font-rozha font-bold mb-2 leading-tight text-4xl ${isDark ? 'text-white' : 'text-[#0F1C1C]'
               }`}
           >
             {episode.title}
@@ -601,7 +606,7 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
         </div>
       </div>
 
-      <p className={`${isDark ? 'text-[#efe8e6]' : 'text-gray-700'} mb-4 leading-relaxed flex-grow text-base`}>
+      <p className={`${isDark ? 'text-[#efe8e6]' : 'text-[#0F1C1C]/80'} mb-4 leading-relaxed flex-grow text-base`}>
         {episode.excerpt}
       </p>
 
@@ -609,7 +614,7 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
         className={`flex items-center justify-between pt-4 ${isDark ? 'border-[#d97ac8]/20 border-t-2' : 'border-gray-200 border-t'
           } mt-auto`}
       >
-        <div className={`flex items-center gap-4 text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+        <div className={`flex items-center gap-4 text-sm ${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'}`}>
           <span
             className={`flex items-center gap-1.5 ${isDark ? 'bg-[#0F1C1C]/10' : 'bg-gray-100'
               } px-3 py-1.5 rounded-lg`}
@@ -640,10 +645,10 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
                 <Headphones size={20} className="text-white" />
               </div>
               <div>
-                <h4 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                <h4 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-[#0F1C1C]'}`}>
                   Listen to Episode
                 </h4>
-                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'}`}>
                   Start your journey
                 </p>
               </div>
@@ -654,7 +659,7 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
                   } rounded-lg p-8 text-center`}
               >
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#d97ac8] mx-auto mb-3"></div>
-                <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'} text-sm`}>
+                <p className={`${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'} text-sm`}>
                   Loading player...
                 </p>
               </div>
@@ -674,7 +679,7 @@ const HeroDescription = ({ text, isDark }: { text: string; isDark: boolean }) =>
   return (
     <div className="w-full">
       <p
-        className={`text-base sm:text-lg ${isDark ? 'text-[#efe8e6]/90' : 'text-gray-700'} leading-relaxed font-light w-full`}
+        className={`text-base sm:text-lg ${isDark ? 'text-[#efe8e6]/90' : 'text-[#0F1C1C]/80'} leading-relaxed font-light w-full`}
       >
         {text}
       </p>
@@ -695,6 +700,28 @@ export default function PodcastSite() {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [heroLoading, setHeroLoading] = useState(false);
+  const [comingSoon, setComingSoon] = useState<{ title: string; description?: string } | null>(null);
+
+  // Set document title on mount
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.title = "Let's Reboot the Future";
+    }
+  }, []);
+
+  // Keyboard navigation support
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      
+      if (e.key === 'Escape' && mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [mobileMenuOpen]);
 
   // Fetch blogs
   useEffect(() => {
@@ -718,6 +745,27 @@ export default function PodcastSite() {
       }
     };
     fetchBlogs();
+  }, []);
+
+  // Fetch coming soon section
+  useEffect(() => {
+    const fetchComingSoon = async () => {
+      try {
+        const res = await fetch("/api/coming-soon");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.comingSoon) {
+            setComingSoon({
+              title: data.comingSoon.title,
+              description: data.comingSoon.description,
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching coming soon:", error);
+      }
+    };
+    fetchComingSoon();
   }, []);
 
   // Fetch episodes
@@ -794,32 +842,37 @@ export default function PodcastSite() {
   const currentPageEpisodes = getCurrentPageEpisodes();
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-[#0F1C1C] text-white' : 'bg-gray-50 text-gray-900'}`}>
+    <div className={`min-h-screen ${isDark ? 'bg-[#0F1C1C] text-white' : 'bg-gray-50 text-[#0F1C1C]'}`}>
       <header
         className={`sticky top-0 ${isDark ? 'bg-[#0F1C1C]/95 border-[#d97ac8]/20 border-b-2' : 'bg-white/30 backdrop-filter backdrop-blur-lg shadow-sm'
-          } z-50`}
+          } z-50 transition-all duration-300`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-8 py-4">
           <div className="flex items-center justify-between gap-4">
-            <a href="/" className="flex-shrink-0">
+            <a 
+              href="/" 
+              className="flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-[#d97ac8] focus:ring-offset-2 rounded-lg transition-all hover:scale-105"
+              aria-label="Reboot The Future - Home"
+            >
               <img
                 src={isDark ? "/logo-white.png" : "/logo-dark.png"}
                 alt="Let's Reboot TheFuture"
                 className="h-16 sm:h-20 w-auto"
               />
             </a>
-            <nav className="hidden lg:flex gap-6 xl:gap-8 flex-shrink-0">
+            <nav className="hidden lg:flex gap-6 xl:gap-8 flex-shrink-0" role="navigation" aria-label="Main navigation">
               <a
                 href="https://www.rebootthefuture.org/who-we-are"
-                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'
+                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-[#0F1C1C] hover:text-[#d97ac8]'
                   } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
-                  }`}
+                  } focus:outline-none focus:ring-2 focus:ring-[#d97ac8] focus:ring-offset-2`}
+                aria-label="Navigate to About page"
               >
                 About
               </a>
               <a
                 href="https://education.rebootthefuture.org/"
-                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'
+                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-[#0F1C1C] hover:text-[#d97ac8]'
                   } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
                   }`}
               >
@@ -827,7 +880,7 @@ export default function PodcastSite() {
               </a>
               <a
                 href="https://www.rebootthefuture.org/what-we-do/reboot-experiences"
-                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'
+                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-[#0F1C1C] hover:text-[#d97ac8]'
                   } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
                   }`}
               >
@@ -835,7 +888,7 @@ export default function PodcastSite() {
               </a>
               <a
                 href="https://www.rebootthefuture.org/contact"
-                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'
+                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-[#0F1C1C] hover:text-[#d97ac8]'
                   } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
                   }`}
               >
@@ -846,8 +899,8 @@ export default function PodcastSite() {
             <button
               onClick={() => setIsDark(!isDark)}
               className={`p-2 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
-                } transition-colors`}
-              aria-label="Toggle theme"
+                } transition-colors focus:outline-none focus:ring-2 focus:ring-[#d97ac8] focus:ring-offset-2`}
+              aria-label={`Switch to ${isDark ? 'light' : 'dark'} theme`}
             >
               {isDark ? <Sun size={24} /> : <Moon size={24} />}
             </button>
@@ -855,29 +908,43 @@ export default function PodcastSite() {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className={`lg:hidden p-2 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
-                } transition-colors`}
-              aria-label="Toggle menu"
+                } transition-colors focus:outline-none focus:ring-2 focus:ring-[#d97ac8] focus:ring-offset-2`}
+              aria-label="Toggle mobile menu"
+              aria-expanded={mobileMenuOpen}
             >
               <Menu size={24} />
             </button>
           </div>
 
           {mobileMenuOpen && (
-            <nav
-              className={`lg:hidden mt-4 pb-4 space-y-2 ${isDark ? 'border-[#d97ac8]/20 border-t-2' : 'border-gray-200 border-t'
-                } pt-4 animate-in fade-in slide-in-from-top-2 duration-200`}
-            >
+            <>
+              {/* Backdrop */}
+              <div 
+                className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+                onClick={() => setMobileMenuOpen(false)}
+                aria-hidden="true"
+              />
+              
+              {/* Mobile Menu */}
+              <nav
+                className={`lg:hidden mt-4 pb-4 space-y-2 ${isDark ? 'border-[#d97ac8]/20 border-t-2' : 'border-gray-200 border-t'
+                  } pt-4 animate-in fade-in slide-in-from-top-2 duration-200 relative z-50`}
+                role="navigation"
+                aria-label="Mobile navigation"
+              >
               <a
                 href="https://www.rebootthefuture.org/who-we-are"
-                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'
+                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-[#0F1C1C] hover:text-[#d97ac8]'
                   } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
-                  }`}
+                  } focus:outline-none focus:ring-2 focus:ring-[#d97ac8] focus:ring-offset-2`}
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label="Navigate to About page"
               >
                 About
               </a>
               <a
                 href="https://education.rebootthefuture.org/"
-                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'
+                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-[#0F1C1C] hover:text-[#d97ac8]'
                   } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
                   }`}
               >
@@ -885,7 +952,7 @@ export default function PodcastSite() {
               </a>
               <a
                 href="https://www.rebootthefuture.org/what-we-do/reboot-experiences"
-                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'
+                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-[#0F1C1C] hover:text-[#d97ac8]'
                   } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
                   }`}
               >
@@ -893,16 +960,52 @@ export default function PodcastSite() {
               </a>
               <a
                 href="https://www.rebootthefuture.org/contact"
-                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'
+                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-[#0F1C1C] hover:text-[#d97ac8]'
                   } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
-                  }`}
+                  } focus:outline-none focus:ring-2 focus:ring-[#d97ac8] focus:ring-offset-2`}
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label="Navigate to Contact page"
               >
                 Contact
               </a>
             </nav>
+            </>
           )}
         </div>
       </header>
+
+      {/* Coming Soon Section */}
+      {comingSoon && (
+        <section className="max-w-[1600px] mx-auto px-4 sm:px-8 py-8 sm:py-16">
+          <div
+            className={`relative rounded-3xl overflow-hidden ${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white/30 backdrop-filter backdrop-blur-lg shadow-lg'
+              } transition-all p-8 sm:p-12 group`}
+            style={isDark ? {} : { border: '1px solid rgba(229, 231, 235, 0.5)' }}
+          >
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#d97ac8] to-[#c84a8a] flex items-center justify-center shadow-lg">
+                  <Sparkles size={18} className="text-white" />
+                </div>
+                <h2 className={`text-2xl sm:text-3xl font-rozha font-bold ${isDark ? 'text-white' : 'text-[#0F1C1C]'}`}>
+                  Coming Soon
+                </h2>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className={`text-xl sm:text-2xl font-bold ${isDark ? 'text-white' : 'text-[#0F1C1C]'} leading-tight`}>
+                  {comingSoon.title}
+                </h3>
+                {comingSoon.description && (
+                  <p className={`text-base sm:text-lg ${isDark ? 'text-[#efe8e6]/90' : 'text-[#0F1C1C]/80'} leading-relaxed`}>
+                    {comingSoon.description}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="max-w-[1600px] mx-auto px-4 sm:px-8 py-8 sm:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-6 lg:gap-10">
@@ -912,10 +1015,18 @@ export default function PodcastSite() {
             style={isDark ? {} : { border: '1px solid rgba(229, 231, 235, 0.5)', borderRadius: '24px' }}
           >
             {heroLoading ? (
-              <div className="absolute inset-0 flex items-center justify-center">
+              <div className={`absolute inset-0 flex items-center justify-center rounded-3xl ${isDark ? 'bg-gradient-to-br from-[#1a2828] to-[#0f1c1c]' : 'bg-gradient-to-br from-white to-gray-50'}`}>
                 <div className="text-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d97ac8] mx-auto mb-4"></div>
-                  <p className={isDark ? "text-[#efe8e6]" : "text-gray-900"}>Loading latest episode...</p>
+                  <div className="relative">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d97ac8] mx-auto mb-4"></div>
+                    <div className="absolute inset-0 animate-pulse rounded-full h-12 w-12 border border-[#d97ac8]/30 mx-auto"></div>
+                  </div>
+                  <p className={`${isDark ? "text-[#efe8e6]" : "text-[#0F1C1C]"} font-medium`}>Loading latest episode...</p>
+                  <div className="mt-2 flex justify-center space-x-1">
+                    <div className="w-2 h-2 bg-[#d97ac8] rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-[#d97ac8] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-[#d97ac8] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
                 </div>
               </div>
             ) : heroEpisode ? (
@@ -928,7 +1039,7 @@ export default function PodcastSite() {
                         Latest Episode
                       </span>
                       <span
-                        className={`${isDark ? 'text-[#efe8e6]' : 'text-gray-900'
+                        className={`${isDark ? 'text-[#efe8e6]' : 'text-[#0F1C1C]'
                           } text-sm flex items-center gap-2 ${isDark ? 'bg-[#0F1C1C]/10' : 'bg-gray-100'
                           } px-4 py-2 rounded-full`}
                       >
@@ -953,7 +1064,7 @@ export default function PodcastSite() {
                   <div className="flex-1 flex flex-col justify-center space-y-6 my-8">
                     <div className="flex-1 flex flex-col justify-start space-y-3 mt-3 w-full">
                       <h1
-                        className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight drop-shadow-md break-words w-full ${isDark ? 'text-white' : 'text-gray-900'
+                        className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight drop-shadow-md break-words w-full ${isDark ? 'text-white' : 'text-[#0F1C1C]'
                           }`}
                       >
                         {heroEpisode.title}
@@ -964,14 +1075,14 @@ export default function PodcastSite() {
                     <div className="flex items-center gap-4 text-sm">
                       <span
                         className={`flex items-center gap-2 ${isDark ? 'bg-[#0F1C1C]/10' : 'bg-gray-100'
-                          } px-4 py-2.5 rounded-xl ${isDark ? 'text-white' : 'text-gray-900'}`}
+                          } px-4 py-2.5 rounded-xl ${isDark ? 'text-white' : 'text-[#0F1C1C]'}`}
                       >
                         <Clock size={18} className="text-[#d97ac8]" />
                         <span className="font-semibold">{Math.floor(heroEpisode.duration / 60)} minutes</span>
                       </span>
                       <span
                         className={`flex items-center gap-2 ${isDark ? 'bg-[#0F1C1C]/10' : 'bg-gray-100'
-                          } px-4 py-2.5 rounded-xl ${isDark ? 'text-white' : 'text-gray-900'}`}
+                          } px-4 py-2.5 rounded-xl ${isDark ? 'text-white' : 'text-[#0F1C1C]'}`}
                       >
                         <Headphones size={18} className="text-[#00ffaa]" />
                         <span className="font-semibold">Featured</span>
@@ -990,10 +1101,10 @@ export default function PodcastSite() {
                             <Headphones size={20} className="text-white" />
                           </div>
                           <div>
-                            <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                            <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-[#0F1C1C]'}`}>
                               Listen Now
                             </h3>
-                            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'}`}>
                               Start your journey
                             </p>
                           </div>
@@ -1001,7 +1112,7 @@ export default function PodcastSite() {
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 rounded-full bg-[#00ffaa] animate-pulse"></div>
                           <span
-                            className={`text-xs font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}
+                            className={`text-xs font-medium ${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'}`}
                           >
                             Available Now
                           </span>
@@ -1009,7 +1120,7 @@ export default function PodcastSite() {
                       </div>
                       <div id="buzzsprout-player-hero" className="buzzsprout-player-wrapper">
                         <div
-                          className={`text-center py-10 ${isDark ? 'text-gray-400' : 'text-gray-600'} text-sm`}
+                          className={`text-center py-10 ${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'} text-sm`}
                         >
                           <div
                             className={`w-16 h-16 mx-auto mb-4 rounded-full ${isDark ? 'bg-[#d97ac8]/10' : 'bg-gray-100'
@@ -1027,10 +1138,10 @@ export default function PodcastSite() {
             ) : (
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
-                  <p className={`text-xl ${isDark ? 'text-[#efe8e6]' : 'text-gray-900'} mb-4`}>
+                  <p className={`text-xl ${isDark ? 'text-[#efe8e6]' : 'text-[#0F1C1C]'} mb-4`}>
                     No episodes available
                   </p>
-                  <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                  <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'}`}>
                     Check back soon for new content!
                   </p>
                 </div>
@@ -1059,13 +1170,13 @@ export default function PodcastSite() {
                     <Play size={18} className="text-white ml-0.5" fill="white" />
                   </div>
                   <h2
-                    className={`text-3xl sm:text-4xl font-rozha font-bold ${isDark ? 'text-white' : 'text-gray-900'
+                    className={`text-3xl sm:text-4xl font-rozha font-bold ${isDark ? 'text-white' : 'text-[#0F1C1C]'
                       }`}
                   >
                     Explore Episodes
                   </h2>
                 </div>
-                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'}`}>
                   Browse our curated selection of insightful conversations.
                 </p>
               </div>
@@ -1075,7 +1186,7 @@ export default function PodcastSite() {
                   } rounded-lg p-2`}
               >
                 <span
-                  className={`text-sm font-medium ${isDark ? 'text-[#efe8e6] bg-[#0F1C1C]/10' : 'text-gray-900 bg-gray-100'
+                  className={`text-sm font-medium ${isDark ? 'text-[#efe8e6] bg-[#0F1C1C]/10' : 'text-[#0F1C1C] bg-gray-100'
                     } px-4 py-2 rounded-full`}
                 >
                   Page {currentPage} of {totalPages}
@@ -1106,16 +1217,24 @@ export default function PodcastSite() {
             {loading ? (
               <div className="flex justify-center items-center py-20">
                 <div className="text-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d97ac8] mx-auto mb-4"></div>
-                  <p className={isDark ? "text-gray-400" : "text-gray-600"}>Loading episodes...</p>
+                  <div className="relative mb-6">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d97ac8] mx-auto"></div>
+                    <div className="absolute inset-0 animate-pulse rounded-full h-12 w-12 border border-[#d97ac8]/30 mx-auto"></div>
+                  </div>
+                  <p className={`${isDark ? "text-gray-400" : "text-[#0F1C1C]/60"} font-medium mb-2`}>Loading episodes...</p>
+                  <div className="flex justify-center space-x-1">
+                    <div className="w-2 h-2 bg-[#d97ac8] rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-[#d97ac8] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-[#d97ac8] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
                 </div>
               </div>
             ) : currentPageEpisodes.length === 0 ? (
               <div className="text-center py-20 rounded-2xl">
-                <p className={`text-xl ${isDark ? 'text-[#efe8e6]' : 'text-gray-900'} mb-2`}>
+                <p className={`text-xl ${isDark ? 'text-[#efe8e6]' : 'text-[#0F1C1C]'} mb-2`}>
                   No episodes available yet.
                 </p>
-                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'}`}>
                   Check back soon for new content!
                 </p>
               </div>
@@ -1152,13 +1271,11 @@ export default function PodcastSite() {
       </section>
 
       <footer
-        className={`${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-t-2' : 'bg-white/30 backdrop-filter backdrop-blur-lg shadow-sm'
-          } mt-12 sm:mt-20`}
+        className="bg-[#0F1C1C] border-[#d97ac8]/20 border-t-2 mt-12 sm:mt-20"
       >
         <div className="max-w-[1600px] mx-auto px-4 sm:px-16 py-12">
           <div
-            className={`flex flex-col md:flex-row justify-between gap-12 ${isDark ? 'text-[#efe8e6]' : 'text-gray-900'
-              }`}
+            className="flex flex-col md:flex-row justify-between gap-12 text-[#efe8e6]"
           >
             <div className="md:w-1/2">
               <h4 className="text-2xl sm:text-3xl font-bold mb-3">Get in touch</h4>

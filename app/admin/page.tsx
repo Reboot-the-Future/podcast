@@ -41,6 +41,10 @@ export default function AdminDashboard() {
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
+    document.title = "Dashboard › Reboot Admin";
+  }, []);
+
+  useEffect(() => {
     const token = typeof window !== "undefined" ? localStorage.getItem("admin_token") : null;
     if (!token) {
       router.replace("/admin/login");
@@ -117,10 +121,18 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-[#0f1c1c] to-[#1a2828]">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-[#ffa9fc]/30 border-t-[#ffa9fc] rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading dashboard...</p>
+          <div className="relative mb-6">
+            <div className="w-16 h-16 border-4 border-[#ffa9fc]/30 border-t-[#ffa9fc] rounded-full animate-spin mx-auto"></div>
+            <div className="absolute inset-0 animate-pulse rounded-full w-16 h-16 border border-[#ffa9fc]/20 mx-auto"></div>
+          </div>
+          <p className="text-gray-400 font-medium mb-2">Loading dashboard...</p>
+          <div className="flex justify-center space-x-1">
+            <div className="w-2 h-2 bg-[#ffa9fc] rounded-full animate-bounce"></div>
+            <div className="w-2 h-2 bg-[#ffa9fc] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+            <div className="w-2 h-2 bg-[#ffa9fc] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+          </div>
         </div>
       </div>
     );
@@ -184,7 +196,8 @@ export default function AdminDashboard() {
         <button
           onClick={() => fetchStats(true)}
           disabled={refreshing}
-          className="px-6 py-3 bg-[#ffa9fc] hover:bg-[#ff8df7] text-[#0f1c1c] rounded-xl font-bold transition-all flex items-center gap-2 disabled:opacity-50 hover:scale-105 active:scale-95 shadow-lg shadow-[#ffa9fc]/20"
+          className="px-6 py-3 bg-[#ffa9fc] hover:bg-[#ff8df7] text-[#0f1c1c] rounded-xl font-bold transition-all flex items-center gap-2 disabled:opacity-50 hover:scale-105 active:scale-95 shadow-lg shadow-[#ffa9fc]/20 focus:outline-none focus:ring-2 focus:ring-[#ffa9fc] focus:ring-offset-2"
+          aria-label={refreshing ? "Refreshing data" : "Refresh dashboard data"}
         >
           <RefreshCw size={18} className={refreshing ? "animate-spin" : ""} />
           {refreshing ? "Refreshing..." : "Refresh Data"}
@@ -253,6 +266,7 @@ export default function AdminDashboard() {
                         {new Date(episode.date_published).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",
+                          year: "numeric",
                         })}
                       </span>
                       <span
@@ -308,6 +322,7 @@ export default function AdminDashboard() {
                         {new Date(blog.date).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",
+                          year: "numeric",
                         })}
                       </span>
                     </div>
