@@ -99,11 +99,6 @@ export default function AdminSettings() {
   };
 
   const handleSave = async () => {
-    if (!settings.trailer_audio_url.trim()) {
-      showAlert('error', 'Please provide a trailer URL');
-      return;
-    }
-
     setSaving(true);
 
     try {
@@ -126,7 +121,10 @@ export default function AdminSettings() {
         throw new Error(errorData.error || `Server error: ${res.status}`);
       }
 
-      showAlert('success', 'Trailer settings saved successfully!');
+      const message = settings.trailer_audio_url.trim() 
+        ? 'Trailer settings saved successfully!' 
+        : 'Trailer removed successfully!';
+      showAlert('success', message);
       
       // Refresh settings to confirm save
       await fetchSettings();
@@ -207,13 +205,15 @@ export default function AdminSettings() {
           </div>
           <div>
             <h2 className="text-2xl font-bold">Upload Trailer</h2>
-            <p className="text-sm text-gray-400">This audio will play on the homepage</p>
+            <p className="text-sm text-gray-400">Optional: Add audio to play on the homepage</p>
           </div>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-semibold mb-3 text-gray-300">Trailer Audio URL</label>
+            <label className="block text-sm font-semibold mb-3 text-gray-300">
+              Trailer Audio URL <span className="text-gray-500 font-normal">(Optional)</span>
+            </label>
             <div className="flex gap-3">
               <input
                 type="text"

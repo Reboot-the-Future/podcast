@@ -121,6 +121,8 @@ function validateBuzzsproutId(id: string): boolean {
 // ============================================================================
 // TRAILER PLAYER COMPONENT
 // ============================================================================
+// Complete TrailerPlayer Component with updated progress bar
+
 const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: boolean }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(0.7);
@@ -173,19 +175,19 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
         setCurrentTime(Math.floor(audio.currentTime));
       }
     };
-    
+
     const handleDurationChange = () => {
       if (!isNaN(audio.duration) && isFinite(audio.duration)) {
         setDuration(Math.floor(audio.duration));
       }
     };
-    
+
     const handleLoadedMetadata = () => {
       if (!isNaN(audio.duration) && isFinite(audio.duration)) {
         setDuration(Math.floor(audio.duration));
       }
     };
-    
+
     const handleEnded = () => setIsPlaying(false);
     const handlePlay = () => setIsPlaying(true);
     const handlePause = () => setIsPlaying(false);
@@ -251,14 +253,13 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
 
   const handleSeek = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!audioRef.current || !duration) return;
-    
+
     const audio = audioRef.current;
     const wasPlaying = !audio.paused;
     const newTime = (parseFloat(e.target.value) / 100) * duration;
-    
+
     audio.currentTime = newTime;
-    
-    // Resume playback if it was playing before seek
+
     if (wasPlaying) {
       try {
         await audio.play();
@@ -272,19 +273,37 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
 
   if (error) {
     return (
-      <div className={`${isDark ? 'bg-gradient-to-br from-[#1a2828] to-[#0f1c1c]' : 'bg-white shadow-lg'} rounded-3xl p-6`} style={isDark ? {} : { border: '1px solid #e5e7eb' }}>
+      <div
+        className={`${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white/30 backdrop-filter backdrop-blur-lg shadow-lg'
+          } rounded-3xl p-6`}
+        style={isDark ? {} : { border: '1px solid rgba(229, 231, 235, 0.5)' }}
+      >
         <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{error}</p>
       </div>
     );
   }
 
   return (
-    <div className={`${isDark ? 'bg-gradient-to-br from-[#1a2828] to-[#0f1c1c]' : 'bg-white shadow-lg'} rounded-3xl p-6 transition-all hover:shadow-pink-500/20`} style={isDark ? {} : { border: '1px solid #e5e7eb' }}>
+    <div
+      className={`${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white/30 backdrop-filter backdrop-blur-lg shadow-lg'
+        } rounded-3xl p-6 transition-all hover:shadow-pink-500/20`}
+      style={isDark ? {} : { border: '1px solid rgba(229, 231, 235, 0.5)' }}
+    >
       <div className="flex justify-between items-center mb-5">
-        <h3 className={`font-semibold text-lg ${isDark ? 'text-white' : 'text-gray-900'} flex items-center gap-2`}>
+        <h3
+          className={`font-semibold text-lg ${isDark ? 'text-white' : 'text-gray-900'
+            } flex items-center gap-2`}
+        >
           <Sparkles className="text-[#d97ac8]" size={18} /> Podcast Trailer
         </h3>
-        <Waves className={`w-5 h-5 ${isPlaying ? "text-[#00ffaa] animate-pulse" : isDark ? "text-gray-500" : "text-gray-400"}`} />
+        <Waves
+          className={`w-5 h-5 ${isPlaying
+              ? 'text-[#d97ac8] animate-pulse'
+              : isDark
+                ? 'text-gray-500'
+                : 'text-gray-400'
+            }`}
+        />
       </div>
 
       <div className="flex items-center gap-5">
@@ -292,11 +311,15 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
           onClick={togglePlay}
           disabled={isLoading}
           className={`w-14 h-14 rounded-full flex items-center justify-center transition-all relative ${isPlaying
-            ? "bg-[#d97ac8] shadow-[#d97ac8]/50 shadow-lg hover:bg-[#c84a8a]"
-            : "bg-[#d97ac8] hover:bg-[#c84a8a] hover:shadow-lg hover:shadow-pink-500/50"
+              ? isDark
+                ? 'bg-[#d97ac8] shadow-[#d97ac8]/50 shadow-lg hover:bg-[#c84a8a]'
+                : 'bg-[#d97ac8]/90 shadow-[#d97ac8]/30 shadow-lg hover:bg-[#c84a8a]/90'
+              : isDark
+                ? 'bg-[#d97ac8] hover:bg-[#c84a8a] hover:shadow-lg hover:shadow-pink-500/50'
+                : 'bg-[#d97ac8]/90 hover:bg-[#c84a8a]/90 hover:shadow-lg hover:shadow-pink-500/30'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           title="Click to play/pause (or press Space)"
-          aria-label={isPlaying ? "Pause" : "Play"}
+          aria-label={isPlaying ? 'Pause' : 'Play'}
         >
           {isPlaying ? (
             <Pause size={26} fill="white" stroke="none" />
@@ -305,7 +328,15 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
           )}
         </button>
 
-        <div className="flex-1">
+        <div className="flex-1 relative">
+          <div className="relative h-2 rounded-full overflow-hidden" style={{
+            background: isDark ? 'rgba(15, 28, 28, 0.5)' : 'rgba(229, 231, 235, 0.5)'
+          }}>
+            <div
+              className="absolute top-0 left-0 h-full bg-[#d97ac8] transition-all rounded-full"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
           <input
             type="range"
             min="0"
@@ -314,22 +345,29 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
             value={progress}
             onChange={handleSeek}
             disabled={isLoading || !duration}
-            className={`w-full accent-[#d97ac8] appearance-none h-2 ${isDark ? 'bg-[#2a3838]' : 'bg-gray-200'} rounded-full cursor-pointer disabled:opacity-50`}
+            className="absolute top-0 left-0 w-full h-2 opacity-0 cursor-pointer disabled:cursor-not-allowed"
             aria-label="Seek"
           />
-          <div className={`flex justify-between text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'} mt-1`}>
+          <div
+            className={`flex justify-between text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'
+              } mt-1`}
+          >
             <span>{formatDuration(currentTime)}</span>
             <span>{formatDuration(duration)}</span>
           </div>
         </div>
       </div>
 
-      <div className={`flex justify-between items-center mt-4 pt-3 ${isDark ? 'border-[#2a3838]/50' : 'border-gray-200'} border-t`}>
+      <div
+        className={`flex justify-between items-center mt-4 pt-3 ${isDark ? 'border-[#d97ac8]/20 border-t-2' : 'border-gray-200/50 border-t'
+          }`}
+      >
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsMuted(!isMuted)}
-            className={`p-2 rounded-xl ${isDark ? 'bg-white/5 hover:bg-white/10' : 'bg-gray-100 hover:bg-gray-200'} transition-all`}
-            aria-label={isMuted ? "Unmute" : "Mute"}
+            className={`p-2 rounded-xl ${isDark ? 'bg-[#0F1C1C]/10 hover:bg-[#0F1C1C]/20' : 'bg-gray-100/50 hover:bg-gray-200/50'
+              } transition-all`}
+            aria-label={isMuted ? 'Unmute' : 'Mute'}
           >
             {isMuted ? (
               <VolumeX size={18} className="text-gray-600" />
@@ -352,9 +390,15 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
           />
         </div>
 
-        <div className={`flex items-center gap-2 text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-          <div className={`w-2 h-2 rounded-full ${isPlaying ? "bg-[#00ffaa] animate-pulse" : "bg-gray-400"}`} />
-          {isPlaying ? "Playing" : "Paused"}
+        <div
+          className={`flex items-center gap-2 text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'
+            }`}
+        >
+          <div
+            className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-[#d97ac8] animate-pulse' : 'bg-gray-400'
+              }`}
+          />
+          {isPlaying ? 'Playing' : 'Paused'}
         </div>
       </div>
 
@@ -365,7 +409,10 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
           onClick={() => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
-          className="fixed bottom-20 md:bottom-6 right-4 sm:right-6 w-12 h-12 rounded-full bg-[#d97ac8] hover:bg-[#c84a8a] text-white flex items-center justify-center shadow-lg shadow-pink-500/30 transition-all hover:scale-110 z-40"
+          className={`fixed bottom-20 md:bottom-6 right-4 sm:right-6 w-12 h-12 rounded-full ${isDark
+              ? 'bg-[#d97ac8] hover:bg-[#c84a8a]'
+              : 'bg-[#d97ac8]/90 hover:bg-[#c84a8a]/90'
+            } text-white flex items-center justify-center shadow-lg shadow-pink-500/30 transition-all hover:scale-110 z-40`}
           aria-label="Scroll to top"
         >
           <ChevronUp size={24} />
@@ -387,20 +434,25 @@ const BlogSidebar = ({ blogs, currentPage, isDark }: { blogs: BlogItem[]; curren
     <div className="flex flex-col space-y-6">
       <TrailerPlayer currentPage={currentPage} isDark={isDark} />
 
-      <div className={`relative rounded-3xl overflow-hidden ${isDark ? 'bg-gradient-to-br from-[#1a2828] via-[#0f1c1c] to-[#1a2828]' : 'bg-white shadow-lg'} transition-all p-6 sm:p-8 group`} style={isDark ? {} : { border: '1px solid #e5e7eb' }}>
-        <div className="absolute top-0 right-0 w-64 h-64 bg-[#d97ac8]/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#00ffaa]/5 rounded-full blur-3xl"></div>
-
+      <div
+        className={`relative rounded-3xl overflow-hidden ${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white/30 backdrop-filter backdrop-blur-lg shadow-lg'
+          } transition-all p-6 sm:p-8 group`}
+        style={isDark ? {} : { border: '1px solid rgba(229, 231, 235, 0.5)' }}
+      >
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#d97ac8] to-[#c84a8a] flex items-center justify-center shadow-lg">
               <Sparkles size={18} className="text-white" />
             </div>
-            <h2 className={`text-2xl sm:text-3xl font-rozha font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Latest Insights</h2>
+            <h2 className={`text-2xl sm:text-3xl font-rozha font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              Latest Insights
+            </h2>
           </div>
 
           {blogs.length === 0 ? (
-            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>No insights available yet.</p>
+            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+              No insights available yet.
+            </p>
           ) : (
             <div className="space-y-4">
               {blogs.map((blog) => {
@@ -413,7 +465,8 @@ const BlogSidebar = ({ blogs, currentPage, isDark }: { blogs: BlogItem[]; curren
                 return (
                   <div
                     key={blog.id}
-                    className={`flex flex-col gap-2 ${isDark ? 'border-[#2a3838]/30' : 'border-gray-200'} pb-4 last:border-b-0 transition-all border-b`}
+                    className={`flex flex-col gap-2 ${isDark ? 'border-[#d97ac8]/20' : 'border-gray-200'
+                      } pb-4 last:border-b-0 transition-all border-b`}
                   >
                     {safeLink ? (
                       <a
@@ -425,14 +478,17 @@ const BlogSidebar = ({ blogs, currentPage, isDark }: { blogs: BlogItem[]; curren
                         {blog.title}
                       </a>
                     ) : (
-                      <span className="text-lg sm:text-xl font-semibold text-[#d97ac8]">{blog.title}</span>
+                      <span className="text-lg sm:text-xl font-semibold text-[#d97ac8]">
+                        {blog.title}
+                      </span>
                     )}
 
                     <div className="flex flex-wrap gap-2">
                       {blog.tags.slice(0, MAX_VISIBLE_TAGS).map((tag) => (
                         <span
                           key={tag}
-                          className="text-xs text-[#d97ac8] bg-[#d97ac8]/10 px-2.5 py-1 rounded-full border border-[#d97ac8]/20 hover:bg-[#d97ac8]/20 transition-colors"
+                          className={`text-xs text-[#d97ac8] ${isDark ? 'bg-[#d97ac8]/10' : 'bg-[#d97ac8]/20'
+                            } px-2.5 py-1 rounded-full border border-[#d97ac8]/20 hover:bg-[#d97ac8]/20 transition-colors`}
                         >
                           {tag}
                         </span>
@@ -452,7 +508,9 @@ const BlogSidebar = ({ blogs, currentPage, isDark }: { blogs: BlogItem[]; curren
                       </button>
                     )}
 
-                    <div className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'} flex items-center gap-2 mt-1`}>
+                    <div
+                      className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'} flex items-center gap-2 mt-1`}
+                    >
                       <Calendar size={12} />
                       {formatDate(blog.date)}
                     </div>
@@ -477,7 +535,6 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
   useEffect(() => {
     if (!episode.buzzsprout_episode_id) return;
 
-    // Validate episode ID (security: prevent script injection)
     if (!validateBuzzsproutId(episode.buzzsprout_episode_id)) {
       console.error('Invalid buzzsprout episode ID format');
       return;
@@ -487,18 +544,15 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
     const bgColor = isDark ? '000000' : 'ffffff';
     const scriptSrc = `https://www.buzzsprout.com/${BUZZSPROUT_PODCAST_ID}/episodes/${episode.buzzsprout_episode_id}.js?container_id=${containerId}&player=small&background_color=${bgColor}`;
 
-    // Remove existing script if any
     const existingScript = document.querySelector(`script[src*="container_id=${containerId}"]`);
     existingScript?.remove();
 
-    // Create new script
     const script = document.createElement('script');
     script.src = scriptSrc;
     script.type = 'text/javascript';
     script.charset = 'utf-8';
     script.async = true;
 
-    // Error handling
     script.onerror = () => {
       console.error('Failed to load Buzzsprout player');
     };
@@ -511,18 +565,33 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
   }, [episode.buzzsprout_episode_id, episode.id, isDark]);
 
   return (
-    <div className={`${isDark ? 'bg-gradient-to-br from-[#1a2828] to-[#0f1c1c]' : 'bg-white shadow-lg'} rounded-2xl p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-pink-500/20 col-span-full flex flex-col group`} style={isDark ? {} : { border: '1px solid #e5e7eb' }}>
+    <div
+      className={`${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white/30 backdrop-filter backdrop-blur-lg shadow-lg'
+        } rounded-2xl p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-pink-500/20 col-span-full flex flex-col group`}
+      style={isDark ? {} : { border: '1px solid rgba(229, 231, 235, 0.5)' }}
+    >
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1 min-w-0 pr-4">
           <div className="flex gap-2 flex-wrap mb-3">
             {tags.slice(0, MAX_VISIBLE_TAGS).map((tag: string) => (
-              <span key={tag} className="text-xs text-[#d97ac8] bg-[#d97ac8]/10 px-3 py-1 rounded-full font-semibold border border-[#d97ac8]/20">
+              <span
+                key={tag}
+                className={`text-xs text-[#d97ac8] ${isDark ? 'bg-[#d97ac8]/10' : 'bg-[#d97ac8]/20'
+                  } px-3 py-1 rounded-full font-semibold border border-[#d97ac8]/20`}
+              >
                 {tag}
               </span>
             ))}
-            {tags.length > MAX_VISIBLE_TAGS && <span className={`text-xs px-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>+{tags.length - MAX_VISIBLE_TAGS}</span>}
+            {tags.length > MAX_VISIBLE_TAGS && (
+              <span className={`text-xs px-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                +{tags.length - MAX_VISIBLE_TAGS}
+              </span>
+            )}
           </div>
-          <h3 className={`font-bold mb-2 hover:text-[#d97ac8] transition-colors leading-tight text-3xl ${isDark ? 'text-white' : 'text-gray-900'}`}>
+          <h3
+            className={`font-bold mb-2 hover:text-[#d97ac8] transition-colors leading-tight text-3xl ${isDark ? 'text-white' : 'text-gray-900'
+              }`}
+          >
             {episode.title}
           </h3>
         </div>
@@ -536,13 +605,22 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
         {episode.excerpt}
       </p>
 
-      <div className={`flex items-center justify-between pt-4 ${isDark ? 'border-[#2a3838]/50' : 'border-gray-200'} border-t mt-auto`}>
+      <div
+        className={`flex items-center justify-between pt-4 ${isDark ? 'border-[#d97ac8]/20 border-t-2' : 'border-gray-200 border-t'
+          } mt-auto`}
+      >
         <div className={`flex items-center gap-4 text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-          <span className={`flex items-center gap-1.5 ${isDark ? 'bg-white/5' : 'bg-gray-100'} px-3 py-1.5 rounded-lg`}>
+          <span
+            className={`flex items-center gap-1.5 ${isDark ? 'bg-[#0F1C1C]/10' : 'bg-gray-100'
+              } px-3 py-1.5 rounded-lg`}
+          >
             <Clock size={16} />
             {formatDuration(episode.duration)}
           </span>
-          <span className={`flex items-center gap-1.5 ${isDark ? 'bg-white/5' : 'bg-gray-100'} px-3 py-1.5 rounded-lg`}>
+          <span
+            className={`flex items-center gap-1.5 ${isDark ? 'bg-[#0F1C1C]/10' : 'bg-gray-100'
+              } px-3 py-1.5 rounded-lg`}
+          >
             <Calendar size={16} />
             {formatDate(episode.date_published)}
           </span>
@@ -550,21 +628,35 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
       </div>
 
       {episode.buzzsprout_episode_id && (
-        <div className={`mt-6 pt-6 ${isDark ? 'border-[#2a3838]' : 'border-gray-200'} border-t space-y-6 animate-in fade-in slide-in-from-top-4 duration-300`}>
-          <div className={`${isDark ? 'bg-gradient-to-br from-[#1a2828]/90 to-[#0f1c1c]/90' : 'bg-white shadow-md'} rounded-2xl p-6 sm:p-8 transition-all`}>
+        <div
+          className={`mt-6 pt-6 ${isDark ? 'border-[#d97ac8]/20 border-t-2' : 'border-gray-200 border-t'} space-y-6 animate-in fade-in slide-in-from-top-4 duration-300`}
+        >
+          <div
+            className={`${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white/30 backdrop-filter backdrop-blur-lg shadow-md'
+              } rounded-2xl p-6 sm:p-8 transition-all`}
+          >
             <div className="flex items-center gap-3 mb-5">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#d97ac8] to-[#c84a8a] flex items-center justify-center shadow-lg">
                 <Headphones size={20} className="text-white" />
               </div>
               <div>
-                <h4 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Listen to Episode</h4>
-                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Start your journey</p>
+                <h4 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  Listen to Episode
+                </h4>
+                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                  Start your journey
+                </p>
               </div>
             </div>
             <div id={containerIdRef.current} className="buzzsprout-player-wrapper">
-              <div className={`${isDark ? 'bg-[#0f1c1c]' : 'bg-gray-100'} rounded-lg p-8 text-center`}>
+              <div
+                className={`${isDark ? 'bg-[#0F1C1C]' : 'bg-gray-100'
+                  } rounded-lg p-8 text-center`}
+              >
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#d97ac8] mx-auto mb-3"></div>
-                <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'} text-sm`}>Loading player...</p>
+                <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'} text-sm`}>
+                  Loading player...
+                </p>
               </div>
             </div>
           </div>
@@ -581,7 +673,9 @@ const HeroDescription = ({ text, isDark }: { text: string; isDark: boolean }) =>
   if (!text) return null;
   return (
     <div className="w-full">
-      <p className={`text-base sm:text-lg ${isDark ? 'text-[#efe8e6]/90' : 'text-gray-700'} leading-relaxed font-light w-full`}>
+      <p
+        className={`text-base sm:text-lg ${isDark ? 'text-[#efe8e6]/90' : 'text-gray-700'} leading-relaxed font-light w-full`}
+      >
         {text}
       </p>
     </div>
@@ -595,8 +689,7 @@ export default function PodcastSite() {
   const [blogsData, setBlogsData] = useState<BlogItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isDark, setIsDark] = useState(true);
-
+  const [isDark, setIsDark] = useState(false); // Default to white theme
   const [heroEpisode, setHeroEpisode] = useState<Episode | null>(null);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -634,12 +727,12 @@ export default function PodcastSite() {
       setHeroLoading(true);
 
       try {
-        const episodesResponse = await fetch("/api/episodes?limit=100&status=published");
-        if (!episodesResponse.ok) {
-          throw new Error(`HTTP error! status: ${episodesResponse.status}`);
+        const res = await fetch("/api/episodes?limit=100&status=published");
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
         }
 
-        const episodesData = await episodesResponse.json();
+        const episodesData = await res.json();
         const processedEpisodes = (episodesData.episodes || []).map((episode: any) => ({
           ...episode,
           tags: parseTags(episode.tags),
@@ -701,8 +794,11 @@ export default function PodcastSite() {
   const currentPageEpisodes = getCurrentPageEpisodes();
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-[#0f1c1c] text-white' : 'bg-gray-50 text-gray-900'}`}>
-      <header className={`sticky top-0 ${isDark ? 'bg-[#0f1c1c]/95' : 'bg-white shadow-sm'} z-50`}>
+    <div className={`min-h-screen ${isDark ? 'bg-[#0F1C1C] text-white' : 'bg-gray-50 text-gray-900'}`}>
+      <header
+        className={`sticky top-0 ${isDark ? 'bg-[#0F1C1C]/95 border-[#d97ac8]/20 border-b-2' : 'bg-white/30 backdrop-filter backdrop-blur-lg shadow-sm'
+          } z-50`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-8 py-4">
           <div className="flex items-center justify-between gap-4">
             <a href="/" className="flex-shrink-0">
@@ -713,27 +809,96 @@ export default function PodcastSite() {
               />
             </a>
             <nav className="hidden lg:flex gap-6 xl:gap-8 flex-shrink-0">
-              <a href="https://www.rebootthefuture.org/who-we-are" className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'} transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-white/5' : 'hover:bg-gray-100'}`}>About</a>
-              <a href="https://education.rebootthefuture.org/" className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'} transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-white/5' : 'hover:bg-gray-100'}`}>Education</a>
-              <a href="https://www.rebootthefuture.org/what-we-do/reboot-experiences" className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'} transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-white/5' : 'hover:bg-gray-100'}`}>Services</a>
-              <a href="https://www.rebootthefuture.org/contact" className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'} transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-white/5' : 'hover:bg-gray-100'}`}>Contact</a>
+              <a
+                href="https://www.rebootthefuture.org/who-we-are"
+                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'
+                  } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
+                  }`}
+              >
+                About
+              </a>
+              <a
+                href="https://education.rebootthefuture.org/"
+                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'
+                  } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
+                  }`}
+              >
+                Education
+              </a>
+              <a
+                href="https://www.rebootthefuture.org/what-we-do/reboot-experiences"
+                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'
+                  } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
+                  }`}
+              >
+                Services
+              </a>
+              <a
+                href="https://www.rebootthefuture.org/contact"
+                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'
+                  } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
+                  }`}
+              >
+                Contact
+              </a>
             </nav>
 
-            <button onClick={() => setIsDark(!isDark)} className={`p-2 rounded-lg ${isDark ? 'hover:bg-white/10' : 'hover:bg-gray-100'} transition-colors`} aria-label="Toggle theme">
+            <button
+              onClick={() => setIsDark(!isDark)}
+              className={`p-2 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
+                } transition-colors`}
+              aria-label="Toggle theme"
+            >
               {isDark ? <Sun size={24} /> : <Moon size={24} />}
             </button>
 
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className={`lg:hidden p-2 rounded-lg ${isDark ? 'hover:bg-white/10' : 'hover:bg-gray-100'} transition-colors`} aria-label="Toggle menu">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className={`lg:hidden p-2 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
+                } transition-colors`}
+              aria-label="Toggle menu"
+            >
               <Menu size={24} />
             </button>
           </div>
 
           {mobileMenuOpen && (
-            <nav className={`lg:hidden mt-4 pb-4 space-y-2 ${isDark ? 'border-[#2a3838]' : 'border-gray-200'} border-t pt-4 animate-in fade-in slide-in-from-top-2 duration-200`}>
-              <a href="https://www.rebootthefuture.org/who-we-are" className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'} transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-white/5' : 'hover:bg-gray-100'}`}>About</a>
-              <a href="https://education.rebootthefuture.org/" className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'} transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-white/5' : 'hover:bg-gray-100'}`}>Education</a>
-              <a href="https://www.rebootthefuture.org/what-we-do/reboot-experiences" className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'} transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-white/5' : 'hover:bg-gray-100'}`}>Services</a>
-              <a href="https://www.rebootthefuture.org/contact" className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'} transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-white/5' : 'hover:bg-gray-100'}`}>Contact</a>
+            <nav
+              className={`lg:hidden mt-4 pb-4 space-y-2 ${isDark ? 'border-[#d97ac8]/20 border-t-2' : 'border-gray-200 border-t'
+                } pt-4 animate-in fade-in slide-in-from-top-2 duration-200`}
+            >
+              <a
+                href="https://www.rebootthefuture.org/who-we-are"
+                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'
+                  } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
+                  }`}
+              >
+                About
+              </a>
+              <a
+                href="https://education.rebootthefuture.org/"
+                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'
+                  } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
+                  }`}
+              >
+                Education
+              </a>
+              <a
+                href="https://www.rebootthefuture.org/what-we-do/reboot-experiences"
+                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'
+                  } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
+                  }`}
+              >
+                Services
+              </a>
+              <a
+                href="https://www.rebootthefuture.org/contact"
+                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-gray-900 hover:text-[#d97ac8]'
+                  } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
+                  }`}
+              >
+                Contact
+              </a>
             </nav>
           )}
         </div>
@@ -741,7 +906,11 @@ export default function PodcastSite() {
 
       <section className="max-w-[1600px] mx-auto px-4 sm:px-8 py-8 sm:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-6 lg:gap-10">
-          <div className={`relative rounded-3xl h-full min-h-[500px] sm:min-h-[650px] ${isDark ? 'bg-gradient-to-br from-[#1a2828] via-[#0f1c1c] to-[#1a2828] overflow-hidden' : 'bg-white shadow-lg'} transition-all group`} style={isDark ? {} : { border: '1px solid #e5e7eb', borderRadius: '24px' }}>
+          <div
+            className={`relative rounded-3xl h-full min-h-[500px] sm:min-h-[650px] ${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2 overflow-hidden' : 'bg-white/30 backdrop-filter backdrop-blur-lg shadow-lg'
+              } transition-all group`}
+            style={isDark ? {} : { border: '1px solid rgba(229, 231, 235, 0.5)', borderRadius: '24px' }}
+          >
             {heroLoading ? (
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
@@ -751,10 +920,6 @@ export default function PodcastSite() {
               </div>
             ) : heroEpisode ? (
               <div className="relative h-full flex flex-col p-6 sm:p-12 py-12 sm:py-16">
-                <div className="absolute top-0 right-0 w-96 h-96 bg-[#d97ac8]/10 rounded-full blur-3xl animate-pulse"></div>
-                <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#00ffaa]/5 rounded-full blur-3xl"></div>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-[#d97ac8]/5 to-[#00ffaa]/5 rounded-full blur-3xl opacity-30"></div>
-
                 <div className="relative z-10 flex flex-col h-full">
                   <div className="space-y-4 mb-6">
                     <div className="flex flex-wrap items-center gap-3">
@@ -762,7 +927,11 @@ export default function PodcastSite() {
                         <Sparkles size={16} className="animate-pulse" />
                         Latest Episode
                       </span>
-                      <span className={`${isDark ? 'text-[#efe8e6]' : 'text-gray-900'} text-sm flex items-center gap-2 ${isDark ? 'bg-white/5' : 'bg-gray-100'} px-4 py-2 rounded-full`}>
+                      <span
+                        className={`${isDark ? 'text-[#efe8e6]' : 'text-gray-900'
+                          } text-sm flex items-center gap-2 ${isDark ? 'bg-[#0F1C1C]/10' : 'bg-gray-100'
+                          } px-4 py-2 rounded-full`}
+                      >
                         <Calendar size={14} />
                         {formatDateLong(heroEpisode.date_published)}
                       </span>
@@ -770,7 +939,11 @@ export default function PodcastSite() {
 
                     <div className="flex gap-2 flex-wrap">
                       {parseTags(heroEpisode.tags).slice(0, 5).map((tag: string) => (
-                        <span key={tag} className="text-xs text-[#d97ac8] bg-[#d97ac8]/10 px-4 py-1.5 rounded-full font-semibold border border-[#d97ac8]/30 hover:bg-[#d97ac8]/20 transition-colors">
+                        <span
+                          key={tag}
+                          className={`text-xs text-[#d97ac8] ${isDark ? 'bg-[#d97ac8]/10' : 'bg-[#d97ac8]/20'
+                            } px-4 py-1.5 rounded-full font-semibold border border-[#d97ac8]/30 hover:bg-[#d97ac8]/20 transition-colors`}
+                        >
                           {tag}
                         </span>
                       ))}
@@ -779,20 +952,27 @@ export default function PodcastSite() {
 
                   <div className="flex-1 flex flex-col justify-center space-y-6 my-8">
                     <div className="flex-1 flex flex-col justify-start space-y-3 mt-3 w-full">
-                      <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight drop-shadow-md break-words w-full">
-                        <span className={isDark ? 'text-white' : 'text-gray-900'}>
-                          {heroEpisode.title}
-                        </span>
+                      <h1
+                        className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight drop-shadow-md break-words w-full ${isDark ? 'text-white' : 'text-gray-900'
+                          }`}
+                      >
+                        {heroEpisode.title}
                       </h1>
                       <HeroDescription text={heroEpisode.excerpt} isDark={isDark} />
                     </div>
 
                     <div className="flex items-center gap-4 text-sm">
-                      <span className={`flex items-center gap-2 ${isDark ? 'bg-white/10' : 'bg-gray-100'} px-4 py-2.5 rounded-xl ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      <span
+                        className={`flex items-center gap-2 ${isDark ? 'bg-[#0F1C1C]/10' : 'bg-gray-100'
+                          } px-4 py-2.5 rounded-xl ${isDark ? 'text-white' : 'text-gray-900'}`}
+                      >
                         <Clock size={18} className="text-[#d97ac8]" />
                         <span className="font-semibold">{Math.floor(heroEpisode.duration / 60)} minutes</span>
                       </span>
-                      <span className={`flex items-center gap-2 ${isDark ? 'bg-white/10' : 'bg-gray-100'} px-4 py-2.5 rounded-xl ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      <span
+                        className={`flex items-center gap-2 ${isDark ? 'bg-[#0F1C1C]/10' : 'bg-gray-100'
+                          } px-4 py-2.5 rounded-xl ${isDark ? 'text-white' : 'text-gray-900'}`}
+                      >
                         <Headphones size={18} className="text-[#00ffaa]" />
                         <span className="font-semibold">Featured</span>
                       </span>
@@ -800,25 +980,41 @@ export default function PodcastSite() {
                   </div>
 
                   <div className="mt-auto">
-                    <div className={`${isDark ? 'bg-gradient-to-br from-[#1a2828]/90 to-[#0f1c1c]/90' : 'bg-white shadow-md'} rounded-2xl p-6 sm:p-8 transition-all`}>
+                    <div
+                      className={`${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white/30 backdrop-filter backdrop-blur-lg shadow-md'
+                        } rounded-2xl p-6 sm:p-8 transition-all`}
+                    >
                       <div className="flex items-center justify-between mb-5">
                         <div className="flex items-center gap-3">
                           <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#d97ac8] to-[#c84a8a] flex items-center justify-center shadow-lg">
                             <Headphones size={20} className="text-white" />
                           </div>
                           <div>
-                            <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Listen Now</h3>
-                            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Start your journey</p>
+                            <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                              Listen Now
+                            </h3>
+                            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                              Start your journey
+                            </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 rounded-full bg-[#00ffaa] animate-pulse"></div>
-                          <span className={`text-xs font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Available Now</span>
+                          <span
+                            className={`text-xs font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}
+                          >
+                            Available Now
+                          </span>
                         </div>
                       </div>
                       <div id="buzzsprout-player-hero" className="buzzsprout-player-wrapper">
-                        <div className={`text-center py-10 ${isDark ? 'text-gray-400' : 'text-gray-600'} text-sm`}>
-                          <div className={`w-16 h-16 mx-auto mb-4 rounded-full ${isDark ? 'bg-[#d97ac8]/10' : 'bg-gray-100'} flex items-center justify-center`}>
+                        <div
+                          className={`text-center py-10 ${isDark ? 'text-gray-400' : 'text-gray-600'} text-sm`}
+                        >
+                          <div
+                            className={`w-16 h-16 mx-auto mb-4 rounded-full ${isDark ? 'bg-[#d97ac8]/10' : 'bg-gray-100'
+                              } flex items-center justify-center`}
+                          >
                             <Play size={32} className="text-[#d97ac8] ml-1" />
                           </div>
                           <p className="text-base font-medium">Player loading...</p>
@@ -831,8 +1027,12 @@ export default function PodcastSite() {
             ) : (
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
-                  <p className={`text-xl ${isDark ? 'text-[#efe8e6]' : 'text-gray-900'} mb-4`}>No episodes available</p>
-                  <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Check back soon for new content!</p>
+                  <p className={`text-xl ${isDark ? 'text-[#efe8e6]' : 'text-gray-900'} mb-4`}>
+                    No episodes available
+                  </p>
+                  <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Check back soon for new content!
+                  </p>
                 </div>
               </div>
             )}
@@ -843,31 +1043,49 @@ export default function PodcastSite() {
       </section>
 
       <section id="episodes" className="max-w-[1600px] mx-auto px-4 sm:px-8 py-8 sm:py-16">
-        <div className={`relative rounded-3xl overflow-hidden ${isDark ? 'bg-gradient-to-br from-[#1a2828] via-[#0f1c1c] to-[#1a2828]' : 'bg-white shadow-lg'} transition-all p-8 sm:p-12 group`} style={isDark ? {} : { border: '1px solid #e5e7eb' }}>
-          <div className="absolute top-0 right-0 w-96 h-96 bg-[#d97ac8]/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#00ffaa]/5 rounded-full blur-3xl"></div>
-
+        <div
+          className={`relative rounded-3xl overflow-hidden ${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white/30 backdrop-filter backdrop-blur-lg shadow-lg'
+            } transition-all p-8 sm:p-12 group`}
+          style={isDark ? {} : { border: '1px solid rgba(229, 231, 235, 0.5)' }}
+        >
           <div className="relative z-10">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-8 pb-8 border-b" style={{ borderBottomColor: isDark ? 'rgba(42, 56, 56, 0.3)' : 'rgba(229, 231, 235, 1)' }}>
+            <div
+              className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-8 pb-8 ${isDark ? 'border-[#d97ac8]/20 border-b-2' : 'border-b border-gray-200'
+                }`}
+            >
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#d97ac8] to-[#c84a8a] flex items-center justify-center shadow-lg">
                     <Play size={18} className="text-white ml-0.5" fill="white" />
                   </div>
-                  <h2 className={`text-3xl sm:text-4xl font-rozha font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Explore Episodes</h2>
+                  <h2
+                    className={`text-3xl sm:text-4xl font-rozha font-bold ${isDark ? 'text-white' : 'text-gray-900'
+                      }`}
+                  >
+                    Explore Episodes
+                  </h2>
                 </div>
-                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Browse our curated selection of insightful conversations.</p>
+                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                  Browse our curated selection of insightful conversations.
+                </p>
               </div>
 
-              <div className="flex items-center gap-4 flex-shrink-0">
-                <span className={`text-sm font-medium ${isDark ? 'text-[#efe8e6] bg-white/5' : 'text-gray-900 bg-gray-100'} px-4 py-2 rounded-full`}>
+              <div
+                className={`flex items-center gap-4 flex-shrink-0 ${isDark ? 'border-[#d97ac8]/20 border-2' : ''
+                  } rounded-lg p-2`}
+              >
+                <span
+                  className={`text-sm font-medium ${isDark ? 'text-[#efe8e6] bg-[#0F1C1C]/10' : 'text-gray-900 bg-gray-100'
+                    } px-4 py-2 rounded-full`}
+                >
                   Page {currentPage} of {totalPages}
                 </span>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                     disabled={currentPage === 1}
-                    className={`w-10 h-10 rounded-full ${isDark ? 'bg-white/10 hover:bg-white/20' : 'bg-gray-100 hover:bg-gray-200'} disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-all hover:scale-105`}
+                    className={`w-10 h-10 rounded-full ${isDark ? 'bg-[#0F1C1C]/10 hover:bg-[#0F1C1C]/20' : 'bg-gray-100 hover:bg-gray-200'
+                      } disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-all hover:scale-105`}
                     aria-label="Previous page"
                   >
                     <ChevronLeft size={20} />
@@ -875,7 +1093,8 @@ export default function PodcastSite() {
                   <button
                     onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                     disabled={currentPage === totalPages}
-                    className={`w-10 h-10 rounded-full ${isDark ? 'bg-white/10 hover:bg-white/20' : 'bg-gray-100 hover:bg-gray-200'} disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-all hover:scale-105`}
+                    className={`w-10 h-10 rounded-full ${isDark ? 'bg-[#0F1C1C]/10 hover:bg-[#0F1C1C]/20' : 'bg-gray-100 hover:bg-gray-200'
+                      } disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-all hover:scale-105`}
                     aria-label="Next page"
                   >
                     <ChevronRight size={20} />
@@ -893,8 +1112,12 @@ export default function PodcastSite() {
               </div>
             ) : currentPageEpisodes.length === 0 ? (
               <div className="text-center py-20 rounded-2xl">
-                <p className={`text-xl ${isDark ? 'text-[#efe8e6]' : 'text-gray-900'} mb-2`}>No episodes available yet.</p>
-                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Check back soon for new content!</p>
+                <p className={`text-xl ${isDark ? 'text-[#efe8e6]' : 'text-gray-900'} mb-2`}>
+                  No episodes available yet.
+                </p>
+                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                  Check back soon for new content!
+                </p>
               </div>
             ) : (
               <div className="space-y-6">
@@ -905,12 +1128,20 @@ export default function PodcastSite() {
             )}
 
             {!loading && currentPageEpisodes.length > 0 && (
-              <div className="flex justify-center gap-2 mt-8 sm:hidden">
+              <div
+                className={`flex justify-center gap-2 mt-8 sm:hidden ${isDark ? 'border-[#d97ac8]/20 border-2' : ''
+                  } rounded-lg p-2`}
+              >
                 {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => (
                   <button
                     key={i}
                     onClick={() => setCurrentPage(i + 1)}
-                    className={`w-2 h-2 rounded-full transition-all ${currentPage === i + 1 ? 'bg-[#d97ac8] w-6' : isDark ? 'bg-white/20' : 'bg-gray-200'}`}
+                    className={`w-2 h-2 rounded-full transition-all ${currentPage === i + 1
+                        ? 'bg-[#d97ac8] w-6'
+                        : isDark
+                          ? 'bg-[#0F1C1C]/20'
+                          : 'bg-gray-200'
+                      }`}
                     aria-label={`Go to page ${i + 1}`}
                   />
                 ))}
@@ -920,30 +1151,53 @@ export default function PodcastSite() {
         </div>
       </section>
 
-      <footer className={`${isDark ? 'bg-[#0f1c1c]' : 'bg-white shadow-sm'} mt-12 sm:mt-20`}>
+      <footer
+        className={`${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-t-2' : 'bg-white/30 backdrop-filter backdrop-blur-lg shadow-sm'
+          } mt-12 sm:mt-20`}
+      >
         <div className="max-w-[1600px] mx-auto px-4 sm:px-16 py-12">
-          <div className={`flex flex-col md:flex-row justify-between gap-12 ${isDark ? 'text-[#efe8e6]' : 'text-gray-900'}`}>
+          <div
+            className={`flex flex-col md:flex-row justify-between gap-12 ${isDark ? 'text-[#efe8e6]' : 'text-gray-900'
+              }`}
+          >
             <div className="md:w-1/2">
               <h4 className="text-2xl sm:text-3xl font-bold mb-3">Get in touch</h4>
-              <a href="mailto:hello@rebootthefuture.org" className="block text-lg sm:text-xl font-semibold mb-6 hover:text-[#d97ac8] transition-colors">
+              <a
+                href="mailto:hello@rebootthefuture.org"
+                className="block text-lg sm:text-xl font-semibold mb-6 hover:text-[#d97ac8] transition-colors"
+              >
                 hello@rebootthefuture.org
               </a>
 
               <div className="flex gap-5">
-                <a href="https://www.linkedin.com/company/reboot-the-future" aria-label="LinkedIn" className="hover:text-[#d97ac8] transition-transform hover:scale-110">
+                <a
+                  href="https://www.linkedin.com/company/reboot-the-future"
+                  aria-label="LinkedIn"
+                  className="hover:text-[#d97ac8] transition-transform hover:scale-110"
+                >
                   <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452z" />
                   </svg>
                 </a>
 
-                <a href="https://www.youtube.com/channel/UCPn_4n01QQlhz5ofmaUPxLw" aria-label="YouTube" className="hover:text-[#d97ac8] transition-transform hover:scale-110">
+                <a
+                  href="https://www.youtube.com/channel/UCPn_4n01QQlhz5ofmaUPxLw"
+                  aria-label="YouTube"
+                  className="hover:text-[#d97ac8] transition-transform hover:scale-110"
+                >
                   <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M23.498 6.186a2.983 2.983 0 0 0-2.1-2.1C19.6 3.5 12 3.5 12 3.5s-7.6 0-9.398.586a2.983 2.983 0 0 0-2.1 2.1A31.1 31.1 0 0 0 .5 12a31.1 31.1 0 0 0 .002 5.814 2.983 2.983 0 0 0 2.1 2.1C4.4 20.5 12 20.5 12 20.5s7.6 0 9.398-.586a2.983 2.983 0 0 0 2.1-2.1A31.1 31.1 0 0 0 23.5 12a31.1 31.1 0 0 0-.002-5.814zM9.75 15.5v-7l6 3.5-6 3.5z" />
                   </svg>
                 </a>
 
-                <a href="https://www.instagram.com/futurereboot/" aria-label="Instagram" className="hover:text-[#d97ac8] transition-transform hover:scale-110">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" /></svg>
+                <a
+                  href="https://www.instagram.com/futurereboot/"
+                  aria-label="Instagram"
+                  className="hover:text-[#d97ac8] transition-transform hover:scale-110"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                  </svg>
                 </a>
               </div>
             </div>
@@ -963,7 +1217,10 @@ export default function PodcastSite() {
                 </div>
 
                 <div>
-                  <a href="https://www.rebootthefuture.org/pages/policies" className="text-lg font-bold hover:text-[#d97ac8] transition-colors">
+                  <a
+                    href="https://www.rebootthefuture.org/pages/policies"
+                    className="text-lg font-bold hover:text-[#d97ac8] transition-colors"
+                  >
                     Our Policies
                   </a>
                 </div>
