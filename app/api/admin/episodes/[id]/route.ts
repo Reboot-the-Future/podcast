@@ -1,3 +1,6 @@
+// app/api/admin/episodes/[id]/route.ts
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { authenticateRequest } from '@/lib/auth';
@@ -6,7 +9,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const auth = authenticateRequest(request);
+  const auth = await authenticateRequest(request); // ✅ ensure awaited
   if (!auth) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -22,6 +25,7 @@ export async function GET(
 
     return NextResponse.json(episode);
   } catch (error) {
+    console.error('Error fetching episode:', error);
     return NextResponse.json({ error: 'Failed to fetch episode' }, { status: 500 });
   }
 }
@@ -30,7 +34,7 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const auth = authenticateRequest(request);
+  const auth = await authenticateRequest(request);
   if (!auth) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -50,7 +54,9 @@ export async function PUT(
       where: { id: episodeId },
       data: {
         ...body,
-        date_published: body.date_published ? new Date(body.date_published) : undefined,
+        date_published: body.date_published
+          ? new Date(body.date_published)
+          : undefined,
       },
     });
 
@@ -68,7 +74,7 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const auth = authenticateRequest(request);
+  const auth = await authenticateRequest(request);
   if (!auth) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
