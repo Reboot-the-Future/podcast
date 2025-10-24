@@ -1,67 +1,23 @@
 // app/api/settings/public/route.ts
-// Public endpoint to fetch settings (no auth required)
+// Public endpoint to fetch trailer (no auth required)
 
-import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
+import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
 
-const SETTINGS_FILE = path.join(process.cwd(), 'data', 'settings.json');
-
-// Ensure data directory exists
-async function ensureDataDir() {
-  const dataDir = path.join(process.cwd(), 'data');
+export async function GET() {
   try {
-    await fs.access(dataDir);
-  } catch {
-    await fs.mkdir(dataDir, { recursive: true });
-  }
-}
+    const trailer = await prisma.trailer.findFirst({
+      orderBy: { created_at: 'desc' },
+      select: { audio_url: true },
+    });
 
-// Get default settings
-function getDefaultSettings() {
-  return {
-    trailer_audio_url: "",
-    radio_stream_url: "",
-    radio_mode: "stream",
-    spotify_show_url: "",
-    apple_show_url: "",
-    rss_feed_url: "",
-    social_twitter: "",
-    social_linkedin: "",
-    social_instagram: "",
-    social_youtube: "",
-  };
-}
-
-export async function GET(request: NextRequest) {
-  try {
-    await ensureDataDir();
-    
-    try {
-      const data = await fs.readFile(SETTINGS_FILE, 'utf-8');
-      const settings = JSON.parse(data);
-      
-      // Return public settings only
-      return NextResponse.json({
-        trailer_audio_url: settings.trailer_audio_url || "",
-        radio_stream_url: settings.radio_stream_url || "",
-        radio_mode: settings.radio_mode || "stream",
-        spotify_show_url: settings.spotify_show_url || "",
-        apple_show_url: settings.apple_show_url || "",
-        rss_feed_url: settings.rss_feed_url || "",
-        social_twitter: settings.social_twitter || "",
-        social_linkedin: settings.social_linkedin || "",
-        social_instagram: settings.social_instagram || "",
-        social_youtube: settings.social_youtube || "",
-      });
-    } catch (error) {
-      // File doesn't exist, return defaults
-      return NextResponse.json(getDefaultSettings());
-    }
+    return NextResponse.json({
+      trailer_audio_url: trailer?.audio_url || '',
+    });
   } catch (error) {
-    console.error('Error fetching settings:', error);
+    console.error('Error fetching trailer:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch settings' },
+      { error: 'Failed to fetch trailer' },
       { status: 500 }
     );
   }
