@@ -26,6 +26,12 @@ export const metadata: Metadata = {
     title: "Reboot The Future - Podcast",
     description: "Conversations that matter. Exploring the ideas that will shape tomorrow.",
   },
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+  },
 };
 
 export default function RootLayout({
