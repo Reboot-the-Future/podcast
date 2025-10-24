@@ -17,6 +17,8 @@ h1 {
   width: 100%;
   max-width: 100%;
   overflow: hidden;
+  /* Reserve space to prevent layout shift while the script loads */
+  min-height: 200px;
 }
 
 .buzzsprout-player-wrapper iframe {

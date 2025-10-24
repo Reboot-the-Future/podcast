@@ -632,9 +632,17 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
           </h3>
         </div>
 
-        <div className="ml-0 sm:ml-4 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg w-12 h-12 xs:w-16 xs:h-16 sm:w-20 sm:h-20 bg-[#d97ac8]/20 self-center sm:self-start">
+        <button
+          type="button"
+          onClick={() => {
+            const el = document.getElementById(containerIdRef.current);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }}
+          className="ml-0 sm:ml-4 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg w-12 h-12 xs:w-16 xs:h-16 sm:w-20 sm:h-20 bg-[#d97ac8]/20 self-center sm:self-start transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#d97ac8] focus:ring-offset-2"
+          aria-label="Scroll to episode player"
+        >
           <Play className="ml-1 w-5 h-5 xs:w-6 xs:h-6 sm:w-8 sm:h-8" fill="#d97ac8" stroke="none" />
-        </div>
+        </button>
       </div>
 
       <p className={`${isDark ? 'text-[#efe8e6]' : 'text-[#0F1C1C]/80'} mb-2 xs:mb-3 sm:mb-4 leading-relaxed flex-grow text-xs xs:text-sm sm:text-base break-words`}>
@@ -681,10 +689,46 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
                 </h4>
               </div>
             </div>
-            <div id={containerIdRef.current} className="buzzsprout-player-wrapper w-full overflow-hidden">
+            {/* Platform CTAs */}
+            {(sanitizeUrl(episode.spotify_url || '') || sanitizeUrl(episode.apple_url || '')) && (
+              <div className="flex flex-wrap items-center gap-2 xs:gap-3 sm:gap-4 mb-2 xs:mb-3 sm:mb-4">
+                {sanitizeUrl(episode.spotify_url || '') && (
+                  <a
+                    href={sanitizeUrl(episode.spotify_url || '')!}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border ${isDark ? 'border-[#2a3838] bg-[#0F1C1C]/40 text-white hover:bg-[#0F1C1C]/60' : 'border-gray-200 bg-gray-100 text-[#0F1C1C] hover:bg-gray-200'}`}
+                    aria-label="Listen on Spotify"
+                  >
+                    {/* Spotify icon */}
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <path d="M12 1.5C6.201 1.5 1.5 6.201 1.5 12S6.201 22.5 12 22.5 22.5 17.799 22.5 12 17.799 1.5 12 1.5zm5.28 15.78a.937.937 0 0 1-1.289.312c-3.533-2.158-7.985-2.648-13.24-1.459a.938.938 0 1 1-.408-1.829c5.7-1.27 10.587-.706 14.462 1.638a.938.938 0 0 1 .475 1.338zm1.72-3.54a1.125 1.125 0 0 1-1.548.375c-4.046-2.47-10.213-3.192-14.997-1.759a1.125 1.125 0 1 1-.652-2.158c5.35-1.616 12.18-.81 16.82 1.997.533.326.701 1.02.377 1.545zm.14-3.7c-4.547-2.7-12.062-2.95-16.38-1.671a1.312 1.312 0 0 1-.744-2.514c4.98-1.476 13.24-1.181 18.38 1.829a1.313 1.313 0 0 1-1.256 2.356z"/>
+                    </svg>
+                    Spotify
+                  </a>
+                )}
+                {sanitizeUrl(episode.apple_url || '') && (
+                  <a
+                    href={sanitizeUrl(episode.apple_url || '')!}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border ${isDark ? 'border-[#2a3838] bg-[#0F1C1C]/40 text-white hover:bg-[#0F1C1C]/60' : 'border-gray-200 bg-gray-100 text-[#0F1C1C] hover:bg-gray-200'}`}
+                    aria-label="Listen on Apple Podcasts"
+                  >
+                    {/* Apple icon */}
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <path d="M19.665 17.233c-.34.78-.744 1.464-1.212 2.055-.64.81-1.163 1.364-1.57 1.662-.63.463-1.306.701-2.028.717-.517 0-1.142-.148-1.875-.444-.733-.296-1.407-.444-2.02-.444-.64 0-1.33.148-2.07.444-.74.296-1.34.451-1.8.466-.695.03-1.384-.22-2.07-.75-.443-.33-.98-.91-1.61-1.74-.69-.9-1.26-1.944-1.71-3.132-.48-1.26-.72-2.475-.72-3.645 0-1.35.29-2.51.87-3.48.46-.79 1.07-1.41 1.83-1.86.76-.45 1.58-.68 2.46-.69.48 0 1.11.17 1.89.51.78.34 1.28.51 1.5.51.16 0 .68-.2 1.56-.6.84-.38 1.55-.54 2.13-.48 1.58.13 2.77.75 3.57 1.86-1.42.86-2.12 2.06-2.1 3.6.02 1.2.45 2.2 1.3 3 .38.37.86.66 1.44.87.58.21 1.14.25 1.68.12-.15.46-.32.9-.51 1.32zm-4.26-13.74c0 .9-.33 1.74-.99 2.5-.8.91-1.76 1.43-2.8 1.34-.01-.1-.02-.21-.02-.33 0-.86.38-1.78 1.06-2.53.34-.4.77-.73 1.29-1 .52-.27 1.02-.42 1.5-.45.02.16.03.31.03.47z" />
+                    </svg>
+                    Apple Podcasts
+                  </a>
+                )}
+              </div>
+            )}
+            <div id={containerIdRef.current} className="buzzsprout-player-wrapper w-full overflow-hidden" aria-busy="true">
               <div
                 className={`${isDark ? 'bg-[#0F1C1C]' : 'bg-gray-100'
                   } rounded-lg p-4 xs:p-6 sm:p-8 text-center`}
+                role="status" aria-live="polite"
               >
                 <div className="animate-spin rounded-full h-5 w-5 xs:h-6 xs:w-6 sm:h-8 sm:w-8 border-b-2 border-[#d97ac8] mx-auto mb-2 sm:mb-3"></div>
                 <p className={`${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'} text-xs sm:text-sm`}>
@@ -790,6 +834,27 @@ export default function PodcastSite() {
       document.title = "Let's Reboot the Future";
     }
   }, []);
+
+  // Theme: initialize from localStorage or system preference
+  useEffect(() => {
+    try {
+      const saved = typeof window !== 'undefined' ? localStorage.getItem('theme') : null;
+      if (saved === 'dark') setIsDark(true);
+      else if (saved === 'light') setIsDark(false);
+      else if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        setIsDark(true);
+      }
+    } catch {}
+  }, []);
+
+  // Theme: persist on change
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      }
+    } catch {}
+  }, [isDark]);
 
   // Keyboard navigation support
   useEffect(() => {
@@ -1236,9 +1301,43 @@ export default function PodcastSite() {
                           </span>
                         </div>
                       </div>
-                      <div id="buzzsprout-player-hero" className="buzzsprout-player-wrapper w-full overflow-hidden">
+                      {/* Platform CTAs for hero */}
+                      {(sanitizeUrl(heroEpisode.spotify_url || '') || sanitizeUrl(heroEpisode.apple_url || '')) && (
+                        <div className="flex flex-wrap items-center gap-2 xs:gap-3 sm:gap-4 mb-2 xs:mb-3 sm:mb-4">
+                          {sanitizeUrl(heroEpisode.spotify_url || '') && (
+                            <a
+                              href={sanitizeUrl(heroEpisode.spotify_url || '')!}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border ${isDark ? 'border-[#2a3838] bg-[#0F1C1C]/40 text-white hover:bg-[#0F1C1C]/60' : 'border-gray-200 bg-gray-100 text-[#0F1C1C] hover:bg-gray-200'}`}
+                              aria-label="Listen on Spotify"
+                            >
+                              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M12 1.5C6.201 1.5 1.5 6.201 1.5 12S6.201 22.5 12 22.5 22.5 17.799 22.5 12 17.799 1.5 12 1.5zm5.28 15.78a.937.937 0 0 1-1.289.312c-3.533-2.158-7.985-2.648-13.24-1.459a.938.938 0 1 1-.408-1.829c5.7-1.27 10.587-.706 14.462 1.638a.938.938 0 0 1 .475 1.338zm1.72-3.54a1.125 1.125 0 0 1-1.548.375c-4.046-2.47-10.213-3.192-14.997-1.759a1.125 1.125 0 1 1-.652-2.158c5.35-1.616 12.18-.81 16.82 1.997.533.326.701 1.02.377 1.545zm.14-3.7c-4.547-2.7-12.062-2.95-16.38-1.671a1.312 1.312 0 0 1-.744-2.514c4.98-1.476 13.24-1.181 18.38 1.829a1.313 1.313 0 0 1-1.256 2.356z"/>
+                              </svg>
+                              Spotify
+                            </a>
+                          )}
+                          {sanitizeUrl(heroEpisode.apple_url || '') && (
+                            <a
+                              href={sanitizeUrl(heroEpisode.apple_url || '')!}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border ${isDark ? 'border-[#2a3838] bg-[#0F1C1C]/40 text-white hover:bg-[#0F1C1C]/60' : 'border-gray-200 bg-gray-100 text-[#0F1C1C] hover:bg-gray-200'}`}
+                              aria-label="Listen on Apple Podcasts"
+                            >
+                              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M19.665 17.233c-.34.78-.744 1.464-1.212 2.055-.64.81-1.163 1.364-1.57 1.662-.63.463-1.306.701-2.028.717-.517 0-1.142-.148-1.875-.444-.733-.296-1.407-.444-2.02-.444-.64 0-1.33.148-2.07.444-.74.296-1.34.451-1.8.466-.695.03-1.384-.22-2.07-.75-.443-.33-.98-.91-1.61-1.74-.69-.9-1.26-1.944-1.71-3.132-.48-1.26-.72-2.475-.72-3.645 0-1.35.29-2.51.87-3.48.46-.79 1.07-1.41 1.83-1.86.76-.45 1.58-.68 2.46-.69.48 0 1.11.17 1.89.51.78.34 1.28.51 1.5.51.16 0 .68-.2 1.56-.6.84-.38 1.55-.54 2.13-.48 1.58.13 2.77.75 3.57 1.86-1.42.86-2.12 2.06-2.1 3.6.02 1.2.45 2.2 1.3 3 .38.37.86.66 1.44.87.58.21 1.14.25 1.68.12-.15.46-.32.9-.51 1.32zm-4.26-13.74c0 .9-.33 1.74-.99 2.5-.8.91-1.76 1.43-2.8 1.34-.01-.1-.02-.21-.02-.33 0-.86.38-1.78 1.06-2.53.34-.4.77-.73 1.29-1 .52-.27 1.02-.42 1.5-.45.02.16.03.31.03.47z" />
+                              </svg>
+                              Apple Podcasts
+                            </a>
+                          )}
+                        </div>
+                      )}
+                      <div id="buzzsprout-player-hero" className="buzzsprout-player-wrapper w-full overflow-hidden" aria-busy="true">
                         <div
                           className={`text-center py-6 xs:py-8 sm:py-10 ${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'} text-xs sm:text-sm`}
+                          role="status" aria-live="polite"
                         >
                           <div className="flex flex-col items-center justify-center">
                             <div className="relative mb-3 xs:mb-4">
