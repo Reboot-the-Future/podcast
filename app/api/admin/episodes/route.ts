@@ -34,7 +34,14 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error fetching episodes:', error);
-    return NextResponse.json({ error: 'Failed to fetch episodes' }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorDetails = error instanceof Error ? error.stack : String(error);
+    console.error('Error details:', errorDetails);
+    
+    return NextResponse.json({ 
+      error: 'Failed to fetch episodes',
+      details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+    }, { status: 500 });
   }
 }
 

@@ -90,10 +90,29 @@ export default function AdminEpisodes() {
   const fetchEpisodes = async () => {
     try {
       const token = localStorage.getItem("admin_token");
+      if (!token) {
+        showAlert("error", "No authentication token found. Please log in again.");
+        router.push("/admin/login");
+        return;
+      }
+
       const res = await fetch("/api/admin/episodes?limit=100", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (!res.ok) throw new Error("Failed to fetch episodes");
+      
+      if (res.status === 401) {
+        showAlert("error", "Session expired. Please log in again.");
+        localStorage.removeItem("admin_token");
+        router.push("/admin/login");
+        return;
+      }
+      
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({ error: 'Unknown error' }));
+        const errorMsg = errorData.details || errorData.error || `Server error: ${res.status}`;
+        throw new Error(errorMsg);
+      }
+      
       const data = await res.json();
 
       const processedEpisodes = (data.episodes || []).map((episode: any) => {
@@ -115,8 +134,9 @@ export default function AdminEpisodes() {
       });
 
       setEpisodes(processedEpisodes);
-    } catch {
-      showAlert("error", "Failed to load episodes.");
+    } catch (error) {
+      console.error("Error fetching episodes:", error);
+      showAlert("error", error instanceof Error ? error.message : "Failed to load episodes.");
     } finally {
       setLoading(false);
     }

@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 interface Blog {
   id?: number;
   title: string;
+  excerpt: string;
   date: string;
   link: string;
   tags: string[];
@@ -21,9 +22,9 @@ export default function AdminBlogsPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("view");
 
   const [blogs, setBlogs] = useState<Blog[]>([
-    { title: "", date: "", link: "", tags: [] },
-    { title: "", date: "", link: "", tags: [] },
-    { title: "", date: "", link: "", tags: [] },
+    { title: "", excerpt: "", date: "", link: "", tags: [] },
+    { title: "", excerpt: "", date: "", link: "", tags: [] },
+    { title: "", excerpt: "", date: "", link: "", tags: [] },
   ]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -62,15 +63,16 @@ export default function AdminBlogsPage() {
       const fetchedBlogs = data.blogs || [];
 
       const blogSlots: Blog[] = [
-        { title: "", date: "", link: "", tags: [] },
-        { title: "", date: "", link: "", tags: [] },
-        { title: "", date: "", link: "", tags: [] },
+        { title: "", excerpt: "", date: "", link: "", tags: [] },
+        { title: "", excerpt: "", date: "", link: "", tags: [] },
+        { title: "", excerpt: "", date: "", link: "", tags: [] },
       ];
 
       fetchedBlogs.slice(0, 3).forEach((blog: any, index: number) => {
         blogSlots[index] = {
           id: blog.id,
           title: blog.title || "",
+          excerpt: blog.excerpt || "",
           date: blog.date ? formatDateForInput(blog.date) : "",
           link: blog.link || "",
           tags: Array.isArray(blog.tags) ? blog.tags : [],
@@ -78,7 +80,9 @@ export default function AdminBlogsPage() {
       });
 
       setBlogs(blogSlots);
-      setViewMode("view");
+      // If all blogs are empty, default to edit mode so user can add content
+      const allEmpty = blogSlots.every(isBlogEmpty);
+      setViewMode(allEmpty ? "edit" : "view");
     } catch (error) {
       console.error("Error fetching blogs:", error);
       setMessage({
@@ -178,10 +182,17 @@ export default function AdminBlogsPage() {
     try {
       setSaving(true);
       setMessage(null);
+      
+      // Ensure excerpt is never undefined/null for database
+      const blogsToSave = blogs.map(blog => ({
+        ...blog,
+        excerpt: blog.excerpt || "" // Always provide empty string if excerpt is empty
+      }));
+      
       const res = await fetch("/api/blogs", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ blogs }),
+        body: JSON.stringify({ blogs: blogsToSave }),
       });
 
       const data = await res.json();
@@ -303,32 +314,30 @@ export default function AdminBlogsPage() {
         )}
 
         {/* View/Edit Toggle */}
-        {!blogs.every(isBlogEmpty) && (
-          <div className="flex gap-3">
-            <button
-              onClick={() => setViewMode("view")}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold transition-all ${
-                viewMode === "view"
-                  ? "bg-[#00ffaa] text-[#0f1c1c] shadow-lg shadow-[#00ffaa]/30"
-                  : "bg-white/10 hover:bg-white/20 text-white"
-              }`}
-            >
-              <Eye size={18} />
-              View
-            </button>
-            <button
-              onClick={() => setViewMode("edit")}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold transition-all ${
-                viewMode === "edit"
-                  ? "bg-[#ffa9fc] text-[#0f1c1c] shadow-lg shadow-[#ffa9fc]/30"
-                  : "bg-white/10 hover:bg-white/20 text-white"
-              }`}
-            >
-              <Edit2 size={18} />
-              Edit
-            </button>
-          </div>
-        )}
+        <div className="flex gap-3">
+          <button
+            onClick={() => setViewMode("view")}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold transition-all ${
+              viewMode === "view"
+                ? "bg-[#00ffaa] text-[#0f1c1c] shadow-lg shadow-[#00ffaa]/30"
+                : "bg-white/10 hover:bg-white/20 text-white"
+            }`}
+          >
+            <Eye size={18} />
+            View
+          </button>
+          <button
+            onClick={() => setViewMode("edit")}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold transition-all ${
+              viewMode === "edit"
+                ? "bg-[#ffa9fc] text-[#0f1c1c] shadow-lg shadow-[#ffa9fc]/30"
+                : "bg-white/10 hover:bg-white/20 text-white"
+            }`}
+          >
+            <Edit2 size={18} />
+            Edit
+          </button>
+        </div>
 
         {/* VIEW MODE */}
         {viewMode === "view" && (
@@ -358,6 +367,10 @@ export default function AdminBlogsPage() {
                       )}
 
                       <h3 className="text-xl font-bold text-white mb-2 line-clamp-2">{blog.title}</h3>
+
+                      {blog.excerpt && (
+                        <p className="text-sm text-gray-300 mb-3 line-clamp-3">{blog.excerpt}</p>
+                      )}
 
                       <div className="text-xs text-gray-400 mb-3">{formatDateForDisplay(blog.date)}</div>
 
@@ -401,6 +414,19 @@ export default function AdminBlogsPage() {
                         maxLength={500}
                         className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[#ffa9fc] focus:ring-2 focus:ring-[#ffa9fc]/20 transition-all"
                       />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-[#00ffaa] mb-2">Excerpt (Optional)</label>
+                      <textarea
+                        value={blog.excerpt}
+                        onChange={(e) => handleChange(index, "excerpt", e.target.value)}
+                        placeholder="Brief description or summary of the blog post"
+                        maxLength={2000}
+                        rows={3}
+                        className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[#00ffaa] focus:ring-2 focus:ring-[#00ffaa]/20 transition-all resize-none"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">{blog.excerpt.length}/2000 characters</p>
                     </div>
 
                     <div>
