@@ -734,27 +734,37 @@ function ComingSoonDescription({ text, isDark }: { text: string; isDark: boolean
 function HeroDescription({ text, isDark }: { text: string; isDark: boolean }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const CHAR_LIMIT = 150;
-  
+
   if (!text) return null;
-  
+
   const shouldTruncate = text.length > CHAR_LIMIT;
-  const displayText = isExpanded ? text : text.slice(0, CHAR_LIMIT) + (shouldTruncate ? '...' : '');
-  
+  const truncated = text.slice(0, CHAR_LIMIT) + (shouldTruncate ? '...' : '');
+
   return (
     <div className="w-full">
-      <p
-        className={`text-sm sm:text-base lg:text-lg ${isDark ? 'text-[#efe8e6]/90' : 'text-[#0F1C1C]/80'} leading-relaxed font-light w-full`}
-      >
-        {displayText}
-      </p>
-      {shouldTruncate && (
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="text-xs sm:text-sm text-[#d97ac8] hover:text-[#c84a8a] font-semibold transition-colors mt-2 lg:hidden"
+      {/* Mobile/Tablet: truncated with toggle */}
+      <div className="lg:hidden">
+        <p
+          className={`text-sm sm:text-base lg:text-lg ${isDark ? 'text-[#efe8e6]/90' : 'text-[#0F1C1C]/80'} leading-relaxed font-light w-full`}
         >
-          {isExpanded ? 'See Less' : 'See More'}
-        </button>
-      )}
+          {isExpanded ? text : truncated}
+        </p>
+        {shouldTruncate && (
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="text-xs sm:text-sm text-[#d97ac8] hover:text-[#c84a8a] font-semibold transition-colors mt-2"
+          >
+            {isExpanded ? 'See Less' : 'See More'}
+          </button>
+        )}
+      </div>
+
+      {/* Desktop (lg+): always show full description */}
+      <p
+        className={`hidden lg:block text-lg ${isDark ? 'text-[#efe8e6]/90' : 'text-[#0F1C1C]/80'} leading-relaxed font-light w-full`}
+      >
+        {text}
+      </p>
     </div>
   );
 }
