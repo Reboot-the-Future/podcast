@@ -274,9 +274,8 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
   if (error) {
     return (
       <div
-        className={`${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white/30 backdrop-filter backdrop-blur-lg shadow-lg'
+        className={`${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white border border-gray-200 shadow-lg'
           } rounded-3xl p-6`}
-        style={isDark ? {} : { border: '1px solid rgba(229, 231, 235, 0.5)' }}
       >
         <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'}`}>{error}</p>
       </div>
@@ -285,14 +284,12 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
 
   return (
     <div
-      className={`${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white/30 backdrop-filter backdrop-blur-lg shadow-lg'
+      className={`${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white border border-gray-200 shadow-lg'
         } rounded-3xl p-6 transition-all hover:shadow-pink-500/20`}
-      style={isDark ? {} : { border: '1px solid rgba(229, 231, 235, 0.5)' }}
     >
       <div className="flex justify-between items-center mb-5">
         <h3
-          className={`font-semibold text-lg ${isDark ? 'text-white' : 'text-[#0F1C1C]'
-            } flex items-center gap-2`}
+          className={`font-semibold text-lg ${isDark ? 'text-white' : 'text-[#0F1C1C]'} flex items-center gap-2`}
         >
           <Sparkles className="text-[#d97ac8]" size={18} /> Podcast Trailer
         </h3>
@@ -329,9 +326,11 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
         </button>
 
         <div className="flex-1 relative">
-          <div className="relative h-2 rounded-full overflow-hidden" style={{
-            background: isDark ? 'rgba(15, 28, 28, 0.5)' : 'rgba(229, 231, 235, 0.5)'
-          }}>
+          <div
+            className={`relative h-2 rounded-full overflow-hidden transition-colors ${
+              isDark ? 'bg-[#2a3838] border border-[#2a3838]' : 'bg-gray-200/70 border border-gray-200'
+            }`}
+          >
             <div
               className="absolute top-0 left-0 h-full bg-[#d97ac8] transition-all rounded-full"
               style={{ width: `${progress}%` }}
@@ -372,9 +371,9 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
             onClick={() => setIsMuted(!isMuted)}
             className={`p-2 rounded-xl ${isDark ? 'bg-[#0F1C1C]/10 hover:bg-[#0F1C1C]/20' : 'bg-gray-100/50 hover:bg-gray-200/50'
               } transition-all`}
-            aria-label={isMuted ? 'Unmute' : 'Mute'}
+            aria-label={(isMuted || volume === 0) ? 'Unmute' : 'Mute'}
           >
-            {isMuted ? (
+            {(isMuted || volume === 0) ? (
               <VolumeX size={18} className={isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'} />
             ) : (
               <Volume2 size={18} className={isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'} />
@@ -387,8 +386,10 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
             step="0.01"
             value={isMuted ? 0 : volume}
             onChange={(e) => {
-              setVolume(parseFloat(e.target.value));
-              if (isMuted) setIsMuted(false);
+              const newVolume = parseFloat(e.target.value);
+              setVolume(newVolume);
+              // If slider hits 0, reflect muted state; otherwise ensure unmuted
+              setIsMuted(newVolume === 0);
             }}
             className="w-28 accent-[#d97ac8]"
             aria-label="Volume"
@@ -440,17 +441,16 @@ const BlogSidebar = ({ blogs, currentPage, isDark }: { blogs: BlogItem[]; curren
       <TrailerPlayer currentPage={currentPage} isDark={isDark} />
 
       <div
-        className={`relative rounded-3xl overflow-hidden ${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white/30 backdrop-filter backdrop-blur-lg shadow-lg'
+        className={`relative rounded-3xl overflow-hidden ${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white border border-gray-200 shadow-lg'
           } transition-all p-6 sm:p-8 group`}
-        style={isDark ? {} : { border: '1px solid rgba(229, 231, 235, 0.5)' }}
       >
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#d97ac8] to-[#c84a8a] flex items-center justify-center shadow-lg">
               <Sparkles size={18} className="text-white" />
             </div>
-            <h2 className={`text-2xl sm:text-3xl font-rozha font-bold ${isDark ? 'text-white' : 'text-[#0F1C1C]'}`}>
-              Latest Insights
+            <h2 className={`text-2xl sm:text-3xl font-bold ${isDark ? 'text-white' : 'text-[#0F1C1C]'}`}>
+              Latest News
             </h2>
           </div>
 
@@ -571,9 +571,8 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
 
   return (
     <div
-      className={`${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white/30 backdrop-filter backdrop-blur-lg shadow-lg'
+      className={`${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white border border-gray-200 shadow-lg'
         } rounded-2xl p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-pink-500/20 col-span-full flex flex-col group`}
-      style={isDark ? {} : { border: '1px solid rgba(229, 231, 235, 0.5)' }}
     >
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1 min-w-0 pr-4">
@@ -594,7 +593,7 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
             )}
           </div>
           <h3
-            className={`font-rozha font-bold mb-2 leading-tight text-4xl ${isDark ? 'text-white' : 'text-[#0F1C1C]'
+            className={`font-bold mb-2 leading-tight text-4xl ${isDark ? 'text-white' : 'text-[#0F1C1C]'
               }`}
           >
             {episode.title}
@@ -637,7 +636,7 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
           className={`mt-6 pt-6 ${isDark ? 'border-[#d97ac8]/20 border-t-2' : 'border-gray-200 border-t'} space-y-6 animate-in fade-in slide-in-from-top-4 duration-300`}
         >
           <div
-            className={`${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white/30 backdrop-filter backdrop-blur-lg shadow-md'
+            className={`${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white border border-gray-200 shadow-md'
               } rounded-2xl p-6 sm:p-8 transition-all`}
           >
             <div className="flex items-center gap-3 mb-5">
@@ -648,9 +647,6 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
                 <h4 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-[#0F1C1C]'}`}>
                   Listen to Episode
                 </h4>
-                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'}`}>
-                  Start your journey
-                </p>
               </div>
             </div>
             <div id={containerIdRef.current} className="buzzsprout-player-wrapper">
@@ -713,7 +709,7 @@ export default function PodcastSite() {
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-      
+
       if (e.key === 'Escape' && mobileMenuOpen) {
         setMobileMenuOpen(false);
       }
@@ -842,15 +838,15 @@ export default function PodcastSite() {
   const currentPageEpisodes = getCurrentPageEpisodes();
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-[#0F1C1C] text-white' : 'bg-gray-50 text-[#0F1C1C]'}`}>
+    <div className={`min-h-screen ${isDark ? 'bg-[#0F1C1C] text-white' : 'bg-white text-[#0F1C1C]'}`}>
       <header
-        className={`sticky top-0 ${isDark ? 'bg-[#0F1C1C]/95 border-[#d97ac8]/20 border-b-2' : 'bg-white/30 backdrop-filter backdrop-blur-lg shadow-sm'
+        className={`sticky top-0 ${isDark ? 'bg-[#0F1C1C]/95 border-[#d97ac8]/20 border-b-2' : 'bg-white border-b border-gray-200 shadow-sm'
           } z-50 transition-all duration-300`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-8 py-4">
           <div className="flex items-center justify-between gap-4">
-            <a 
-              href="/" 
+            <a
+              href="/"
               className="flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-[#d97ac8] focus:ring-offset-2 rounded-lg transition-all hover:scale-105"
               aria-label="Reboot The Future - Home"
             >
@@ -919,12 +915,12 @@ export default function PodcastSite() {
           {mobileMenuOpen && (
             <>
               {/* Backdrop */}
-              <div 
+              <div
                 className="fixed inset-0 bg-black/50 z-40 lg:hidden"
                 onClick={() => setMobileMenuOpen(false)}
                 aria-hidden="true"
               />
-              
+
               {/* Mobile Menu */}
               <nav
                 className={`lg:hidden mt-4 pb-4 space-y-2 ${isDark ? 'border-[#d97ac8]/20 border-t-2' : 'border-gray-200 border-t'
@@ -932,43 +928,43 @@ export default function PodcastSite() {
                 role="navigation"
                 aria-label="Mobile navigation"
               >
-              <a
-                href="https://www.rebootthefuture.org/who-we-are"
-                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-[#0F1C1C] hover:text-[#d97ac8]'
-                  } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
-                  } focus:outline-none focus:ring-2 focus:ring-[#d97ac8] focus:ring-offset-2`}
-                onClick={() => setMobileMenuOpen(false)}
-                aria-label="Navigate to About page"
-              >
-                About
-              </a>
-              <a
-                href="https://education.rebootthefuture.org/"
-                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-[#0F1C1C] hover:text-[#d97ac8]'
-                  } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
-                  }`}
-              >
-                Education
-              </a>
-              <a
-                href="https://www.rebootthefuture.org/what-we-do/reboot-experiences"
-                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-[#0F1C1C] hover:text-[#d97ac8]'
-                  } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
-                  }`}
-              >
-                Services
-              </a>
-              <a
-                href="https://www.rebootthefuture.org/contact"
-                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-[#0F1C1C] hover:text-[#d97ac8]'
-                  } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
-                  } focus:outline-none focus:ring-2 focus:ring-[#d97ac8] focus:ring-offset-2`}
-                onClick={() => setMobileMenuOpen(false)}
-                aria-label="Navigate to Contact page"
-              >
-                Contact
-              </a>
-            </nav>
+                <a
+                  href="https://www.rebootthefuture.org/who-we-are"
+                  className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-[#0F1C1C] hover:text-[#d97ac8]'
+                    } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
+                    } focus:outline-none focus:ring-2 focus:ring-[#d97ac8] focus:ring-offset-2`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  aria-label="Navigate to About page"
+                >
+                  About
+                </a>
+                <a
+                  href="https://education.rebootthefuture.org/"
+                  className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-[#0F1C1C] hover:text-[#d97ac8]'
+                    } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
+                    }`}
+                >
+                  Education
+                </a>
+                <a
+                  href="https://www.rebootthefuture.org/what-we-do/reboot-experiences"
+                  className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-[#0F1C1C] hover:text-[#d97ac8]'
+                    } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
+                    }`}
+                >
+                  Services
+                </a>
+                <a
+                  href="https://www.rebootthefuture.org/contact"
+                  className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-[#0F1C1C] hover:text-[#d97ac8]'
+                    } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
+                    } focus:outline-none focus:ring-2 focus:ring-[#d97ac8] focus:ring-offset-2`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  aria-label="Navigate to Contact page"
+                >
+                  Contact
+                </a>
+              </nav>
             </>
           )}
         </div>
@@ -978,16 +974,15 @@ export default function PodcastSite() {
       {comingSoon && (
         <section className="max-w-[1600px] mx-auto px-4 sm:px-8 py-8 sm:py-16">
           <div
-            className={`relative rounded-3xl overflow-hidden ${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white/30 backdrop-filter backdrop-blur-lg shadow-lg'
+            className={`relative rounded-3xl overflow-hidden ${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white border border-gray-200 shadow-lg'
               } transition-all p-8 sm:p-12 group`}
-            style={isDark ? {} : { border: '1px solid rgba(229, 231, 235, 0.5)' }}
           >
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#d97ac8] to-[#c84a8a] flex items-center justify-center shadow-lg">
                   <Sparkles size={18} className="text-white" />
                 </div>
-                <h2 className={`text-2xl sm:text-3xl font-rozha font-bold ${isDark ? 'text-white' : 'text-[#0F1C1C]'}`}>
+                <h2 className={`text-2xl sm:text-3xl font-bold ${isDark ? 'text-white' : 'text-[#0F1C1C]'}`}>
                   Coming Soon
                 </h2>
               </div>
@@ -1010,9 +1005,8 @@ export default function PodcastSite() {
       <section className="max-w-[1600px] mx-auto px-4 sm:px-8 py-8 sm:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-6 lg:gap-10">
           <div
-            className={`relative rounded-3xl h-full min-h-[500px] sm:min-h-[650px] ${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2 overflow-hidden' : 'bg-white/30 backdrop-filter backdrop-blur-lg shadow-lg'
+            className={`relative rounded-3xl h-full min-h-[500px] sm:min-h-[650px] ${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2 overflow-hidden' : 'bg-white border border-gray-200 shadow-lg'
               } transition-all group`}
-            style={isDark ? {} : { border: '1px solid rgba(229, 231, 235, 0.5)', borderRadius: '24px' }}
           >
             {heroLoading ? (
               <div className={`absolute inset-0 flex items-center justify-center rounded-3xl ${isDark ? 'bg-gradient-to-br from-[#1a2828] to-[#0f1c1c]' : 'bg-gradient-to-br from-white to-gray-50'}`}>
@@ -1092,7 +1086,7 @@ export default function PodcastSite() {
 
                   <div className="mt-auto">
                     <div
-                      className={`${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white/30 backdrop-filter backdrop-blur-lg shadow-md'
+                      className={`${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white border border-gray-200 shadow-md'
                         } rounded-2xl p-6 sm:p-8 transition-all`}
                     >
                       <div className="flex items-center justify-between mb-5">
@@ -1104,9 +1098,6 @@ export default function PodcastSite() {
                             <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-[#0F1C1C]'}`}>
                               Listen Now
                             </h3>
-                            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'}`}>
-                              Start your journey
-                            </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
@@ -1155,9 +1146,8 @@ export default function PodcastSite() {
 
       <section id="episodes" className="max-w-[1600px] mx-auto px-4 sm:px-8 py-8 sm:py-16">
         <div
-          className={`relative rounded-3xl overflow-hidden ${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white/30 backdrop-filter backdrop-blur-lg shadow-lg'
+          className={`relative rounded-3xl overflow-hidden ${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white border border-gray-200 shadow-lg'
             } transition-all p-8 sm:p-12 group`}
-          style={isDark ? {} : { border: '1px solid rgba(229, 231, 235, 0.5)' }}
         >
           <div className="relative z-10">
             <div
@@ -1170,15 +1160,12 @@ export default function PodcastSite() {
                     <Play size={18} className="text-white ml-0.5" fill="white" />
                   </div>
                   <h2
-                    className={`text-3xl sm:text-4xl font-rozha font-bold ${isDark ? 'text-white' : 'text-[#0F1C1C]'
+                    className={`text-3xl sm:text-4xl font-bold ${isDark ? 'text-white' : 'text-[#0F1C1C]'
                       }`}
                   >
                     Explore Episodes
                   </h2>
                 </div>
-                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'}`}>
-                  Browse our curated selection of insightful conversations.
-                </p>
               </div>
 
               <div
@@ -1271,17 +1258,17 @@ export default function PodcastSite() {
       </section>
 
       <footer
-        className="bg-[#0F1C1C] border-[#d97ac8]/20 border-t-2 mt-12 sm:mt-20"
+        className={`${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-t-2' : 'bg-white border-gray-200 border-t'} mt-12 sm:mt-20`}
       >
         <div className="max-w-[1600px] mx-auto px-4 sm:px-16 py-12">
           <div
-            className="flex flex-col md:flex-row justify-between gap-12 text-[#efe8e6]"
+            className={`flex flex-col md:flex-row justify-between gap-12 ${isDark ? 'text-[#efe8e6]' : 'text-[#0F1C1C]'}`}
           >
             <div className="md:w-1/2">
               <h4 className="text-2xl sm:text-3xl font-bold mb-3">Get in touch</h4>
               <a
                 href="mailto:hello@rebootthefuture.org"
-                className="block text-lg sm:text-xl font-semibold mb-6 hover:text-[#d97ac8] transition-colors"
+                className="block text-lg sm:text-xl font-semibold mb-6 hover:text-[#d97ac8] transition-colors focus:outline-none focus:ring-2 focus:ring-[#d97ac8] focus:ring-offset-2"
               >
                 hello@rebootthefuture.org
               </a>
@@ -1290,7 +1277,7 @@ export default function PodcastSite() {
                 <a
                   href="https://www.linkedin.com/company/reboot-the-future"
                   aria-label="LinkedIn"
-                  className="hover:text-[#d97ac8] transition-transform hover:scale-110"
+                  className="hover:text-[#d97ac8] transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#d97ac8] focus:ring-offset-2"
                 >
                   <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452z" />
@@ -1300,7 +1287,7 @@ export default function PodcastSite() {
                 <a
                   href="https://www.youtube.com/channel/UCPn_4n01QQlhz5ofmaUPxLw"
                   aria-label="YouTube"
-                  className="hover:text-[#d97ac8] transition-transform hover:scale-110"
+                  className="hover:text-[#d97ac8] transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#d97ac8] focus:ring-offset-2"
                 >
                   <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M23.498 6.186a2.983 2.983 0 0 0-2.1-2.1C19.6 3.5 12 3.5 12 3.5s-7.6 0-9.398.586a2.983 2.983 0 0 0-2.1 2.1A31.1 31.1 0 0 0 .5 12a31.1 31.1 0 0 0 .002 5.814 2.983 2.983 0 0 0 2.1 2.1C4.4 20.5 12 20.5 12 20.5s7.6 0 9.398-.586a2.983 2.983 0 0 0 2.1-2.1A31.1 31.1 0 0 0 23.5 12a31.1 31.1 0 0 0-.002-5.814zM9.75 15.5v-7l6 3.5-6 3.5z" />
@@ -1310,7 +1297,7 @@ export default function PodcastSite() {
                 <a
                   href="https://www.instagram.com/futurereboot/"
                   aria-label="Instagram"
-                  className="hover:text-[#d97ac8] transition-transform hover:scale-110"
+                  className="hover:text-[#d97ac8] transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#d97ac8] focus:ring-offset-2"
                 >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
@@ -1336,7 +1323,7 @@ export default function PodcastSite() {
                 <div>
                   <a
                     href="https://www.rebootthefuture.org/pages/policies"
-                    className="text-lg font-bold hover:text-[#d97ac8] transition-colors"
+                    className="text-lg font-bold hover:text-[#d97ac8] transition-colors focus:outline-none focus:ring-2 focus:ring-[#d97ac8] focus:ring-offset-2"
                   >
                     Our Policies
                   </a>

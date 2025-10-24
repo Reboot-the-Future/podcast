@@ -3,7 +3,11 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { NextRequest } from 'next/server';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-change-me';
+// Enforce a proper JWT secret in production; allow a dev fallback for local use only
+const JWT_SECRET = process.env.JWT_SECRET || (process.env.NODE_ENV !== 'production' ? 'dev-only-secret' : '');
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET is not set. Please configure a strong secret in your environment.');
+}
 
 export interface JWTPayload {
   adminId: number;

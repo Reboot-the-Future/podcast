@@ -280,7 +280,8 @@ export default function TrailerPlayer({ trailerUrl }: TrailerPlayerProps) {
                 onChange={(e) => {
                   const newVolume = parseFloat(e.target.value);
                   setVolume(newVolume);
-                  if (newVolume > 0) setIsMuted(false);
+                  // If slider is dragged to 0, reflect muted state; otherwise ensure unmuted
+                  setIsMuted(newVolume === 0);
                 }}
                 className="w-full h-1 bg-[#2a3838] rounded-full appearance-none cursor-pointer transition-all
                   [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 

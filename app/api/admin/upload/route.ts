@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
-import jwt from 'jsonwebtoken';
 import { writeFile } from 'fs/promises';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+import { authenticateRequest } from '@/lib/auth';
+import { rateLimit } from '@/lib/rate-limit';
 const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads');
 
 // Ensure upload directory exists
@@ -16,19 +15,15 @@ async function ensureUploadDir() {
   }
 }
 
-// Verify JWT token
-function verifyToken(request: NextRequest) {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return null;
-  }
-
-  const token = authHeader.substring(7);
-  try {
-    return jwt.verify(token, JWT_SECRET);
-  } catch (error) {
-    return null;
-  }
+// Simple rate limiter: 10 requests/min per IP for uploads
+const limiter = rateLimit({ interval: 60_000, uniqueTokenPerInterval: 1000 });
+function getClientIdentifier(request: NextRequest) {
+  return (
+    request.ip ||
+    request.headers.get('x-forwarded-for') ||
+    request.headers.get('x-real-ip') ||
+    'unknown'
+  );
 }
 
 // Generate unique filename
@@ -42,8 +37,15 @@ function generateFilename(originalName: string): string {
 }
 
 export async function POST(request: NextRequest) {
+  // Rate limit
+  try {
+    await limiter.check(getClientIdentifier(request), 10);
+  } catch {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+  }
+
   // Verify authentication
-  const user = verifyToken(request);
+  const user = authenticateRequest(request);
   if (!user) {
     return NextResponse.json(
       { error: 'Unauthorized' },
@@ -55,8 +57,8 @@ export async function POST(request: NextRequest) {
     await ensureUploadDir();
 
     const formData = await request.formData();
-    const file = formData.get('file') as File;
-    const type = formData.get('type') as string;
+  const file = formData.get('file') as File;
+  const type = (formData.get('type') as string) || '';
 
     if (!file) {
       return NextResponse.json(
@@ -65,15 +67,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate file type
-    if (type === 'audio') {
-      const allowedTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/m4a', 'audio/x-m4a'];
-      if (!allowedTypes.includes(file.type) && !file.name.match(/\.(mp3|wav|ogg|m4a)$/i)) {
-        return NextResponse.json(
-          { error: 'Invalid audio file type. Please upload MP3, WAV, OGG, or M4A files.' },
-          { status: 400 }
-        );
-      }
+    // Validate file type: only allow audio uploads
+    const allowedTypes = [
+      'audio/mpeg',
+      'audio/mp3',
+      'audio/wav',
+      'audio/ogg',
+      'audio/m4a',
+      'audio/x-m4a',
+      'audio/aac',
+      'audio/flac'
+    ];
+    const allowedExt = /\.(mp3|wav|ogg|m4a|aac|flac)$/i;
+    if (!allowedTypes.includes(file.type) && !allowedExt.test(file.name)) {
+      return NextResponse.json(
+        { error: 'Invalid file type. Only MP3, WAV, OGG, or M4A are allowed.' },
+        { status: 400 }
+      );
     }
 
     // Check file size (max 50MB)
@@ -115,7 +125,7 @@ export async function POST(request: NextRequest) {
 // Optional: DELETE endpoint to remove uploaded files
 export async function DELETE(request: NextRequest) {
   // Verify authentication
-  const user = verifyToken(request);
+  const user = authenticateRequest(request);
   if (!user) {
     return NextResponse.json(
       { error: 'Unauthorized' },
