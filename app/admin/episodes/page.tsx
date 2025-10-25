@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   Plus, Edit, Trash2, X, Search, Filter, Star, EyeOff, ExternalLink, Info, Settings, Eye,
@@ -52,6 +52,13 @@ export default function AdminEpisodes() {
     description: "",
     is_visible: false,
   });
+  // Separate input state to allow temporary empty/partial input (fixes backspace issue)
+  const [durationInput, setDurationInput] = useState<string>("");
+  // Dirty tracking for unsaved changes in the episode form
+  const [isDirty, setIsDirty] = useState(false);
+  const titleInputRef = useRef<HTMLInputElement | null>(null);
+
+  const markDirty = () => setIsDirty(true);
 
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;
@@ -176,8 +183,10 @@ export default function AdminEpisodes() {
       spotify_url: "",
       apple_url: "",
     });
+    setDurationInput("");
     setEditingEpisode(null);
     setCurrentStep(1);
+    setIsDirty(false);
   };
 
   const handleSubmit = async () => {
@@ -193,12 +202,19 @@ export default function AdminEpisodes() {
         : "/api/admin/episodes";
       const method = editingEpisode ? "PUT" : "POST";
 
+      // Parse minutes from input (allow empty, commas, and decimals)
+      const minutes = (() => {
+        const cleaned = (durationInput || "").replace(",", ".");
+        const n = parseFloat(cleaned);
+        return Number.isFinite(n) && n >= 0 ? n : 0;
+      })();
+
       const payload = {
         title: formData.title,
         slug: formData.slug,
         excerpt: formData.excerpt,
         content: formData.content,
-        duration: Math.round(formData.duration * 60),
+        duration: Math.round(minutes * 60),
         date_published: formData.date_published,
         tags: formData.tags,
         status: formData.status,
@@ -240,6 +256,7 @@ export default function AdminEpisodes() {
 
       await fetchEpisodes();
       resetForm();
+      setIsDirty(false);
       setShowForm(false);
       showAlert("success", `Episode "${formData.title}" saved successfully!`);
     } catch (error: any) {
@@ -275,6 +292,7 @@ export default function AdminEpisodes() {
 
   const startEdit = (episode: Episode) => {
     setEditingEpisode(episode);
+    setCurrentStep(1); // Always start from step 1 when opening an episode
     setFormData({
       title: episode.title,
       slug: episode.slug,
@@ -288,8 +306,75 @@ export default function AdminEpisodes() {
       spotify_url: episode.spotify_url || "",
       apple_url: episode.apple_url || "",
     });
+    // Pre-fill minutes as a string so user can edit freely
+    setDurationInput(String(Math.round(episode.duration / 60)));
+    setIsDirty(false);
     setShowForm(true);
   };
+  const attemptCloseForm = () => {
+    if (isDirty) {
+      setConfirmDialog({
+        isOpen: true,
+        title: "Discard changes?",
+        message: "You have unsaved changes. Do you want to discard them?",
+        onConfirm: () => {
+          setIsDirty(false);
+          setShowForm(false);
+          setConfirmDialog(null);
+        },
+      });
+      return;
+    }
+    setShowForm(false);
+  };
+
+  // Focus first input and keyboard shortcuts when modal opens
+  useEffect(() => {
+    if (showForm) {
+      // Defer focus to after render
+      setTimeout(() => titleInputRef.current?.focus(), 0);
+    }
+  }, [showForm]);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (!showForm) return;
+      const target = e.target as HTMLElement | null;
+      const isTextArea = target?.tagName === 'TEXTAREA';
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        attemptCloseForm();
+      } else if (e.key === 'Enter' && !e.shiftKey && !isTextArea) {
+        e.preventDefault();
+        if (currentStep < 2) {
+          setCurrentStep(currentStep + 1);
+        } else {
+          handleSubmit();
+        }
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [showForm, currentStep, isDirty, formData, durationInput]);
+
+  // Warn before closing tab if form is dirty
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (showForm && isDirty) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [showForm, isDirty]);
+
+  // Slug duplicate check (exclude self when editing)
+  const isSlugDuplicate = formData.slug.trim().length > 0 && episodes.some(
+    (ep) => ep.slug === formData.slug.trim() && (!editingEpisode || ep.id !== editingEpisode.id)
+  );
+
+  const canProceedStep1 = !!formData.title.trim() && !!formData.slug.trim() && !!formData.excerpt.trim() && !isSlugDuplicate;
 
   const generateSlug = (title: string) =>
     title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -646,7 +731,7 @@ export default function AdminEpisodes() {
                 {editingEpisode ? "Edit Episode" : "New Episode"}
               </h2>
               <button
-                onClick={() => setShowForm(false)}
+                onClick={attemptCloseForm}
                 className="text-gray-400 hover:text-white transition-colors"
               >
                 <X size={24} />
@@ -684,14 +769,16 @@ export default function AdminEpisodes() {
                   </label>
                   <input
                     type="text"
+                    ref={titleInputRef}
                     value={formData.title}
-                    onChange={(e) =>
+                    onChange={(e) => {
                       setFormData({
                         ...formData,
                         title: e.target.value,
                         slug: generateSlug(e.target.value),
-                      })
-                    }
+                      });
+                      markDirty();
+                    }}
                     placeholder="Enter episode title"
                     className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
                   />
@@ -704,12 +791,16 @@ export default function AdminEpisodes() {
                   <input
                     type="text"
                     value={formData.slug}
-                    onChange={(e) =>
-                      setFormData({ ...formData, slug: e.target.value })
-                    }
+                    onChange={(e) => {
+                      setFormData({ ...formData, slug: e.target.value });
+                      markDirty();
+                    }}
                     placeholder="episode-slug"
                     className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
                   />
+                  {isSlugDuplicate && (
+                    <p className="text-xs text-red-400 mt-2">Slug already exists. Please choose a unique slug.</p>
+                  )}
                 </div>
 
                 <div>
@@ -718,9 +809,10 @@ export default function AdminEpisodes() {
                   </label>
                   <textarea
                     value={formData.excerpt}
-                    onChange={(e) =>
-                      setFormData({ ...formData, excerpt: e.target.value })
-                    }
+                    onChange={(e) => {
+                      setFormData({ ...formData, excerpt: e.target.value });
+                      markDirty();
+                    }}
                     placeholder="Full description of the episode"
                     className="w-full px-4 py-3 h-32 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc] resize-none"
                   />
@@ -732,16 +824,17 @@ export default function AdminEpisodes() {
                       Duration (minutes)
                     </label>
                     <input
-                      type="number"
-                      min="0"
-                      step="0.1"
-                      value={formData.duration}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          duration: parseFloat(e.target.value) || 0,
-                        })
-                      }
+                      type="text"
+                      inputMode="decimal"
+                      value={durationInput}
+                      onChange={(e) => {
+                        // Allow only digits and a single dot/comma; permit empty
+                        const next = e.target.value.replace(/,/g, ".");
+                        if (/^\d*(?:\.?\d*)?$/.test(next)) {
+                          setDurationInput(next);
+                        }
+                        markDirty();
+                      }}
                       className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
                       placeholder="45"
                     />
@@ -754,12 +847,13 @@ export default function AdminEpisodes() {
                     <input
                       type="date"
                       value={formData.date_published}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setFormData({
                           ...formData,
                           date_published: e.target.value,
-                        })
-                      }
+                        });
+                        markDirty();
+                      }}
                       className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
                     />
                   </div>
@@ -777,15 +871,16 @@ export default function AdminEpisodes() {
                   <input
                     type="text"
                     value={formData.tags.join(", ")}
-                    onChange={(e) =>
+                    onChange={(e) => {
                       setFormData({
                         ...formData,
                         tags: e.target.value
                           .split(",")
                           .map((t) => t.trim())
                           .filter(Boolean),
-                      })
-                    }
+                      });
+                      markDirty();
+                    }}
                     placeholder="Technology, Leadership, Innovation"
                     className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
                   />
@@ -801,12 +896,13 @@ export default function AdminEpisodes() {
                   <input
                     type="text"
                     value={formData.buzzsprout_episode_id}
-                    onChange={(e) =>
+                    onChange={(e) => {
                       setFormData({
                         ...formData,
                         buzzsprout_episode_id: e.target.value,
-                      })
-                    }
+                      });
+                      markDirty();
+                    }}
                     placeholder="Enter Buzzsprout episode ID"
                     className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
                   />
@@ -826,9 +922,10 @@ export default function AdminEpisodes() {
                   </div>
                   <select
                     value={formData.status}
-                    onChange={(e) =>
-                      setFormData({ ...formData, status: e.target.value })
-                    }
+                    onChange={(e) => {
+                      setFormData({ ...formData, status: e.target.value });
+                      markDirty();
+                    }}
                     className="px-6 py-3 bg-[#1a2828] border border-[#2a3838] rounded-xl text-white font-semibold focus:outline-none focus:border-[#ffa9fc]"
                   >
                     <option value="draft">Draft</option>
@@ -854,14 +951,16 @@ export default function AdminEpisodes() {
               {currentStep < 2 ? (
                 <button
                   onClick={() => setCurrentStep(currentStep + 1)}
-                  className="px-8 py-3 bg-gradient-to-r from-[#ffa9fc] to-[#ff8df7] rounded-xl font-bold text-[#0f1c1c] hover:scale-105 transition-all shadow-lg"
+                  disabled={!canProceedStep1}
+                  className={`px-8 py-3 bg-gradient-to-r from-[#ffa9fc] to-[#ff8df7] rounded-xl font-bold text-[#0f1c1c] transition-all shadow-lg ${!canProceedStep1 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
                 >
                   Next Step
                 </button>
               ) : (
                 <button
                   onClick={handleSubmit}
-                  className="px-8 py-3 bg-gradient-to-r from-[#ffa9fc] to-[#ff8df7] rounded-xl font-bold text-[#0f1c1c] hover:scale-105 transition-all shadow-lg"
+                  disabled={isSlugDuplicate || !formData.slug.trim()}
+                  className={`px-8 py-3 bg-gradient-to-r from-[#ffa9fc] to-[#ff8df7] rounded-xl font-bold text-[#0f1c1c] transition-all shadow-lg ${(isSlugDuplicate || !formData.slug.trim()) ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
                 >
                   {editingEpisode ? "Update Episode" : "Create Episode"}
                 </button>

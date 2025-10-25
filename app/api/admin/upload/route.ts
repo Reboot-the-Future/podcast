@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
 
   // Verify authentication
   const user = authenticateRequest(request);
-  if (!user) {
+  if (!user || user.role !== 'admin') {
     return NextResponse.json(
       { error: 'Unauthorized' },
       { status: 401 }
@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   // Verify authentication
   const user = authenticateRequest(request);
-  if (!user) {
+  if (!user || user.role !== 'admin') {
     return NextResponse.json(
       { error: 'Unauthorized' },
       { status: 401 }

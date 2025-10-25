@@ -5,24 +5,31 @@ import prisma from '@/lib/prisma';
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
+
+    // Enforce safe pagination bounds
+    const rawPage = parseInt(searchParams.get('page') || '1', 10);
+    const rawLimit = parseInt(searchParams.get('limit') || '10', 10);
+    const page = Number.isFinite(rawPage) && rawPage > 0 ? rawPage : 1;
+    const MAX_LIMIT = 100;
+    const limit = Number.isFinite(rawLimit) && rawLimit > 0 ? Math.min(rawLimit, MAX_LIMIT) : 10;
+
     const tag = searchParams.get('tag');
-    const status = searchParams.get('status') || 'published';
 
-    console.log('📡 Episodes API called:', { page, limit, tag, status });
+    // Public endpoint must only return published episodes available now
+    const where: any = {
+      status: 'published',
+      date_published: { lte: new Date() },
+    };
 
-    const skip = (page - 1) * limit;
-
-    const where: any = { status };
-    
-    if (tag) {
-      where.tags = {
-        array_contains: tag,
-      };
+    if (tag && typeof tag === 'string') {
+      // Basic sanity check for tag length
+      const safeTag = tag.trim().slice(0, 50);
+      if (safeTag) {
+        where.tags = { array_contains: safeTag };
+      }
     }
 
-    console.log('🔍 Querying database with:', where);
+    const skip = (page - 1) * limit;
 
     const [episodes, total] = await Promise.all([
       prisma.episode.findMany({
@@ -34,9 +41,7 @@ export async function GET(request: NextRequest) {
       prisma.episode.count({ where }),
     ]);
 
-    console.log('✅ Found episodes:', episodes.length, 'Total:', total);
-
-    const totalPages = Math.ceil(total / limit);
+    const totalPages = Math.ceil(total / limit) || 1;
 
     return NextResponse.json({
       episodes,
@@ -50,7 +55,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('❌ Error fetching episodes:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch episodes', details: error instanceof Error ? error.message : 'Unknown error' },
+      { error: 'Failed to fetch episodes' },
       { status: 500 }
     );
   }

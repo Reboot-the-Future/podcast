@@ -2,9 +2,27 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { authenticateRequest } from '@/lib/auth';
 
+function isExternalHttpUrl(url?: string | null): boolean {
+  if (!url) return true; // empty is allowed, validate only when provided
+  try {
+    const u = new URL(url);
+    if (!['http:', 'https:'].includes(u.protocol)) return false;
+    const hostname = u.hostname.toLowerCase();
+    if (process.env.NODE_ENV === 'production') {
+      const blockedHosts = ['localhost', '127.0.0.1', '0.0.0.0', '::1'];
+      if (blockedHosts.includes(hostname) || hostname.startsWith('192.168.') || hostname.startsWith('10.')) {
+        return false;
+      }
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export async function GET(request: NextRequest) {
   const auth = authenticateRequest(request);
-  if (!auth) {
+  if (!auth || auth.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -47,7 +65,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const auth = authenticateRequest(request);
-  if (!auth) {
+  if (!auth || auth.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -84,6 +102,17 @@ export async function POST(request: NextRequest) {
         where: { is_hero: true },
         data: { is_hero: false },
       });
+    }
+
+    // Validate URLs if provided
+    const urlFields = { hero_image_url, thumb_image_url, audio_url, spotify_url, apple_url, webplayer_url };
+    for (const [key, value] of Object.entries(urlFields)) {
+      if (value && !isExternalHttpUrl(String(value))) {
+        return NextResponse.json(
+          { error: `Invalid URL for ${key}. Must be a public http/https URL and not an internal address.` },
+          { status: 400 }
+        );
+      }
     }
 
     const episode = await prisma.episode.create({

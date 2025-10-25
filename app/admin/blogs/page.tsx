@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Save, AlertCircle, CheckCircle, Link as LinkIcon, RefreshCw, LogOut, Edit2, Eye } from "lucide-react";
+import { Save, AlertCircle, CheckCircle, Link as LinkIcon, RefreshCw, Edit2, Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface Blog {
@@ -218,10 +218,7 @@ export default function AdminBlogsPage() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("admin_token");
-    router.push("/admin/login");
-  };
+  // Removed per request: logout is handled globally in Admin layout
 
   if (!token) {
     return (
@@ -263,14 +260,6 @@ export default function AdminBlogsPage() {
               <h1 className="text-4xl md:text-5xl font-bold text-white">Homepage Blogs</h1>
               <p className="text-[#efe8e6]/70 mt-2">Manage up to 3 blog posts displayed on the homepage sidebar</p>
             </div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#0f1c1c]"
-              aria-label="Logout from admin panel"
-            >
-              <LogOut size={18} />
-              Logout
-            </button>
           </div>
         </div>
 

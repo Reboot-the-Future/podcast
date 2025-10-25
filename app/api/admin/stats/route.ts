@@ -4,7 +4,7 @@ import { authenticateRequest } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   const auth = authenticateRequest(request);
-  if (!auth) {
+  if (!auth || auth.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

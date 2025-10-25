@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Lock, Mail, Eye, EyeOff, AlertCircle, ArrowRight, Shield } from "lucide-react";
 
 export default function AdminLogin() {
@@ -10,12 +10,24 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   useEffect(() => {
     document.title = "Login › Reboot Admin";
   }, []);
+
+  // Show notice when redirected after logout
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    if (!searchParams) return;
+    if (searchParams.get('logged_out') === '1') {
+      setNotice('You have been logged out.');
+      const timeout = setTimeout(() => setNotice(""), 4000);
+      return () => clearTimeout(timeout);
+    }
+  }, [searchParams]);
 
   interface LoginResponse {
     token?: string;
@@ -79,6 +91,14 @@ export default function AdminLogin() {
 
         {/* Login Card */}
         <div className="bg-gradient-to-br from-[#1a2828]/95 to-[#0f1c1c]/95 backdrop-blur-xl rounded-3xl p-8 space-y-6 shadow-2xl border border-[#2a3838]/50 hover:border-[#2a3838] transition-all">
+          {/* Success/Info Notice */}
+          {notice && (
+            <div className="bg-emerald-500/10 border border-emerald-500/50 text-emerald-300 px-4 py-3 rounded-xl flex items-start gap-3 animate-in slide-in-from-top-2 duration-200">
+              <AlertCircle size={20} className="flex-shrink-0 mt-0.5" />
+              <p className="text-sm font-medium">{notice}</p>
+            </div>
+          )}
+
           {/* Error Alert */}
           {error && (
             <div className="bg-red-500/10 border border-red-500/50 text-red-300 px-4 py-3 rounded-xl flex items-start gap-3 animate-in slide-in-from-top-2 duration-200">

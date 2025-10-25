@@ -5,10 +5,27 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { authenticateRequest } from '@/lib/auth';
 
+function isExternalHttpUrl(url: string): boolean {
+  try {
+    const u = new URL(url);
+    if (!['http:', 'https:'].includes(u.protocol)) return false;
+    const hostname = u.hostname.toLowerCase();
+    if (process.env.NODE_ENV === 'production') {
+      const blockedHosts = ['localhost', '127.0.0.1', '0.0.0.0', '::1'];
+      if (blockedHosts.includes(hostname) || hostname.startsWith('192.168.') || hostname.startsWith('10.')) {
+        return false;
+      }
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 // GET - Fetch trailer settings (admin only)
 export async function GET(request: NextRequest) {
   const user = authenticateRequest(request);
-  if (!user) {
+  if (!user || user.role !== 'admin') {
     return NextResponse.json(
       { error: 'Unauthorized' },
       { status: 401 }
@@ -35,7 +52,7 @@ export async function GET(request: NextRequest) {
 // PUT - Update trailer settings (admin only)
 export async function PUT(request: NextRequest) {
   const user = authenticateRequest(request);
-  if (!user) {
+  if (!user || user.role !== 'admin') {
     return NextResponse.json(
       { error: 'Unauthorized' },
       { status: 401 }
@@ -49,6 +66,13 @@ export async function PUT(request: NextRequest) {
     if (trailer_audio_url === undefined || trailer_audio_url === null) {
       return NextResponse.json(
         { error: 'Missing trailer_audio_url' },
+        { status: 400 }
+      );
+    }
+
+    if (trailer_audio_url && !isExternalHttpUrl(trailer_audio_url)) {
+      return NextResponse.json(
+        { error: 'Invalid trailer_audio_url. Must be a public http/https URL and not an internal address.' },
         { status: 400 }
       );
     }

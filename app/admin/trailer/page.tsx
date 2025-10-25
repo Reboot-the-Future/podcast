@@ -244,6 +244,17 @@ export default function AdminSettings() {
                   }}
                 />
               </label>
+              {settings.trailer_audio_url && (
+                <button
+                  type="button"
+                  onClick={() => setSettings({ trailer_audio_url: "" })}
+                  disabled={uploading || saving}
+                  className="px-4 py-3 bg-[#2a3838] hover:bg-[#3a4848] text-white rounded-xl font-semibold transition-all whitespace-nowrap disabled:opacity-50"
+                  title="Clear trailer URL"
+                >
+                  Clear
+                </button>
+              )}
             </div>
             <p className="text-xs text-gray-500 mt-2">Supported formats: MP3, WAV, AAC, FLAC</p>
           </div>
@@ -257,7 +268,15 @@ export default function AdminSettings() {
                 </div>
               </div>
               <div className="p-4 bg-[#0f1c1c] rounded-xl border border-[#2a3838]">
-                <audio controls className="w-full" key={settings.trailer_audio_url}>
+                {/* Hint native controls to use dark styling and keep it compact */}
+                <audio
+                  controls
+                  className="w-full rounded-lg"
+                  key={settings.trailer_audio_url}
+                  // Remove some noisy defaults and hint dark controls where supported
+                  controlsList="nodownload noplaybackrate"
+                  style={{ colorScheme: "dark" }}
+                >
                   <source src={settings.trailer_audio_url} type="audio/mpeg" />
                   Your browser does not support the audio element.
                 </audio>

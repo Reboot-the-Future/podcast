@@ -6,6 +6,11 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Seeding database...');
 
+  if (process.env.NODE_ENV === 'production') {
+    console.error('❌ Refusing to seed in production environment. Aborting.');
+    process.exit(1);
+  }
+
   // Admin credentials
   const email = 'admin@rebootthefuture.org';
   const password = 'admin123';

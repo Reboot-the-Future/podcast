@@ -16,6 +16,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [mounted, setMounted] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const isLoginPage = pathname === "/admin/login";
 
@@ -43,13 +44,18 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   ];
 
   const handleLogout = () => {
-    if (window.confirm("Are you sure you want to log out?")) {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem("admin_token");
-      }
-      router.replace("/admin/login");
-    }
+    setShowLogoutConfirm(true);
   };
+
+  const confirmLogout = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem("admin_token");
+    }
+    setShowLogoutConfirm(false);
+    router.replace("/admin/login?logged_out=1");
+  };
+
+  const cancelLogout = () => setShowLogoutConfirm(false);
 
   const Sidebar = ({ mobile = false }: { mobile?: boolean }) => (
     <div className={`${mobile ? 'flex flex-col h-full' : ''}`}>
@@ -143,6 +149,37 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           {children}
         </div>
       </main>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={cancelLogout} />
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="relative z-10 w-full max-w-md mx-4 rounded-2xl border border-[#2a3838] bg-gradient-to-b from-[#1a2828] to-[#152020] p-6 shadow-2xl"
+          >
+            <h3 className="text-lg font-bold text-white mb-2">Sign out?</h3>
+            <p className="text-sm text-gray-300 mb-6">
+              You'll be logged out of Reboot Admin and can sign in again anytime.
+            </p>
+            <div className="flex items-center justify-end gap-3">
+              <button
+                onClick={cancelLogout}
+                className="px-4 py-2 rounded-lg text-gray-200 border border-[#2a3838] hover:bg-[#2a3838]/60 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmLogout}
+                className="px-4 py-2 rounded-lg text-red-100 bg-red-600/80 hover:bg-red-600 transition-colors border border-red-500/40"
+              >
+                Log out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
