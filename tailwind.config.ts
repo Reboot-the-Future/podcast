@@ -12,8 +12,10 @@ const config: Config = {
         'xs': '375px',
       },
       fontFamily: {
-        sans: ['Poppins', 'Lora', 'ui-sans-serif', 'system-ui', 'sans-serif', "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"],
-        rozha: ['Rozha One', 'Poppins', 'Lora', 'sans-serif'],
+        poppins: ['var(--font-poppins)', 'sans-serif'],
+        lora: ['var(--font-lora)', 'serif'],
+        rozha: ['var(--font-rozha)', 'serif'],
+        sans: ['var(--font-poppins)', 'var(--font-lora)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       colors: {
         brand: {

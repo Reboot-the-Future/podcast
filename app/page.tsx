@@ -18,10 +18,10 @@ import {
   Moon,
   Headphones,
 } from "lucide-react";
+import MarkdownContent from "@/components/MarkdownContent";
 
 // ============================================================================
 // CONSTANTS
-// ============================================================================
 const BUZZSPROUT_PODCAST_ID = process.env.NEXT_PUBLIC_BUZZSPROUT_ID;
 const EPISODES_PER_PAGE = 1;
 const BLOG_EXCERPT_LIMIT = 150;
@@ -498,12 +498,12 @@ const BlogSidebar = ({ blogs, currentPage, isDark }: { blogs: BlogItem[]; curren
                         href={safeLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm xs:text-base sm:text-lg lg:text-xl font-semibold text-[#d97ac8] hover:text-[#c84a8a] transition-colors break-words"
+                        className={`text-sm xs:text-base sm:text-lg lg:text-xl font-semibold break-words ${isDark ? 'text-white' : 'text-[#0F1C1C]'} hover:underline underline-offset-2`}
                       >
                         {blog.title}
                       </a>
                     ) : (
-                      <span className="text-sm xs:text-base sm:text-lg lg:text-xl font-semibold text-[#d97ac8] break-words">
+                      <span className={`text-sm xs:text-base sm:text-lg lg:text-xl font-semibold break-words ${isDark ? 'text-white' : 'text-[#0F1C1C]'}`}>
                         {blog.title}
                       </span>
                     )}
@@ -520,16 +520,16 @@ const BlogSidebar = ({ blogs, currentPage, isDark }: { blogs: BlogItem[]; curren
                       ))}
                     </div>
 
-                    <p className={`text-xs sm:text-sm ${isDark ? 'text-gray-300' : 'text-[#0F1C1C]/80'} leading-relaxed break-words`}>
+                    <p className={`text-xs sm:text-sm ${isDark ? 'text-gray-300' : 'text-[#0F1C1C]'} leading-relaxed break-words`}>
                       {displayedText}
                     </p>
 
                     {shouldTruncate && (
                       <button
                         onClick={() => setExpandedBlogId(isExpanded ? null : blog.id)}
-                        className="text-xs text-[#d97ac8] hover:text-[#c84a8a] font-semibold transition-colors text-left mt-0.5 xs:mt-1"
+                        className="text-xs text-[#d97ac8] hover:underline underline-offset-2 font-semibold transition-colors text-left mt-0.5 xs:mt-1"
                       >
-                        {isExpanded ? 'See Less' : 'See More'}
+                        {isExpanded ? 'Show less' : 'Read more'}
                       </button>
                     )}
 
@@ -645,9 +645,9 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
         </button>
       </div>
 
-      <p className={`${isDark ? 'text-[#efe8e6]' : 'text-[#0F1C1C]/80'} mb-2 xs:mb-3 sm:mb-4 leading-relaxed flex-grow text-xs xs:text-sm sm:text-base break-words`}>
-        {episode.excerpt}
-      </p>
+  <div className={`${isDark ? 'text-[#efe8e6]' : 'text-[#0F1C1C]'} mb-2 xs:mb-3 sm:mb-4 flex-grow text-xs xs:text-sm sm:text-base break-words`}>
+        <MarkdownContent content={episode.excerpt} isDark={isDark} />
+      </div>
 
       <div
         className={`flex flex-wrap items-center justify-between gap-1.5 xs:gap-2 sm:gap-0 pt-2 xs:pt-3 sm:pt-4 ${isDark ? 'border-[#d97ac8]/20 border-t-2' : 'border-gray-200 border-t'
@@ -757,9 +757,9 @@ function ComingSoonDescription({ text, isDark }: { text: string; isDark: boolean
   
   return (
     <>
-      <p className={`text-sm sm:text-base lg:text-lg ${isDark ? 'text-[#efe8e6]/90' : 'text-[#0F1C1C]/80'} leading-relaxed`}>
-        {displayText}
-      </p>
+  <div className={`text-sm sm:text-base lg:text-lg ${isDark ? 'text-[#efe8e6]/90' : 'text-[#0F1C1C]'}`}>
+        <MarkdownContent content={displayText} isDark={isDark} />
+      </div>
       {shouldTruncate && (
         <button
           onClick={() => setIsExpanded(!isExpanded)}
@@ -777,23 +777,26 @@ function ComingSoonDescription({ text, isDark }: { text: string; isDark: boolean
 // ============================================================================
 function HeroDescription({ text, isDark }: { text: string; isDark: boolean }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const CHAR_LIMIT = 150;
+  const CHAR_LIMIT_MOBILE = 150;
+  const CHAR_LIMIT_DESKTOP = 300;
 
   if (!text) return null;
 
-  const shouldTruncate = text.length > CHAR_LIMIT;
-  const truncated = text.slice(0, CHAR_LIMIT) + (shouldTruncate ? '...' : '');
+  const shouldTruncateMobile = text.length > CHAR_LIMIT_MOBILE;
+  const shouldTruncateDesktop = text.length > CHAR_LIMIT_DESKTOP;
+  const truncatedMobile = text.slice(0, CHAR_LIMIT_MOBILE) + (shouldTruncateMobile ? '...' : '');
+  const truncatedDesktop = text.slice(0, CHAR_LIMIT_DESKTOP) + (shouldTruncateDesktop ? '...' : '');
 
   return (
     <div className="w-full">
       {/* Mobile/Tablet: truncated with toggle */}
       <div className="lg:hidden">
-        <p
-          className={`text-sm sm:text-base lg:text-lg ${isDark ? 'text-[#efe8e6]/90' : 'text-[#0F1C1C]/80'} leading-relaxed font-light w-full`}
+        <div
+          className={`text-sm sm:text-base lg:text-lg ${isDark ? 'text-[#efe8e6]/90' : 'text-[#0F1C1C]'} font-light w-full`}
         >
-          {isExpanded ? text : truncated}
-        </p>
-        {shouldTruncate && (
+          <MarkdownContent content={isExpanded ? text : truncatedMobile} isDark={isDark} />
+        </div>
+        {shouldTruncateMobile && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
             className="text-xs sm:text-sm text-[#d97ac8] hover:text-[#c84a8a] font-semibold transition-colors mt-2"
@@ -803,12 +806,22 @@ function HeroDescription({ text, isDark }: { text: string; isDark: boolean }) {
         )}
       </div>
 
-      {/* Desktop (lg+): always show full description */}
-      <p
-        className={`hidden lg:block text-lg ${isDark ? 'text-[#efe8e6]/90' : 'text-[#0F1C1C]/80'} leading-relaxed font-light w-full`}
-      >
-        {text}
-      </p>
+      {/* Desktop (lg+): truncated with toggle */}
+      <div className="hidden lg:block">
+        <div
+          className={`text-lg ${isDark ? 'text-[#efe8e6]/90' : 'text-[#0F1C1C]'} font-light w-full`}
+        >
+          <MarkdownContent content={isExpanded ? text : truncatedDesktop} isDark={isDark} />
+        </div>
+        {shouldTruncateDesktop && (
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="text-sm text-[#d97ac8] hover:text-[#c84a8a] font-semibold transition-colors mt-3"
+          >
+            {isExpanded ? 'See Less' : 'See More'}
+          </button>
+        )}
+      </div>
     </div>
   );
 }
@@ -1102,7 +1115,7 @@ export default function PodcastSite() {
             <>
               {/* Backdrop */}
               <div
-                className={`fixed inset-0 z-40 lg:hidden ${isDark ? 'bg-black/50' : 'bg-white/20'}`}
+                className={`fixed inset-0 z-40 lg:hidden ${isDark ? 'bg-[#0F1C1C]/50' : 'bg-white/20'}`}
                 onClick={() => setMobileMenuOpen(false)}
                 aria-hidden="true"
               />
@@ -1153,6 +1166,18 @@ export default function PodcastSite() {
           )}
         </div>
       </header>
+
+      {/* Main Title */}
+      <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 pt-8 sm:pt-12 lg:pt-16 pb-4 sm:pb-6">
+        <h1 
+          className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-center ${
+            isDark ? 'text-white' : 'text-[#0F1C1C]'
+          } leading-tight tracking-tight`}
+          style={{ fontFamily: 'var(--font-rozha)' }}
+        >
+          Let's Reboot the Future Podcast
+        </h1>
+      </section>
 
       {/* Coming Soon Section */}
       {comingSoon && (
@@ -1248,10 +1273,9 @@ export default function PodcastSite() {
                   </div>
 
                   <div className="flex-1 flex flex-col justify-center space-y-3 xs:space-y-4 sm:space-y-6 my-3 xs:my-4 sm:my-8">
-                    <div className="flex-1 flex flex-col justify-start space-y-1.5 xs:space-y-2 sm:space-y-3 mt-2 sm:mt-3 w-full">
+                    <div className="flex-1 flex flex-col justify-start mt-2 sm:mt-3 w-full">
                       <h1
-                        className={`font-bold leading-tight text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl drop-shadow-md break-words w-full ${isDark ? 'text-white' : 'text-[#0F1C1C]'
-                          }`}
+                        className={`font-bold leading-tight text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl drop-shadow-md break-words w-full ${isDark ? 'text-white' : 'text-[#0F1C1C]'} mb-1.5 xs:mb-2 sm:mb-3`}
                       >
                         {heroEpisode.title}
                       </h1>
@@ -1370,7 +1394,7 @@ export default function PodcastSite() {
           </div>
 
           {/* Desktop sidebar - hidden on mobile since it's shown above */}
-          <div className="hidden lg:block order-2">
+          <div className="hidden lg:block order-2 lg:sticky lg:top-24">
             <BlogSidebar blogs={blogsData} currentPage={currentPage} isDark={isDark} />
           </div>
         </div>

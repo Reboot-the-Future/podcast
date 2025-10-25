@@ -6,6 +6,7 @@ import {
   Plus, Edit, Trash2, X, Search, Filter, Star, EyeOff, ExternalLink, Info, Settings, Eye,
   CheckCircle, AlertCircle, AlertTriangle, InfoIcon,
 } from "lucide-react";
+import MarkdownContent from "@/components/MarkdownContent";
 
 interface Episode {
   id: number;
@@ -52,11 +53,17 @@ export default function AdminEpisodes() {
     description: "",
     is_visible: false,
   });
+  const comingSoonDescRef = useRef<HTMLTextAreaElement | null>(null);
+  const [csShowPreview, setCsShowPreview] = useState(false);
+  const [csPreviewTheme, setCsPreviewTheme] = useState<'light' | 'dark'>('light');
   // Separate input state to allow temporary empty/partial input (fixes backspace issue)
   const [durationInput, setDurationInput] = useState<string>("");
   // Dirty tracking for unsaved changes in the episode form
   const [isDirty, setIsDirty] = useState(false);
   const titleInputRef = useRef<HTMLInputElement | null>(null);
+  const excerptRef = useRef<HTMLTextAreaElement | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
+  const [previewTheme, setPreviewTheme] = useState<'light' | 'dark'>('light');
 
   const markDirty = () => setIsDirty(true);
 
@@ -65,6 +72,8 @@ export default function AdminEpisodes() {
     title: string;
     message: string;
     onConfirm: () => void;
+    confirmLabel?: string;
+    confirmTone?: "danger" | "primary";
   } | null>(null);
 
   const [formData, setFormData] = useState({
@@ -80,6 +89,53 @@ export default function AdminEpisodes() {
     spotify_url: "",
     apple_url: "",
   });
+
+  // Markdown toolbar helpers for the Full Description textarea
+  const applyMarkdown = (action: 'bold' | 'italic' | 'link') => {
+    const el = excerptRef.current;
+    if (!el) return;
+    const start = el.selectionStart ?? 0;
+    const end = el.selectionEnd ?? 0;
+    const value = formData.excerpt || '';
+    const selected = value.slice(start, end);
+
+    let nextValue = value;
+    let caretPos = end;
+
+    switch (action) {
+      case 'bold': {
+        const wrapped = `**${selected || 'bold text'}**`;
+        nextValue = value.slice(0, start) + wrapped + value.slice(end);
+        caretPos = start + (selected ? wrapped.length : 2);
+        break;
+      }
+      case 'italic': {
+        const wrapped = `*${selected || 'italic text'}*`;
+        nextValue = value.slice(0, start) + wrapped + value.slice(end);
+        caretPos = start + (selected ? wrapped.length : 1);
+        break;
+      }
+      case 'link': {
+        const text = selected || 'link text';
+        const wrapped = `[${text}](https://)`;
+        nextValue = value.slice(0, start) + wrapped + value.slice(end);
+        // place caret inside the URL to edit
+        caretPos = start + wrapped.indexOf('https://');
+        break;
+      }
+      
+    }
+
+    setFormData({ ...formData, excerpt: nextValue });
+    markDirty();
+
+    requestAnimationFrame(() => {
+      if (excerptRef.current) {
+        excerptRef.current.focus();
+        excerptRef.current.selectionStart = excerptRef.current.selectionEnd = caretPos;
+      }
+    });
+  };
 
   useEffect(() => {
     document.title = "Episodes › Reboot Admin";
@@ -271,6 +327,8 @@ export default function AdminEpisodes() {
       isOpen: true,
       title: "Delete Episode",
       message: `Are you sure you want to delete "${episode.title}"? This action cannot be undone.`,
+      confirmLabel: "Delete",
+      confirmTone: "danger",
       onConfirm: async () => {
         try {
           const token = localStorage.getItem("admin_token");
@@ -317,6 +375,8 @@ export default function AdminEpisodes() {
         isOpen: true,
         title: "Discard changes?",
         message: "You have unsaved changes. Do you want to discard them?",
+        confirmLabel: "Discard",
+        confirmTone: "primary",
         onConfirm: () => {
           setIsDirty(false);
           setShowForm(false);
@@ -335,6 +395,34 @@ export default function AdminEpisodes() {
       setTimeout(() => titleInputRef.current?.focus(), 0);
     }
   }, [showForm]);
+
+  // When the episode form opens, start with preview closed and light theme
+  useEffect(() => {
+    if (showForm) {
+      setShowPreview(false);
+      setPreviewTheme('light');
+    }
+  }, [showForm]);
+
+  // When the Coming Soon form opens, start with preview closed and light theme
+  useEffect(() => {
+    if (showComingSoonForm) {
+      setCsShowPreview(false);
+      setCsPreviewTheme('light');
+    }
+  }, [showComingSoonForm]);
+
+  // Lock background scroll when any modal or confirm dialog is open
+  useEffect(() => {
+    const anyOpen = showForm || showComingSoonForm || !!confirmDialog?.isOpen;
+    if (anyOpen) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prev;
+      };
+    }
+  }, [showForm, showComingSoonForm, confirmDialog?.isOpen]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -461,6 +549,8 @@ export default function AdminEpisodes() {
       isOpen: true,
       title: "Delete Coming Soon Section",
       message: `Are you sure you want to delete "${comingSoon.title}"? This action cannot be undone.`,
+      confirmLabel: "Delete",
+      confirmTone: "danger",
       onConfirm: async () => {
         try {
           const token = localStorage.getItem("admin_token");
@@ -487,6 +577,50 @@ export default function AdminEpisodes() {
         } finally {
           setConfirmDialog(null);
         }
+      }
+    });
+  };
+
+  // Markdown toolbar for Coming Soon description
+  const applyCsMarkdown = (action: 'bold' | 'italic' | 'link') => {
+    const el = comingSoonDescRef.current;
+    if (!el) return;
+    const start = el.selectionStart ?? 0;
+    const end = el.selectionEnd ?? 0;
+    const value = comingSoonForm.description || '';
+    const selected = value.slice(start, end);
+
+    let nextValue = value;
+    let caretPos = end;
+
+    switch (action) {
+      case 'bold': {
+        const wrapped = `**${selected || 'bold text'}**`;
+        nextValue = value.slice(0, start) + wrapped + value.slice(end);
+        caretPos = start + (selected ? wrapped.length : 2);
+        break;
+      }
+      case 'italic': {
+        const wrapped = `*${selected || 'italic text'}*`;
+        nextValue = value.slice(0, start) + wrapped + value.slice(end);
+        caretPos = start + (selected ? wrapped.length : 1);
+        break;
+      }
+      case 'link': {
+        const text = selected || 'link text';
+        const wrapped = `[${text}](https://)`;
+        nextValue = value.slice(0, start) + wrapped + value.slice(end);
+        caretPos = start + wrapped.indexOf('https://');
+        break;
+      }
+    }
+
+    setComingSoonForm({ ...comingSoonForm, description: nextValue });
+
+    requestAnimationFrame(() => {
+      if (comingSoonDescRef.current) {
+        comingSoonDescRef.current.focus();
+        comingSoonDescRef.current.selectionStart = comingSoonDescRef.current.selectionEnd = caretPos;
       }
     });
   };
@@ -535,7 +669,7 @@ export default function AdminEpisodes() {
     if (!confirmDialog?.isOpen) return null;
 
     return (
-      <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[200] flex items-center justify-center p-4 animate-in fade-in duration-200">
+  <div className="fixed inset-0 bg-[#0F1C1C]/80 backdrop-blur-sm z-[200] flex items-center justify-center p-4 animate-in fade-in duration-200">
         <div className="bg-gradient-to-br from-[#1a2828] to-[#0f1c1c] rounded-2xl border border-[#2a3838] shadow-2xl max-w-md w-full animate-in zoom-in-95 duration-200">
           <div className="p-6 space-y-4">
             {/* Header */}
@@ -561,9 +695,13 @@ export default function AdminEpisodes() {
                 onClick={() => {
                   confirmDialog.onConfirm();
                 }}
-                className="flex-1 px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-red-500/30"
+                className={`flex-1 px-4 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-lg ${
+                  confirmDialog.confirmTone === 'danger'
+                    ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-red-500/30'
+                    : 'bg-[#ffa9fc] text-[#0f1c1c] hover:brightness-110'
+                }`}
               >
-                Delete
+                {confirmDialog.confirmLabel || 'Confirm'}
               </button>
             </div>
           </div>
@@ -669,7 +807,9 @@ export default function AdminEpisodes() {
           <div className="bg-[#0f1c1c] rounded-xl p-4 border border-[#2a3838]">
             <h3 className="text-lg font-semibold text-white mb-2">{comingSoon.title}</h3>
             {comingSoon.description && (
-              <p className="text-gray-400 text-sm mb-3">{comingSoon.description}</p>
+              <div className="text-gray-400 text-sm mb-3">
+                <MarkdownContent className="text-gray-400 text-sm" content={comingSoon.description} isDark={true} />
+              </div>
             )}
             <div className="flex items-center gap-2 text-xs">
               <span className={`px-2 py-1 rounded-full ${
@@ -724,8 +864,8 @@ export default function AdminEpisodes() {
 
       {/* Modal Form */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-gradient-to-br from-[#1a2828] to-[#0f1c1c] rounded-3xl p-8 max-w-3xl w-full border border-[#ffa9fc]/20 shadow-2xl my-8">
+        <div className="fixed inset-0 bg-[#0F1C1C]/90 backdrop-blur-sm flex items-start md:items-center justify-center z-50 p-4 pt-14 md:pt-8 overflow-y-auto">
+          <div className="bg-gradient-to-br from-[#1a2828] to-[#0f1c1c] rounded-3xl p-8 max-w-3xl w-full border border-[#ffa9fc]/20 shadow-2xl my-8 max-h-[85vh] overflow-y-auto themed-scrollbar">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-[#ffa9fc]">
                 {editingEpisode ? "Edit Episode" : "New Episode"}
@@ -807,7 +947,67 @@ export default function AdminEpisodes() {
                   <label className="block text-sm font-semibold mb-2 text-gray-300">
                     Full Description *
                   </label>
+                  {/* Markdown Toolbar */}
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                    <button
+                      type="button"
+                      onClick={() => applyMarkdown('bold')}
+                      className="px-2.5 py-1.5 text-xs bg-[#1a2828] border border-[#2a3838] rounded-lg text-white hover:border-[#ffa9fc]"
+                      title="Bold (wrap selection with ** **)"
+                    >
+                      Bold
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applyMarkdown('italic')}
+                      className="px-2.5 py-1.5 text-xs bg-[#1a2828] border border-[#2a3838] rounded-lg text-white hover:border-[#ffa9fc]"
+                      title="Italic (wrap selection with * *)"
+                    >
+                      Italic
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applyMarkdown('link')}
+                      className="px-2.5 py-1.5 text-xs bg-[#1a2828] border border-[#2a3838] rounded-lg text-white hover:border-[#ffa9fc]"
+                      title="Insert link [text](https://)"
+                    >
+                      Link
+                    </button>
+                    <div className="flex-1" />
+                    <button
+                      type="button"
+                      onClick={() => setShowPreview((v) => !v)}
+                      className={`px-2.5 py-1.5 text-xs rounded-lg border transition-colors ${showPreview ? 'bg-[#ffa9fc] text-[#0f1c1c] border-[#ffa9fc]' : 'bg-[#1a2828] border-[#2a3838] text-white hover:border-[#ffa9fc]'}`}
+                      title="Toggle preview"
+                    >
+                      {showPreview ? 'Hide Preview' : 'Show Preview'}
+                    </button>
+                    {showPreview && (
+                      <div className="flex items-center gap-1 ml-2">
+                        <button
+                          type="button"
+                          onClick={() => setPreviewTheme('light')}
+                          className={`px-2 py-1 text-xs rounded-lg border transition-colors ${previewTheme === 'light' ? 'bg-white text-[#0f1c1c] border-gray-300' : 'bg-[#1a2828] text-white border-[#2a3838] hover:border-[#ffa9fc]'}`}
+                          title="Preview on light background"
+                        >
+                          Light
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setPreviewTheme('dark')}
+                          className={`px-2 py-1 text-xs rounded-lg border transition-colors ${previewTheme === 'dark' ? 'bg-[#2a3838] text-white border-[#3a4848]' : 'bg-[#1a2828] text-white border-[#2a3838] hover:border-[#ffa9fc]'}`}
+                          title="Preview on dark background"
+                        >
+                          Dark
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-400 mb-2">
+                    Tip: select the text first, then click Bold or Italic. For Link, select the text that should become the link.
+                  </p>
                   <textarea
+                    ref={excerptRef}
                     value={formData.excerpt}
                     onChange={(e) => {
                       setFormData({ ...formData, excerpt: e.target.value });
@@ -816,6 +1016,38 @@ export default function AdminEpisodes() {
                     placeholder="Full description of the episode"
                     className="w-full px-4 py-3 h-32 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc] resize-none"
                   />
+                  {showPreview && (
+                    <div className={`mt-2 p-3 rounded-lg border ${previewTheme === 'dark' ? 'bg-[#0f1c1c] border-[#2a3838]' : 'bg-white border-gray-200'}`}>
+                      <p className={`text-xs font-semibold mb-2 ${previewTheme === 'dark' ? 'text-gray-400' : 'text-gray-700'}`}>Preview</p>
+                      <div className={`${previewTheme === 'dark' ? 'prose prose-invert' : 'prose'} max-w-none text-[15px] leading-snug`}>
+                        <MarkdownContent className={`${previewTheme === 'dark' ? 'text-white' : 'text-[#0F1C1C]'}`} content={formData.excerpt} isDark={previewTheme === 'dark'} />
+                      </div>
+                    </div>
+                  )}
+                  <div className="mt-2 p-3 bg-[#0f1c1c] border border-[#2a3838] rounded-lg">
+                    <p className="text-xs text-gray-400 font-semibold mb-2">💡 Formatting Tips:</p>
+                    <div className="space-y-1 text-xs text-gray-500">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                          <span className="text-[#ffa9fc] font-mono">**bold text**</span> → <strong className="text-white">bold text</strong>
+                        </div>
+                        <div>
+                          <span className="text-[#ffa9fc] font-mono">*italic text*</span> → <em className="text-white">italic text</em>
+                        </div>
+                      </div>
+                      <div>
+                        <span className="text-[#ffa9fc] font-mono">[link text](https://example.com)</span> → <a className="text-[#d97ac8] underline">link text</a>
+                      </div>
+                      <div className="pt-1 border-t border-[#2a3838] mt-2">
+                        <div className="text-gray-400 mb-1">Line breaks:</div>
+                        <div className="pl-2 space-y-0.5">
+                          <div>• Press Enter once for a line break</div>
+                          <div>• Press Enter twice for paragraph spacing</div>
+                          <div>• Add multiple blank lines for extra spacing</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -972,8 +1204,8 @@ export default function AdminEpisodes() {
 
       {/* Coming Soon Form Modal */}
       {showComingSoonForm && (
-        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-gradient-to-br from-[#1a2828] to-[#0f1c1c] rounded-3xl p-8 max-w-2xl w-full border border-[#ffa9fc]/20 shadow-2xl my-8">
+        <div className="fixed inset-0 bg-[#0F1C1C]/90 backdrop-blur-sm flex items-start md:items-center justify-center z-50 p-4 pt-14 md:pt-8 overflow-y-auto">
+          <div className="bg-gradient-to-br from-[#1a2828] to-[#0f1c1c] rounded-3xl p-8 max-w-2xl w-full border border-[#ffa9fc]/20 shadow-2xl my-8 max-h-[85vh] overflow-y-auto themed-scrollbar">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-[#ffa9fc]">
                 {comingSoon ? "Edit Coming Soon" : "Create Coming Soon"}
@@ -1006,7 +1238,67 @@ export default function AdminEpisodes() {
                 <label className="block text-sm font-semibold mb-2 text-gray-300">
                   Description (Optional)
                 </label>
+                {/* Markdown Toolbar (Coming Soon) */}
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  <button
+                    type="button"
+                    onClick={() => applyCsMarkdown('bold')}
+                    className="px-2.5 py-1.5 text-xs bg-[#1a2828] border border-[#2a3838] rounded-lg text-white hover:border-[#ffa9fc]"
+                    title="Bold (wrap selection with ** **)"
+                  >
+                    Bold
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => applyCsMarkdown('italic')}
+                    className="px-2.5 py-1.5 text-xs bg-[#1a2828] border border-[#2a3838] rounded-lg text-white hover:border-[#ffa9fc]"
+                    title="Italic (wrap selection with * *)"
+                  >
+                    Italic
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => applyCsMarkdown('link')}
+                    className="px-2.5 py-1.5 text-xs bg-[#1a2828] border border-[#2a3838] rounded-lg text-white hover:border-[#ffa9fc]"
+                    title="Insert link [text](https://)"
+                  >
+                    Link
+                  </button>
+                  <div className="flex-1" />
+                  <button
+                    type="button"
+                    onClick={() => setCsShowPreview((v) => !v)}
+                    className={`px-2.5 py-1.5 text-xs rounded-lg border transition-colors ${csShowPreview ? 'bg-[#ffa9fc] text-[#0f1c1c] border-[#ffa9fc]' : 'bg-[#1a2828] border-[#2a3838] text-white hover:border-[#ffa9fc]'}`}
+                    title="Toggle preview"
+                  >
+                    {csShowPreview ? 'Hide Preview' : 'Show Preview'}
+                  </button>
+                  {csShowPreview && (
+                    <div className="flex items-center gap-1 ml-2">
+                      <button
+                        type="button"
+                        onClick={() => setCsPreviewTheme('light')}
+                        className={`px-2 py-1 text-xs rounded-lg border transition-colors ${csPreviewTheme === 'light' ? 'bg-white text-[#0f1c1c] border-gray-300' : 'bg-[#1a2828] text-white border-[#2a3838] hover:border-[#ffa9fc]'}`}
+                        title="Preview on light background"
+                      >
+                        Light
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setCsPreviewTheme('dark')}
+                        className={`px-2 py-1 text-xs rounded-lg border transition-colors ${csPreviewTheme === 'dark' ? 'bg-[#2a3838] text-white border-[#3a4848]' : 'bg-[#1a2828] text-white border-[#2a3838] hover:border-[#ffa9fc]'}`}
+                        title="Preview on dark background"
+                      >
+                        Dark
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <p className="text-xs text-gray-400 mb-2">
+                  Tip: select the text first, then click Bold or Italic. For Link, select the text that should become the link.
+                </p>
                 <textarea
+                  ref={comingSoonDescRef}
                   value={comingSoonForm.description}
                   onChange={(e) =>
                     setComingSoonForm({ ...comingSoonForm, description: e.target.value })
@@ -1014,6 +1306,38 @@ export default function AdminEpisodes() {
                   placeholder="Enter description (optional)"
                   className="w-full px-4 py-3 h-24 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc] resize-none"
                 />
+                {csShowPreview && (
+                  <div className={`mt-2 p-3 rounded-lg border ${csPreviewTheme === 'dark' ? 'bg-[#0f1c1c] border-[#2a3838]' : 'bg-white border-gray-200'}`}>
+                    <p className={`text-xs font-semibold mb-2 ${csPreviewTheme === 'dark' ? 'text-gray-400' : 'text-gray-700'}`}>Preview</p>
+                    <div className={`${csPreviewTheme === 'dark' ? 'prose prose-invert' : 'prose'} max-w-none text-[15px] leading-snug`}>
+                      <MarkdownContent className={`${csPreviewTheme === 'dark' ? 'text-white' : 'text-[#0F1C1C]'}`} content={comingSoonForm.description} isDark={csPreviewTheme === 'dark'} />
+                    </div>
+                  </div>
+                )}
+                <div className="mt-2 p-3 bg-[#0f1c1c] border border-[#2a3838] rounded-lg">
+                  <p className="text-xs text-gray-400 font-semibold mb-2">💡 Formatting Tips:</p>
+                  <div className="space-y-1 text-xs text-gray-500">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <div>
+                        <span className="text-[#ffa9fc] font-mono">**bold text**</span> → <strong className="text-white">bold text</strong>
+                      </div>
+                      <div>
+                        <span className="text-[#ffa9fc] font-mono">*italic text*</span> → <em className="text-white">italic text</em>
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-[#ffa9fc] font-mono">[link text](https://example.com)</span> → <a className="text-[#d97ac8] underline">link text</a>
+                    </div>
+                    <div className="pt-1 border-t border-[#2a3838] mt-2">
+                      <div className="text-gray-400 mb-1">Line breaks:</div>
+                      <div className="pl-2 space-y-0.5">
+                        <div>• Press Enter once for a line break</div>
+                        <div>• Press Enter twice for paragraph spacing</div>
+                        <div>• Add multiple blank lines for extra spacing</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="flex items-center justify-between p-4 bg-[#0f1c1c] rounded-xl border border-[#2a3838]">
@@ -1086,9 +1410,9 @@ export default function AdminEpisodes() {
               </div>
             </div>
 
-            <p className="text-gray-400 text-sm line-clamp-2 flex-grow">
-              {episode.excerpt}
-            </p>
+            <div className="text-gray-400 text-sm line-clamp-2 flex-grow">
+              <MarkdownContent className="text-gray-400 text-sm line-clamp-2" content={episode.excerpt} isDark={true} />
+            </div>
 
             <div className="flex flex-wrap gap-2">
               <span

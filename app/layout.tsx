@@ -1,6 +1,28 @@
 import type { Metadata } from "next";
+import { Rozha_One, Poppins, Lora } from 'next/font/google';
 import "./globals.css";
 import siteSettings from "@/data/settings.json";
+
+const rozhaOne = Rozha_One({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-rozha',
+  display: 'swap',
+});
+
+const poppins = Poppins({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+  variable: '--font-poppins',
+  display: 'swap',
+});
+
+const lora = Lora({
+  weight: ['400', '600'],
+  subsets: ['latin'],
+  variable: '--font-lora',
+  display: 'swap',
+});
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 const siteName = "Reboot the Future";
@@ -95,8 +117,6 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="icon" href="/tab-icon.png" type="image/png" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* Structured Data: Organization */}
         <script
           type="application/ld+json"
@@ -148,7 +168,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="font-poppins antialiased">{children}</body>
+      <body className={`${poppins.variable} ${lora.variable} ${rozhaOne.variable} font-poppins antialiased`}>{children}</body>
     </html>
   );
 }

@@ -1,16 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Rozha+One&family=Poppins:wght@400;500;600;700&family=Lora:wght@400;600&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-body {
-  font-family: 'Poppins', 'Lora', sans-serif;
-}
-
-h1 {
-  font-family: 'Rozha One', 'Poppins', 'Lora', sans-serif;
-}
 
 /* Ensure Buzzsprout player is responsive */
 .buzzsprout-player-wrapper {
@@ -60,4 +50,26 @@ h1 {
   .min-h-screen {
     min-height: -webkit-fill-available;
   }
+}
+
+/* Themed scrollbar for admin modals and any scrollable panel */
+.themed-scrollbar {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #d97ac8 #1a2828; /* thumb track */
+}
+.themed-scrollbar::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.themed-scrollbar::-webkit-scrollbar-track {
+  background: #1a2828; /* brand.dark */
+  border-radius: 9999px;
+}
+.themed-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #d97ac8; /* brand.primary */
+  border-radius: 9999px;
+  border: 2px solid #1a2828; /* separates thumb from track */
+}
+.themed-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #ffa9fc; /* lighter hover */
 }
