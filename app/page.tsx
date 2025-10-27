@@ -468,7 +468,7 @@ const BlogSidebar = ({ blogs, currentPage, isDark }: { blogs: BlogItem[]; curren
               <Sparkles size={16} className="hidden xs:block sm:hidden text-white" />
               <Sparkles size={18} className="hidden sm:block text-white" />
             </div>
-            <h2 className={`text-lg xs:text-xl sm:text-2xl lg:text-3xl font-bold ${isDark ? 'text-white' : 'text-[#0F1C1C]'}`}>
+            <h2 className={`text-lg xs:text-xl sm:text-2xl lg:text-[28px] font-bold ${isDark ? 'text-white' : 'text-[#0F1C1C]'}`}>
               Latest News
             </h2>
           </div>
@@ -497,12 +497,12 @@ const BlogSidebar = ({ blogs, currentPage, isDark }: { blogs: BlogItem[]; curren
                         href={safeLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`text-sm xs:text-base sm:text-lg lg:text-xl font-semibold break-words ${isDark ? 'text-white' : 'text-[#0F1C1C]'} hover:underline underline-offset-2`}
+                        className={`text-sm xs:text-base sm:text-lg lg:text-[18px] font-semibold break-words ${isDark ? 'text-white' : 'text-[#0F1C1C]'} hover:underline underline-offset-2`}
                       >
                         {blog.title}
                       </a>
                     ) : (
-                      <span className={`text-sm xs:text-base sm:text-lg lg:text-xl font-semibold break-words ${isDark ? 'text-white' : 'text-[#0F1C1C]'}`}>
+                      <span className={`text-sm xs:text-base sm:text-lg lg:text-[18px] font-semibold break-words ${isDark ? 'text-white' : 'text-[#0F1C1C]'}`}>
                         {blog.title}
                       </span>
                     )}
@@ -624,8 +624,9 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
             )}
           </div>
           <h3
-            className={`font-bold mb-1.5 xs:mb-2 leading-tight text-xl xs:text-2xl sm:text-3xl lg:text-4xl break-words ${isDark ? 'text-white' : 'text-[#0F1C1C]'
+            className={`font-bold mb-1.5 xs:mb-2 text-xl xs:text-2xl sm:text-3xl lg:text-4xl ${isDark ? 'text-white' : 'text-[#0F1C1C]'
               }`}
+            style={{ wordBreak: 'keep-all', overflowWrap: 'break-word', lineHeight: '1.35' }}
           >
             {episode.title}
           </h3>
@@ -675,15 +676,14 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
           className={`mt-3 xs:mt-4 sm:mt-6 pt-3 xs:pt-4 sm:pt-6 ${isDark ? 'border-[#d97ac8]/20 border-t-2' : 'border-gray-200 border-t'} space-y-3 xs:space-y-4 sm:space-y-6 animate-in fade-in slide-in-from-top-4 duration-300`}
         >
           <div
-            className={`${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white border border-gray-200 shadow-md'
-              } rounded-xl sm:rounded-2xl p-3 xs:p-4 sm:p-6 lg:p-8 transition-all`}
+            className="bg-white border border-gray-200 shadow-md rounded-xl sm:rounded-2xl p-3 xs:p-4 sm:p-6 lg:p-8 transition-all"
           >
             <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-3 mb-3 xs:mb-4 sm:mb-5">
               <div className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-[#d97ac8] to-[#c84a8a] flex items-center justify-center shadow-lg">
                 <Headphones className="text-white w-4 h-4 xs:w-[18px] xs:h-[18px] sm:w-5 sm:h-5" />
               </div>
               <div>
-                <h4 className={`text-sm xs:text-base sm:text-lg font-bold ${isDark ? 'text-white' : 'text-[#0F1C1C]'}`}>
+                <h4 className="text-sm xs:text-base sm:text-lg font-bold text-[#0F1C1C]">
                   Listen to Episode
                 </h4>
               </div>
@@ -696,7 +696,7 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
                     href={sanitizeUrl(episode.spotify_url || '')!}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border ${isDark ? 'border-[#2a3838] bg-[#0F1C1C]/40 text-white hover:bg-[#0F1C1C]/60' : 'border-gray-200 bg-gray-100 text-[#0F1C1C] hover:bg-gray-200'}`}
+                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border border-gray-200 bg-gray-100 text-[#0F1C1C] hover:bg-gray-200"
                     aria-label="Listen on Spotify"
                   >
                     {/* Spotify icon */}
@@ -711,7 +711,7 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
                     href={sanitizeUrl(episode.apple_url || '')!}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border ${isDark ? 'border-[#2a3838] bg-[#0F1C1C]/40 text-white hover:bg-[#0F1C1C]/60' : 'border-gray-200 bg-gray-100 text-[#0F1C1C] hover:bg-gray-200'}`}
+                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border border-gray-200 bg-gray-100 text-[#0F1C1C] hover:bg-gray-200"
                     aria-label="Listen on Apple Podcasts"
                   >
                     {/* Apple icon */}
@@ -723,14 +723,13 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
                 )}
               </div>
             )}
-            <div id={containerIdRef.current} className="buzzsprout-player-wrapper w-full overflow-hidden" aria-busy="true">
+            <div id={containerIdRef.current} className="buzzsprout-player-wrapper w-full overflow-hidden bg-white rounded-lg" aria-busy="true">
               <div
-                className={`${isDark ? 'bg-[#0F1C1C]' : 'bg-gray-100'
-                  } rounded-lg p-4 xs:p-6 sm:p-8 text-center`}
+                className="bg-white rounded-lg p-4 xs:p-6 sm:p-8 text-center"
                 role="status" aria-live="polite"
               >
                 <div className="animate-spin rounded-full h-5 w-5 xs:h-6 xs:w-6 sm:h-8 sm:w-8 border-b-2 border-[#d97ac8] mx-auto mb-2 sm:mb-3"></div>
-                <p className={`${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'} text-xs sm:text-sm`}>
+                <p className="text-[#0F1C1C]/60 text-xs sm:text-sm">
                   Loading player...
                 </p>
               </div>
@@ -1073,12 +1072,12 @@ export default function PodcastSite() {
                 Education
               </a>
               <a
-                href="https://www.rebootthefuture.org/what-we-do/reboot-experiences"
+                href="https://www.rebootthefuture.org/get-involved/make-an-impact"
                 className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8]' : 'text-[#0F1C1C] hover:text-[#d97ac8]'
                   } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
                   }`}
               >
-                Services
+                Make an Impact
               </a>
               <a
                 href="https://www.rebootthefuture.org/contact"
@@ -1144,12 +1143,12 @@ export default function PodcastSite() {
                   Education
                 </a>
                 <a
-                  href="https://www.rebootthefuture.org/what-we-do/reboot-experiences"
+                  href="https://www.rebootthefuture.org/get-involved/make-an-impact"
                   className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#d97ac8] hover:bg-[#d97ac8]/10' : 'text-[#0F1C1C] font-medium hover:text-white hover:bg-[#d97ac8]'
                     } transition-all py-3 px-4 rounded-lg`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Services
+                  Make an Impact
                 </a>
                 <a
                   href="https://www.rebootthefuture.org/contact"
@@ -1168,14 +1167,11 @@ export default function PodcastSite() {
 
       {/* Main Title */}
       <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 pt-8 sm:pt-12 lg:pt-16 pb-4 sm:pb-6">
-        <h1 
-          className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-center ${
-            isDark ? 'text-white' : 'text-[#0F1C1C]'
-          } leading-tight tracking-tight`}
-          style={{ fontFamily: 'var(--font-rozha)' }}
-        >
-          Let's Reboot the Future Podcast
-        </h1>
+        <img 
+          src="/Website Article banner cover 1.png" 
+          alt="Let's Reboot the Future Podcast"
+          className={`w-full h-auto object-contain rounded-2xl sm:rounded-3xl ${isDark ? 'border-2 border-[#d97ac8]/20' : ''}`}
+        />
       </section>
 
       {/* Coming Soon Section */}
@@ -1210,13 +1206,13 @@ export default function PodcastSite() {
 
       <section className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 py-4 xs:py-6 sm:py-12 lg:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-4 sm:gap-6 lg:gap-10">
-          {/* On mobile, show sidebar first (trailer + blogs), on desktop show hero first */}
-          <div className="lg:hidden order-1">
+          {/* On mobile, show hero first, then blogs. On desktop show hero first (left), blogs second (right) */}
+          <div className="lg:hidden order-2">
             <BlogSidebar blogs={blogsData} currentPage={currentPage} isDark={isDark} />
           </div>
           
           <div
-            className={`relative rounded-2xl sm:rounded-3xl h-full min-h-[500px] xs:min-h-[600px] sm:min-h-[650px] order-2 lg:order-1 ${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2 overflow-hidden' : 'bg-white border border-gray-200 shadow-lg'
+            className={`relative rounded-2xl sm:rounded-3xl h-full min-h-[500px] xs:min-h-[600px] sm:min-h-[650px] order-1 ${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2 overflow-hidden' : 'bg-white border border-gray-200 shadow-lg'
               } transition-all group`}
           >
             {heroLoading ? (
@@ -1274,7 +1270,8 @@ export default function PodcastSite() {
                   <div className="flex-1 flex flex-col justify-center space-y-3 xs:space-y-4 sm:space-y-6 my-3 xs:my-4 sm:my-8">
                     <div className="flex-1 flex flex-col justify-start mt-2 sm:mt-3 w-full">
                       <h1
-                        className={`font-bold leading-tight text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl drop-shadow-md break-words w-full ${isDark ? 'text-white' : 'text-[#0F1C1C]'} mb-1.5 xs:mb-2 sm:mb-3`}
+                        className={`font-bold text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-[34px] xl:text-[46px] drop-shadow-md w-full ${isDark ? 'text-white' : 'text-[#0F1C1C]'} mb-4 xs:mb-5 sm:mb-6`}
+                        style={{ wordBreak: 'keep-all', overflowWrap: 'break-word', lineHeight: '1.35' }}
                       >
                         {heroEpisode.title}
                       </h1>
@@ -1301,8 +1298,7 @@ export default function PodcastSite() {
 
                   <div className="mt-auto">
                     <div
-                      className={`${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white border border-gray-200 shadow-md'
-                        } rounded-xl sm:rounded-2xl p-3 xs:p-4 sm:p-6 lg:p-8 transition-all`}
+                      className="bg-white border border-gray-200 shadow-md rounded-xl sm:rounded-2xl p-3 xs:p-4 sm:p-6 lg:p-8 transition-all"
                     >
                       <div className="flex items-center justify-between mb-3 xs:mb-4 sm:mb-5">
                         <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-3">
@@ -1310,7 +1306,7 @@ export default function PodcastSite() {
                             <Headphones className="text-white w-4 h-4 xs:w-[18px] xs:h-[18px] sm:w-5 sm:h-5" />
                           </div>
                           <div>
-                            <h3 className={`text-sm xs:text-base sm:text-xl font-bold ${isDark ? 'text-white' : 'text-[#0F1C1C]'}`}>
+                            <h3 className="text-sm xs:text-base sm:text-xl font-bold text-[#0F1C1C]">
                               Listen Now
                             </h3>
                           </div>
@@ -1318,7 +1314,7 @@ export default function PodcastSite() {
                         <div className="flex items-center gap-1 xs:gap-1.5 sm:gap-2">
                           <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#00ffaa] animate-pulse"></div>
                           <span
-                            className={`text-xs font-medium ${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'} hidden xs:inline`}
+                            className="text-xs font-medium text-[#0F1C1C]/60 hidden xs:inline"
                           >
                             Available Now
                           </span>
@@ -1332,7 +1328,7 @@ export default function PodcastSite() {
                               href={sanitizeUrl(heroEpisode.spotify_url || '')!}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border ${isDark ? 'border-[#2a3838] bg-[#0F1C1C]/40 text-white hover:bg-[#0F1C1C]/60' : 'border-gray-200 bg-gray-100 text-[#0F1C1C] hover:bg-gray-200'}`}
+                              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border border-gray-200 bg-gray-100 text-[#0F1C1C] hover:bg-gray-200"
                               aria-label="Listen on Spotify"
                             >
                               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -1346,7 +1342,7 @@ export default function PodcastSite() {
                               href={sanitizeUrl(heroEpisode.apple_url || '')!}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border ${isDark ? 'border-[#2a3838] bg-[#0F1C1C]/40 text-white hover:bg-[#0F1C1C]/60' : 'border-gray-200 bg-gray-100 text-[#0F1C1C] hover:bg-gray-200'}`}
+                              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border border-gray-200 bg-gray-100 text-[#0F1C1C] hover:bg-gray-200"
                               aria-label="Listen on Apple Podcasts"
                             >
                               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -1357,9 +1353,9 @@ export default function PodcastSite() {
                           )}
                         </div>
                       )}
-                      <div id="buzzsprout-player-hero" className="buzzsprout-player-wrapper w-full overflow-hidden" aria-busy="true">
+                      <div id="buzzsprout-player-hero" className="buzzsprout-player-wrapper w-full overflow-hidden bg-white rounded-lg" aria-busy="true">
                         <div
-                          className={`text-center py-6 xs:py-8 sm:py-10 ${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'} text-xs sm:text-sm`}
+                          className="text-center py-6 xs:py-8 sm:py-10 text-[#0F1C1C]/60 text-xs sm:text-sm bg-white"
                           role="status" aria-live="polite"
                         >
                           <div className="flex flex-col items-center justify-center">
@@ -1416,7 +1412,7 @@ export default function PodcastSite() {
                     <Play size={18} className="hidden sm:block text-white ml-0.5" fill="white" />
                   </div>
                   <h2
-                    className={`text-2xl sm:text-3xl lg:text-4xl font-bold ${isDark ? 'text-white' : 'text-[#0F1C1C]'
+                    className={`text-2xl sm:text-3xl lg:text-[34px] font-bold ${isDark ? 'text-white' : 'text-[#0F1C1C]'
                       }`}
                   >
                     Explore Episodes
@@ -1493,7 +1489,7 @@ export default function PodcastSite() {
 
             {!loading && currentPageEpisodes.length > 0 && (
               <div
-                className={`flex justify-center gap-2 mt-6 sm:mt-8 sm:hidden ${isDark ? 'border-[#d97ac8]/20 border-2' : ''
+                className={`flex justify-center gap-2 mt-6 sm:mt-8 sm:hidden ${isDark ? 'border-[#d97ac8]/20 border-2 bg-[#0F1C1C]' : 'bg-gray-100'
                   } rounded-lg p-2`}
               >
                 {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => (
@@ -1503,8 +1499,8 @@ export default function PodcastSite() {
                     className={`w-2 h-2 rounded-full transition-all ${currentPage === i + 1
                       ? 'bg-[#d97ac8] w-6'
                       : isDark
-                        ? 'bg-[#0F1C1C]/20'
-                        : 'bg-gray-200'
+                        ? 'bg-white/20'
+                        : 'bg-gray-300'
                       }`}
                     aria-label={`Go to page ${i + 1}`}
                   />

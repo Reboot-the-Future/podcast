@@ -1139,7 +1139,8 @@ export default function AdminEpisodes() {
                     className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
                   />
                   <p className="text-xs text-gray-400 mt-2">
-                    Optional: Link to Buzzsprout episode
+                    Optional: Link to Buzzsprout episode. Get the ID from the Buzzsprout URL<br />
+                    Example: https://www.buzzsprout.com/<span className="text-[#ffa9fc]">2416731</span>/<span className="text-[#00ffaa] font-semibold">16360662</span> → Use <span className="text-[#00ffaa] font-semibold">16360662</span>
                   </p>
                 </div>
 
