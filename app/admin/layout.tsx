@@ -40,7 +40,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { href: "/admin", label: "Dashboard", icon: Home },
     { href: "/admin/episodes", label: "Episodes", icon: FileText },
     { href: "/admin/blogs", label: "Blogs", icon: BookOpen },
-    { href: "/admin/trailer", label: "Trailer", icon: Film },
+    // { href: "/admin/trailer", label: "Trailer", icon: Film },
   ];
 
   const handleLogout = () => {

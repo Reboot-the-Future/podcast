@@ -426,8 +426,7 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
         </div>
       </div>
 
-      <audio ref={audioRef} preload="metadata" />
-
+      <audio ref={audioRef} preload="metadata" src="/uploads/SoundHelix-Song-2.mp3" />
       {currentPage > 1 && (
         <button
           onClick={() => {
@@ -456,7 +455,7 @@ const BlogSidebar = ({ blogs, currentPage, isDark }: { blogs: BlogItem[]; curren
 
   return (
     <div className="flex flex-col space-y-3 xs:space-y-4 sm:space-y-6">
-      <TrailerPlayer currentPage={currentPage} isDark={isDark} />
+      {/* <TrailerPlayer currentPage={currentPage} isDark={isDark} /> */}
 
       <div
         className={`relative rounded-2xl sm:rounded-3xl overflow-hidden ${isDark ? 'bg-[#0F1C1C] border-[#d97ac8]/20 border-2' : 'bg-white border border-gray-200 shadow-lg'
