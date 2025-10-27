@@ -5,7 +5,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { authenticateRequest } from '@/lib/auth';
 
-function isExternalHttpUrl(url: string): boolean {
+function isValidTrailerUrl(url: string): boolean {
+  // Allow empty string (to remove trailer)
+  if (!url || url.trim() === '') return true;
+  
+  // Allow relative URLs (e.g., /uploads/trailer.mp3)
+  if (url.startsWith('/')) return true;
+  
+  // Validate absolute http/https URLs
   try {
     const u = new URL(url);
     if (!['http:', 'https:'].includes(u.protocol)) return false;
@@ -70,9 +77,9 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    if (trailer_audio_url && !isExternalHttpUrl(trailer_audio_url)) {
+    if (trailer_audio_url && !isValidTrailerUrl(trailer_audio_url)) {
       return NextResponse.json(
-        { error: 'Invalid trailer_audio_url. Must be a public http/https URL and not an internal address.' },
+        { error: 'Invalid trailer_audio_url. Must be a public http/https URL or a relative path (e.g., /uploads/file.mp3).' },
         { status: 400 }
       );
     }
