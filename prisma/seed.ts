@@ -11,10 +11,15 @@ async function main() {
     process.exit(1);
   }
 
-  // Admin credentials
-  const email = 'admin@rebootthefuture.org';
-  const password = 'admin123';
-  const name = 'Administrator';
+  // Admin credentials from environment variables
+  const email = process.env.ADMIN_EMAIL;
+  const password = process.env.ADMIN_PASSWORD;
+  const name = process.env.ADMIN_NAME || 'Administrator';
+
+  if (!email || !password) {
+    console.error('❌ ADMIN_EMAIL and ADMIN_PASSWORD must be set in environment variables');
+    process.exit(1);
+  }
 
   // Hash the password before saving
   const password_hash = await bcrypt.hash(password, 10);
