@@ -55,7 +55,7 @@
 /* Themed scrollbar for admin modals and any scrollable panel */
 .themed-scrollbar {
   scrollbar-width: thin; /* Firefox */
-  scrollbar-color: #d97ac8 #1a2828; /* thumb track */
+  scrollbar-color: #FFA9FC #1a2828; /* thumb track */
 }
 .themed-scrollbar::-webkit-scrollbar {
   width: 10px;
@@ -66,7 +66,7 @@
   border-radius: 9999px;
 }
 .themed-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #d97ac8; /* brand.primary */
+  background-color: #FFA9FC; /* brand.primary */
   border-radius: 9999px;
   border: 2px solid #1a2828; /* separates thumb from track */
 }

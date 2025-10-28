@@ -22,7 +22,7 @@ const config: Config = {
           black: '#0f1c1c',
           dark: '#1a2828',
           darker: '#2a3838',
-          primary: '#d97ac8',
+          primary: '#FFA9FC',
           secondary: '#c84a8a',
           accent: '#00ffaa',
         },

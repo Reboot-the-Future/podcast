@@ -21,7 +21,7 @@ export default function MarkdownContent({ content, className = "", isDark = fals
           a: ({ node, ...props }) => (
             <a
               {...props}
-              className={`underline ${isDark ? 'text-[#d97ac8] hover:text-[#ffa9fc]' : 'text-[#c84a8a] hover:text-[#d97ac8]'} transition-colors font-medium`}
+              className={`underline ${isDark ? 'text-[#FFA9FC] hover:text-[#ffa9fc]' : 'text-[#c84a8a] hover:text-[#FFA9FC]'} transition-colors font-medium`}
               target="_blank"
               rel="noopener noreferrer"
             />
@@ -47,3 +47,4 @@ export default function MarkdownContent({ content, className = "", isDark = fals
     </div>
   );
 }
+
