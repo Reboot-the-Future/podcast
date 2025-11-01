@@ -147,7 +147,7 @@ export default function AdminDashboard() {
           <p className="text-gray-300 mb-6">{error}</p>
           <button
             onClick={() => fetchStats()}
-            className="px-8 py-3 bg-[#ffa9fc] hover:bg-[#ff8df7] text-[#0f1c1c] rounded-xl font-bold transition-all"
+            className="px-8 py-3 bg-[#ffa9fc] hover:bg-brand-primary-hover text-[#0f1c1c] rounded-xl font-bold transition-all"
           >
             Retry
           </button>
@@ -196,7 +196,7 @@ export default function AdminDashboard() {
         <button
           onClick={() => fetchStats(true)}
           disabled={refreshing}
-          className="px-6 py-3 bg-[#ffa9fc] hover:bg-[#ff8df7] text-[#0f1c1c] rounded-xl font-bold transition-all flex items-center gap-2 disabled:opacity-50 hover:scale-105 active:scale-95 shadow-lg shadow-[#ffa9fc]/20 focus:outline-none focus:ring-2 focus:ring-[#ffa9fc] focus:ring-offset-2"
+          className="px-6 py-3 bg-[#ffa9fc] hover:bg-brand-primary-hover text-[#0f1c1c] rounded-xl font-bold transition-all flex items-center gap-2 disabled:opacity-50 hover:scale-105 active:scale-95 shadow-lg focus:outline-none focus:ring-2 focus:ring-[#ffa9fc] focus:ring-offset-2"
           aria-label={refreshing ? "Refreshing data" : "Refresh dashboard data"}
         >
           <RefreshCw size={18} className={refreshing ? "animate-spin" : ""} />

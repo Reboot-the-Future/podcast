@@ -41,7 +41,7 @@
 /* Improve text readability on mobile */
 @media (max-width: 640px) {
   * {
-    -webkit-tap-highlight-color: rgba(217, 122, 200, 0.2);
+    -webkit-tap-highlight-color: rgba(255, 169, 252, 0.2);
   }
 }
 

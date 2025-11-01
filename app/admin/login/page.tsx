@@ -77,7 +77,7 @@ export default function AdminLogin() {
       <div className="w-full max-w-md relative z-10">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-block p-4 bg-gradient-to-br from-[#ffa9fc]/20 to-[#ff8df7]/10 rounded-2xl mb-6 border border-[#ffa9fc]/30 shadow-lg shadow-[#ffa9fc]/10">
+          <div className="inline-block p-4 bg-[#ffa9fc]/10 rounded-2xl mb-6 border border-[#ffa9fc]/30 shadow-lg">
             <Shield size={44} className="text-[#ffa9fc]" />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-3 tracking-tight">
@@ -160,7 +160,7 @@ export default function AdminLogin() {
           <button
             onClick={handleSubmit}
             disabled={loading || !isFormValid}
-            className="w-full py-3.5 bg-gradient-to-r from-[#ffa9fc] to-[#ff8df7] hover:from-[#ff8df7] hover:to-[#ffa9fc] text-[#0f1c1c] font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#ffa9fc]/20 hover:shadow-[#ffa9fc]/40 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 group focus:outline-none focus:ring-2 focus:ring-[#ffa9fc] focus:ring-offset-2"
+            className="w-full py-3.5 bg-[#ffa9fc] hover:bg-brand-primary-hover text-[#0f1c1c] font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 group focus:outline-none focus:ring-2 focus:ring-[#ffa9fc] focus:ring-offset-2"
             aria-label={loading ? "Logging in" : "Login to dashboard"}
           >
             {loading ? (

@@ -23,7 +23,7 @@ const config: Config = {
           dark: '#1a2828',
           darker: '#2a3838',
           primary: '#FFA9FC',
-          secondary: '#c84a8a',
+          'primary-hover': '#FFC4FD',
           accent: '#00ffaa',
         },
       },

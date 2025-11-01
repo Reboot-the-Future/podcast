@@ -185,7 +185,7 @@ export default function TrailerPlayer({ trailerUrl }: TrailerPlayerProps) {
   }
 
   return (
-    <div className="bg-gradient-to-br from-[#1a2828] to-[#0f1c1c] rounded-2xl p-6 border border-[#ffa9fc]/30 shadow-xl hover:shadow-2xl hover:shadow-pink-500/10 transition-all duration-300 focus-within:ring-2 focus-within:ring-[#ffa9fc] focus-within:ring-offset-2">
+    <div className="bg-gradient-to-br from-[#1a2828] to-[#0f1c1c] rounded-2xl p-6 border border-[#ffa9fc]/30 shadow-xl transition-all duration-300 focus-within:ring-2 focus-within:ring-[#ffa9fc] focus-within:ring-offset-2">
       <audio ref={audioRef} preload="metadata" />
       
       {error && (
@@ -220,7 +220,7 @@ export default function TrailerPlayer({ trailerUrl }: TrailerPlayerProps) {
             onClick={handleSeek}
           >
             <div
-              className="h-full bg-gradient-to-r from-[#ffa9fc] to-[#ff8df7] transition-all relative"
+              className="h-full bg-[#ffa9fc] transition-all relative"
               style={{ width: `${progress}%` }}
             >
               <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -242,7 +242,7 @@ export default function TrailerPlayer({ trailerUrl }: TrailerPlayerProps) {
           <button
             onClick={togglePlay}
             disabled={!hasTrailer || isBuffering}
-            className="w-12 h-12 rounded-full bg-[#ffa9fc] hover:bg-[#ff8df7] flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-pink-500/30 flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-[#ffa9fc] focus:ring-offset-2"
+            className="w-12 h-12 rounded-full bg-[#ffa9fc] hover:bg-brand-primary-hover flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-[#ffa9fc] focus:ring-offset-2"
             aria-label={isPlaying ? "Pause trailer" : "Play trailer"}
           >
             {isBuffering ? (
@@ -293,7 +293,7 @@ export default function TrailerPlayer({ trailerUrl }: TrailerPlayerProps) {
               />
               {/* Volume indicator */}
               <div 
-                className="absolute top-0 left-0 h-1 bg-gradient-to-r from-[#ffa9fc] to-[#ff8df7] rounded-full pointer-events-none"
+                className="absolute top-0 left-0 h-1 bg-[#ffa9fc] rounded-full pointer-events-none"
                 style={{ width: `${(isMuted ? 0 : volume) * 100}%` }}
               ></div>
             </div>

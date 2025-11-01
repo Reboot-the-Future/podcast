@@ -36,6 +36,18 @@ const nextConfig = {
       },
     ];
   },
+
+  async redirects() {
+    return [
+      // Redirect all old Buzzsprout account ID patterns that Bing indexed
+      // This catches /2068911/episodes, /2068911/about, /2068911/anything
+      {
+        source: '/2068911/:path*',
+        destination: '/',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -25,7 +25,7 @@ const lora = Lora({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://podcast.rebootthefuture.org";
-const siteName = "Reboot the Future";
+const siteName = "Let's Reboot the Future";
 const siteDescription =
   "A weekly 15-minute podcast sharing inspiring stories of people leading with kindness, courage and care. For anyone who's ever been called naïve for believing in a fairer, more beautiful world, this podcast reminds you that change is possible and you're not alone.";
 
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
     default: siteName,
-    template: "%s › Reboot the Future",
+    template: "%s › Let's Reboot the Future",
   },
   description: siteDescription,
   keywords: [
@@ -80,9 +80,9 @@ export const metadata: Metadata = {
     siteName,
     images: [
       {
-        url: "/logo-dark.png",
-        width: 1200,
-        height: 630,
+        url: "/tab-icon.png",
+        width: 512,
+        height: 512,
         alt: "Reboot The Future",
       },
     ],
@@ -91,7 +91,9 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Reboot The Future - Podcast",
     description: siteDescription,
-    images: ["/logo-dark.png"],
+    images: ["/tab-icon.png"],
+    site: "@futurereboot",
+    creator: "@futurereboot",
   },
   robots: {
     index: true,
@@ -128,7 +130,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               '@type': 'Organization',
               name: siteName,
               url: siteUrl,
-              logo: new URL('/logo-dark.png', siteUrl).toString(),
+              logo: new URL('/tab-icon.png', siteUrl).toString(),
               sameAs,
             }),
           }}
@@ -160,11 +162,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               name: 'Reboot The Future',
               url: siteUrl,
               description: siteDescription,
-              publisher: {
+              image: new URL('/tab-icon.png', siteUrl).toString(),
+              author: {
                 '@type': 'Organization',
                 name: siteName,
                 url: siteUrl,
               },
+              publisher: {
+                '@type': 'Organization',
+                name: siteName,
+                url: siteUrl,
+                logo: {
+                  '@type': 'ImageObject',
+                  url: new URL('/tab-icon.png', siteUrl).toString(),
+                },
+              },
+              genre: ['Inspiration', 'Leadership', 'Social Impact'],
+              keywords: 'podcast, inspiration, kindness, leadership, courage, changemakers, social impact',
               sameAs,
             }),
           }}

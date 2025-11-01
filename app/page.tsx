@@ -285,7 +285,7 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
   return (
     <div
       className={`${isDark ? 'bg-[#0F1C1C] border-[#FFA9FC]/20 border-2' : 'bg-white border border-gray-200 shadow-lg'
-        } rounded-2xl sm:rounded-3xl p-3 xs:p-4 sm:p-6 transition-all hover:shadow-pink-500/20`}
+        } rounded-2xl sm:rounded-3xl p-3 xs:p-4 sm:p-6 transition-all`}
     >
       <div className="flex justify-between items-center mb-3 xs:mb-4 sm:mb-5">
         <h3
@@ -309,14 +309,7 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
         <button
           onClick={togglePlay}
           disabled={isLoading}
-          className={`w-10 h-10 xs:w-12 xs:h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center transition-all relative flex-shrink-0 ${isPlaying
-            ? isDark
-              ? 'bg-[#FFA9FC] shadow-[#FFA9FC]/50 shadow-lg hover:bg-[#c84a8a]'
-              : 'bg-[#FFA9FC]/90 shadow-[#FFA9FC]/30 shadow-lg hover:bg-[#c84a8a]/90'
-            : isDark
-              ? 'bg-[#FFA9FC] hover:bg-[#c84a8a] hover:shadow-lg hover:shadow-pink-500/50'
-              : 'bg-[#FFA9FC]/90 hover:bg-[#c84a8a]/90 hover:shadow-lg hover:shadow-pink-500/30'
-            } disabled:opacity-50 disabled:cursor-not-allowed`}
+          className={`w-10 h-10 xs:w-12 xs:h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center transition-all relative flex-shrink-0 bg-[#FFA9FC] hover:bg-brand-primary-hover shadow-lg disabled:opacity-50 disabled:cursor-not-allowed`}
           title="Click to play/pause (or press Space)"
           aria-label={isPlaying ? 'Pause' : 'Play'}
         >
@@ -432,10 +425,7 @@ const TrailerPlayer = ({ currentPage, isDark }: { currentPage: number; isDark: b
           onClick={() => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
-          className={`fixed bottom-20 md:bottom-6 right-4 sm:right-6 w-12 h-12 rounded-full ${isDark
-            ? 'bg-[#FFA9FC] hover:bg-[#c84a8a]'
-            : 'bg-[#FFA9FC]/90 hover:bg-[#c84a8a]/90'
-            } text-white flex items-center justify-center shadow-lg shadow-pink-500/30 transition-all hover:scale-110 z-40`}
+          className="fixed bottom-20 md:bottom-6 right-4 sm:right-6 w-12 h-12 rounded-full bg-[#FFA9FC] hover:bg-brand-primary-hover text-white flex items-center justify-center shadow-lg transition-all hover:scale-110 z-40"
           aria-label="Scroll to top"
         >
           <ChevronUp size={24} />
@@ -603,7 +593,7 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
   return (
     <div
       className={`${isDark ? 'bg-[#0F1C1C] border-[#FFA9FC]/20 border-2' : 'bg-white border border-gray-200 shadow-lg'
-        } rounded-xl sm:rounded-2xl p-3 xs:p-4 sm:p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-pink-500/20 col-span-full flex flex-col group`}
+        } rounded-xl sm:rounded-2xl p-3 xs:p-4 sm:p-6 transition-all duration-300 col-span-full flex flex-col group`}
     >
       <div className="flex flex-col sm:flex-row items-start justify-between mb-2 xs:mb-3 sm:mb-4 gap-2 xs:gap-3 sm:gap-0">
         <div className="flex-1 min-w-0 w-full sm:pr-4">
@@ -761,7 +751,7 @@ function ComingSoonDescription({ text, isDark }: { text: string; isDark: boolean
       {shouldTruncate && (
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="text-xs sm:text-sm text-[#FFA9FC] hover:text-[#c84a8a] font-semibold transition-colors mt-2 lg:hidden"
+          className="text-xs sm:text-sm text-[#FFA9FC] hover:text-brand-primary-hover font-semibold transition-colors mt-2 lg:hidden"
         >
           {isExpanded ? 'See Less' : 'See More'}
         </button>
@@ -797,7 +787,7 @@ function HeroDescription({ text, isDark }: { text: string; isDark: boolean }) {
         {shouldTruncateMobile && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="text-xs sm:text-sm text-[#FFA9FC] hover:text-[#c84a8a] font-semibold transition-colors mt-2"
+            className="text-xs sm:text-sm text-[#FFA9FC] hover:text-brand-primary-hover font-semibold transition-colors mt-2"
           >
             {isExpanded ? 'See Less' : 'See More'}
           </button>
@@ -814,7 +804,7 @@ function HeroDescription({ text, isDark }: { text: string; isDark: boolean }) {
         {shouldTruncateDesktop && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="text-sm text-[#FFA9FC] hover:text-[#c84a8a] font-semibold transition-colors mt-3"
+            className="text-sm text-[#FFA9FC] hover:text-brand-primary-hover font-semibold transition-colors mt-3"
           >
             {isExpanded ? 'See Less' : 'See More'}
           </button>
@@ -1218,7 +1208,7 @@ export default function PodcastSite() {
                 <div className="relative z-10 flex flex-col h-full">
                   <div className="space-y-2 xs:space-y-3 sm:space-y-4 mb-3 xs:mb-4 sm:mb-6">
                     <div className="flex flex-wrap items-center gap-1.5 xs:gap-2 sm:gap-3">
-                      <span className="bg-gradient-to-r from-[#FFA9FC] to-[#c84a8a] text-white px-2 xs:px-3 sm:px-5 py-1 xs:py-1.5 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center gap-1 xs:gap-1.5 sm:gap-2 shadow-lg shadow-pink-500/30 hover:scale-105 transition-transform">
+                      <span className="bg-[#FFA9FC] text-white px-2 xs:px-3 sm:px-5 py-1 xs:py-1.5 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center gap-1 xs:gap-1.5 sm:gap-2 shadow-lg">
                         <Sparkles size={12} className="xs:hidden animate-pulse" />
                         <Sparkles size={14} className="hidden xs:block sm:hidden animate-pulse" />
                         <Sparkles size={16} className="hidden sm:block animate-pulse" />
@@ -1358,15 +1348,8 @@ export default function PodcastSite() {
                 </div>
               </div>
             ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <p className={`text-xl ${isDark ? 'text-[#efe8e6]' : 'text-[#0F1C1C]'} mb-4`}>
-                    No episodes available
-                  </p>
-                  <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'}`}>
-                    Check back soon for new content!
-                  </p>
-                </div>
+              <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
+                {/* Intentionally empty - episodes load via client-side fetch */}
               </div>
             )}
           </div>
@@ -1454,13 +1437,8 @@ export default function PodcastSite() {
                 </div>
               </div>
             ) : currentPageEpisodes.length === 0 ? (
-              <div className="text-center py-16 sm:py-20 rounded-2xl">
-                <p className={`text-lg sm:text-xl ${isDark ? 'text-[#efe8e6]' : 'text-[#0F1C1C]'} mb-2`}>
-                  No episodes available yet.
-                </p>
-                <p className={`text-xs sm:text-sm ${isDark ? 'text-gray-400' : 'text-[#0F1C1C]/60'}`}>
-                  Check back soon for new content!
-                </p>
+              <div className="text-center py-16 sm:py-20" aria-hidden="true">
+                {/* Intentionally empty - episodes load via client-side fetch */}
               </div>
             ) : (
               <div className="space-y-4 sm:space-y-6">
@@ -1536,7 +1514,7 @@ export default function PodcastSite() {
                   aria-label="Instagram"
                   className="hover:text-[#FFA9FC] transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#FFA9FC] focus:ring-offset-2"
                 >
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
                   </svg>
                 </a>

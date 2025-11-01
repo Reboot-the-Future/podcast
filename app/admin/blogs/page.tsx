@@ -479,7 +479,7 @@ export default function AdminBlogsPage() {
               <button
                 onClick={saveBlogs}
                 disabled={saving}
-                className="flex items-center justify-center gap-2 px-8 py-3 bg-gradient-to-r from-[#ffa9fc] to-[#ff8df7] text-[#0f1c1c] font-bold rounded-2xl shadow-lg hover:shadow-pink-500/50 disabled:opacity-50 transition-all hover:scale-105 active:scale-95"
+                className="flex items-center justify-center gap-2 px-8 py-3 bg-[#ffa9fc] hover:bg-brand-primary-hover text-[#0f1c1c] font-bold rounded-2xl shadow-lg disabled:opacity-50 transition-all hover:scale-105 active:scale-95"
               >
                 {saving ? (
                   <>

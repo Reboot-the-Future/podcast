@@ -194,7 +194,7 @@ export default function AdminSettings() {
         <button
           onClick={handleSave}
           disabled={saving || uploading}
-          className="px-8 py-3 bg-gradient-to-r from-[#ffa9fc] to-[#ff8df7] hover:from-[#ff8df7] hover:to-[#ffa9fc] text-[#0f1c1c] rounded-xl font-bold flex items-center gap-2 transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#ffa9fc]/20 whitespace-nowrap"
+          className="px-8 py-3 bg-[#ffa9fc] hover:bg-brand-primary-hover text-[#0f1c1c] rounded-xl font-bold flex items-center gap-2 transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg whitespace-nowrap"
         >
           <Save size={20} />
           {saving ? "Saving..." : "Save"}

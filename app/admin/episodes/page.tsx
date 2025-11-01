@@ -751,7 +751,7 @@ export default function AdminEpisodes() {
             resetForm();
             setShowForm(true);
           }}
-          className="px-6 py-3 bg-gradient-to-r from-[#ffa9fc] to-[#ff8df7] text-[#0f1c1c] rounded-xl font-bold flex items-center gap-2 transition-all hover:scale-105 shadow-lg focus:outline-none focus:ring-2 focus:ring-[#ffa9fc] focus:ring-offset-2"
+          className="px-6 py-3 bg-[#ffa9fc] hover:bg-brand-primary-hover text-[#0f1c1c] rounded-xl font-bold flex items-center gap-2 transition-all hover:scale-105 shadow-lg focus:outline-none focus:ring-2 focus:ring-[#ffa9fc] focus:ring-offset-2"
           aria-label="Create new episode"
         >
           <Plus size={20} />
@@ -1185,7 +1185,7 @@ export default function AdminEpisodes() {
                 <button
                   onClick={() => setCurrentStep(currentStep + 1)}
                   disabled={!canProceedStep1}
-                  className={`px-8 py-3 bg-gradient-to-r from-[#ffa9fc] to-[#ff8df7] rounded-xl font-bold text-[#0f1c1c] transition-all shadow-lg ${!canProceedStep1 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
+                  className={`px-8 py-3 bg-[#ffa9fc] hover:bg-brand-primary-hover rounded-xl font-bold text-[#0f1c1c] transition-all shadow-lg ${!canProceedStep1 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
                 >
                   Next Step
                 </button>
@@ -1193,7 +1193,7 @@ export default function AdminEpisodes() {
                 <button
                   onClick={handleSubmit}
                   disabled={isSlugDuplicate || !formData.slug.trim()}
-                  className={`px-8 py-3 bg-gradient-to-r from-[#ffa9fc] to-[#ff8df7] rounded-xl font-bold text-[#0f1c1c] transition-all shadow-lg ${(isSlugDuplicate || !formData.slug.trim()) ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
+                  className={`px-8 py-3 bg-[#ffa9fc] hover:bg-brand-primary-hover rounded-xl font-bold text-[#0f1c1c] transition-all shadow-lg ${(isSlugDuplicate || !formData.slug.trim()) ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
                 >
                   {editingEpisode ? "Update Episode" : "Create Episode"}
                 </button>
@@ -1373,7 +1373,7 @@ export default function AdminEpisodes() {
               </button>
               <button
                 onClick={handleComingSoonSubmit}
-                className="px-8 py-3 bg-gradient-to-r from-[#ffa9fc] to-[#ff8df7] rounded-xl font-bold text-[#0f1c1c] hover:scale-105 transition-all shadow-lg"
+                className="px-8 py-3 bg-[#ffa9fc] hover:bg-brand-primary-hover rounded-xl font-bold text-[#0f1c1c] hover:scale-105 transition-all shadow-lg"
               >
                 {comingSoon ? "Update" : "Create"}
               </button>
