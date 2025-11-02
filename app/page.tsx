@@ -487,7 +487,7 @@ const BlogSidebar = ({ blogs, currentPage, isDark }: { blogs: BlogItem[]; curren
                         href={safeLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`text-sm xs:text-base sm:text-lg lg:text-[18px] font-semibold break-words ${isDark ? 'text-white' : 'text-[#0F1C1C]'} hover:underline underline-offset-2`}
+                        className={`text-sm xs:text-base sm:text-lg lg:text-[18px] font-semibold break-words ${isDark ? 'text-white' : 'text-[#0F1C1C]'} hover:underline underline-offset-2 focus:outline-none focus:ring-2 focus:ring-[#FFA9FC] rounded`}
                       >
                         {blog.title}
                       </a>
@@ -628,7 +628,7 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
             const el = document.getElementById(containerIdRef.current);
             if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }}
-          className="ml-0 sm:ml-4 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg w-12 h-12 xs:w-16 xs:h-16 sm:w-20 sm:h-20 bg-[#FFA9FC]/20 self-center sm:self-start transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#FFA9FC] focus:ring-offset-2"
+          className="ml-0 sm:ml-4 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg w-12 h-12 xs:w-16 xs:h-16 sm:w-20 sm:h-20 bg-[#FFA9FC]/20 self-center sm:self-start transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#FFA9FC]"
           aria-label="Scroll to episode player"
         >
           <Play className="ml-1 w-5 h-5 xs:w-6 xs:h-6 sm:w-8 sm:h-8" fill="#FFA9FC" stroke="none" />
@@ -686,7 +686,7 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
                     href={sanitizeUrl(episode.spotify_url || '')!}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border border-gray-200 bg-gray-100 text-[#0F1C1C] hover:bg-gray-200"
+                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border border-gray-200 bg-gray-100 text-[#0F1C1C] hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FFA9FC]"
                     aria-label="Listen on Spotify"
                   >
                     {/* Spotify icon */}
@@ -701,7 +701,7 @@ const EpisodeCard = ({ episode, isDark }: { episode: Episode; isDark: boolean })
                     href={sanitizeUrl(episode.apple_url || '')!}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border border-gray-200 bg-gray-100 text-[#0F1C1C] hover:bg-gray-200"
+                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border border-gray-200 bg-gray-100 text-[#0F1C1C] hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FFA9FC]"
                     aria-label="Listen on Apple Podcasts"
                   >
                     {/* Apple icon */}
@@ -1017,7 +1017,7 @@ export default function PodcastSite() {
           <div className="flex items-center justify-between gap-2 sm:gap-4">
             <a
               href="/"
-              className="flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-[#FFA9FC] focus:ring-offset-2 rounded-lg transition-all hover:scale-105"
+              className="flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-[#FFA9FC] rounded-lg transition-all hover:scale-105"
               aria-label="Reboot The Future - Home"
             >
               <img
@@ -1029,34 +1029,30 @@ export default function PodcastSite() {
             <nav className="hidden lg:flex gap-4 xl:gap-8 flex-shrink-0" role="navigation" aria-label="Main navigation">
               <a
                 href="https://www.rebootthefuture.org/who-we-are"
-                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#FFA9FC]' : 'text-[#0F1C1C] hover:text-[#FFA9FC]'
-                  } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
-                  } focus:outline-none focus:ring-2 focus:ring-[#FFA9FC] focus:ring-offset-2`}
+                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#FFA9FC] hover:bg-[#FFA9FC]/10' : 'text-[#0F1C1C] font-medium hover:text-white hover:bg-[#FFA9FC]'
+                  } transition-all py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFA9FC]`}
                 aria-label="Navigate to About page"
               >
                 About
               </a>
               <a
                 href="https://education.rebootthefuture.org/"
-                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#FFA9FC]' : 'text-[#0F1C1C] hover:text-[#FFA9FC]'
-                  } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
-                  }`}
+                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#FFA9FC] hover:bg-[#FFA9FC]/10' : 'text-[#0F1C1C] font-medium hover:text-white hover:bg-[#FFA9FC]'
+                  } transition-all py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFA9FC]`}
               >
                 Education
               </a>
               <a
                 href="https://www.rebootthefuture.org/get-involved/make-an-impact"
-                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#FFA9FC]' : 'text-[#0F1C1C] hover:text-[#FFA9FC]'
-                  } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
-                  }`}
+                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#FFA9FC] hover:bg-[#FFA9FC]/10' : 'text-[#0F1C1C] font-medium hover:text-white hover:bg-[#FFA9FC]'
+                  } transition-all py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFA9FC]`}
               >
                 Make an Impact
               </a>
               <a
                 href="https://www.rebootthefuture.org/contact"
-                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#FFA9FC]' : 'text-[#0F1C1C] hover:text-[#FFA9FC]'
-                  } transition-colors py-2 px-4 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20' : 'hover:bg-gray-100'
-                  }`}
+                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#FFA9FC] hover:bg-[#FFA9FC]/10' : 'text-[#0F1C1C] font-medium hover:text-white hover:bg-[#FFA9FC]'
+                  } transition-all py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFA9FC]`}
               >
                 Contact
               </a>
@@ -1065,7 +1061,7 @@ export default function PodcastSite() {
             <button
               onClick={() => setIsDark(!isDark)}
               className={`p-2 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20 text-white' : 'hover:bg-[#FFA9FC]/10 text-[#0F1C1C]'
-                } transition-colors focus:outline-none focus:ring-2 focus:ring-[#FFA9FC] focus:ring-offset-2`}
+                } transition-colors focus:outline-none focus:ring-2 focus:ring-[#FFA9FC]`}
               aria-label={`Switch to ${isDark ? 'light' : 'dark'} theme`}
             >
               {isDark ? <Sun size={24} /> : <Moon size={24} />}
@@ -1074,7 +1070,7 @@ export default function PodcastSite() {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className={`lg:hidden p-2 rounded-lg ${isDark ? 'hover:bg-[#0F1C1C]/20 text-white' : 'hover:bg-[#FFA9FC]/10 text-[#0F1C1C]'
-                } transition-colors focus:outline-none focus:ring-2 focus:ring-[#FFA9FC] focus:ring-offset-2`}
+                } transition-colors focus:outline-none focus:ring-2 focus:ring-[#FFA9FC]`}
               aria-label="Toggle mobile menu"
               aria-expanded={mobileMenuOpen}
             >
@@ -1101,7 +1097,7 @@ export default function PodcastSite() {
                 <a
                   href="https://www.rebootthefuture.org/who-we-are"
                   className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#FFA9FC] hover:bg-[#FFA9FC]/10' : 'text-[#0F1C1C] font-medium hover:text-white hover:bg-[#FFA9FC]'
-                    } transition-all py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFA9FC] focus:ring-offset-2`}
+                    } transition-all py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFA9FC]`}
                   onClick={() => setMobileMenuOpen(false)}
                   aria-label="Navigate to About page"
                 >
@@ -1110,7 +1106,7 @@ export default function PodcastSite() {
                 <a
                   href="https://education.rebootthefuture.org/"
                   className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#FFA9FC] hover:bg-[#FFA9FC]/10' : 'text-[#0F1C1C] font-medium hover:text-white hover:bg-[#FFA9FC]'
-                    } transition-all py-3 px-4 rounded-lg`}
+                    } transition-all py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFA9FC]`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Education
@@ -1118,7 +1114,7 @@ export default function PodcastSite() {
                 <a
                   href="https://www.rebootthefuture.org/get-involved/make-an-impact"
                   className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#FFA9FC] hover:bg-[#FFA9FC]/10' : 'text-[#0F1C1C] font-medium hover:text-white hover:bg-[#FFA9FC]'
-                    } transition-all py-3 px-4 rounded-lg`}
+                    } transition-all py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFA9FC]`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Make an Impact
@@ -1126,7 +1122,7 @@ export default function PodcastSite() {
                 <a
                   href="https://www.rebootthefuture.org/contact"
                   className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#FFA9FC] hover:bg-[#FFA9FC]/10' : 'text-[#0F1C1C] font-medium hover:text-white hover:bg-[#FFA9FC]'
-                    } transition-all py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFA9FC] focus:ring-offset-2`}
+                    } transition-all py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFA9FC]`}
                   onClick={() => setMobileMenuOpen(false)}
                   aria-label="Navigate to Contact page"
                 >
@@ -1301,7 +1297,7 @@ export default function PodcastSite() {
                               href={sanitizeUrl(heroEpisode.spotify_url || '')!}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border border-gray-200 bg-gray-100 text-[#0F1C1C] hover:bg-gray-200"
+                              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border border-gray-200 bg-gray-100 text-[#0F1C1C] hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FFA9FC]"
                               aria-label="Listen on Spotify"
                             >
                               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -1315,7 +1311,7 @@ export default function PodcastSite() {
                               href={sanitizeUrl(heroEpisode.apple_url || '')!}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border border-gray-200 bg-gray-100 text-[#0F1C1C] hover:bg-gray-200"
+                              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all border border-gray-200 bg-gray-100 text-[#0F1C1C] hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FFA9FC]"
                               aria-label="Listen on Apple Podcasts"
                             >
                               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -1481,18 +1477,20 @@ export default function PodcastSite() {
           >
             <div className="md:w-1/2">
               <h4 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3">Get in touch</h4>
-              <a
-                href="mailto:hello@rebootthefuture.org"
-                className="block text-base sm:text-lg lg:text-xl font-semibold mb-4 sm:mb-6 hover:text-[#FFA9FC] transition-colors focus:outline-none focus:ring-2 focus:ring-[#FFA9FC] focus:ring-offset-2 break-all"
-              >
-                hello@rebootthefuture.org
-              </a>
+              <div className="mb-4 sm:mb-6">
+                <a
+                  href="mailto:hello@rebootthefuture.org"
+                  className="inline-block text-base sm:text-lg lg:text-xl font-semibold hover:text-[#FFA9FC] transition-colors focus:outline-none focus:ring-2 focus:ring-[#FFA9FC] rounded break-all"
+                >
+                  hello@rebootthefuture.org
+                </a>
+              </div>
 
               <div className="flex gap-4 sm:gap-5">
                 <a
                   href="https://www.linkedin.com/company/reboot-the-future"
                   aria-label="LinkedIn"
-                  className="hover:text-[#FFA9FC] transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#FFA9FC] focus:ring-offset-2"
+                  className="inline-flex items-center justify-center rounded-full hover:text-[#FFA9FC] transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#FFA9FC]"
                 >
                   <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452z" />
@@ -1502,7 +1500,7 @@ export default function PodcastSite() {
                 <a
                   href="https://www.youtube.com/channel/UCPn_4n01QQlhz5ofmaUPxLw"
                   aria-label="YouTube"
-                  className="hover:text-[#FFA9FC] transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#FFA9FC] focus:ring-offset-2"
+                  className="inline-flex items-center justify-center rounded-full hover:text-[#FFA9FC] transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#FFA9FC]"
                 >
                   <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M23.498 6.186a2.983 2.983 0 0 0-2.1-2.1C19.6 3.5 12 3.5 12 3.5s-7.6 0-9.398.586a2.983 2.983 0 0 0-2.1 2.1A31.1 31.1 0 0 0 .5 12a31.1 31.1 0 0 0 .002 5.814 2.983 2.983 0 0 0 2.1 2.1C4.4 20.5 12 20.5 12 20.5s7.6 0 9.398-.586a2.983 2.983 0 0 0 2.1-2.1A31.1 31.1 0 0 0 23.5 12a31.1 31.1 0 0 0-.002-5.814zM9.75 15.5v-7l6 3.5-6 3.5z" />
@@ -1512,7 +1510,7 @@ export default function PodcastSite() {
                 <a
                   href="https://www.instagram.com/futurereboot/"
                   aria-label="Instagram"
-                  className="hover:text-[#FFA9FC] transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#FFA9FC] focus:ring-offset-2"
+                  className="inline-flex items-center justify-center rounded-full hover:text-[#FFA9FC] transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#FFA9FC]"
                 >
                   <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
@@ -1538,7 +1536,7 @@ export default function PodcastSite() {
                 <div>
                   <a
                     href="https://www.rebootthefuture.org/pages/policies"
-                    className="text-base sm:text-lg font-bold hover:text-[#FFA9FC] transition-colors focus:outline-none focus:ring-2 focus:ring-[#FFA9FC] focus:ring-offset-2 inline-block"
+                    className="text-base sm:text-lg font-bold hover:text-[#FFA9FC] transition-colors focus:outline-none focus:ring-2 focus:ring-[#FFA9FC] inline-block rounded"
                   >
                     Our Policies
                   </a>

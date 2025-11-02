@@ -29,6 +29,8 @@ export default function AdminBlogsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string; details?: string[] } | null>(null);
+  // Separate state for tags input to preserve user-typed separators (commas)
+  const [tagsInput, setTagsInput] = useState<string[]>(["", "", ""]);
 
   // Set document title
   useEffect(() => {
@@ -80,6 +82,9 @@ export default function AdminBlogsPage() {
       });
 
       setBlogs(blogSlots);
+      // Initialize tags input from fetched blogs
+      const tagsInputSlots = blogSlots.map(blog => blog.tags.join(", "));
+      setTagsInput(tagsInputSlots);
       // If all blogs are empty, default to edit mode so user can add content
       const allEmpty = blogSlots.every(isBlogEmpty);
       setViewMode(allEmpty ? "edit" : "view");
@@ -446,17 +451,40 @@ export default function AdminBlogsPage() {
                       <label className="block text-sm font-semibold text-[#00ffaa] mb-2">Tags</label>
                       <input
                         type="text"
-                        value={blog.tags.join(", ")}
-                        onChange={(e) =>
-                          handleChange(
-                            index,
-                            "tags",
-                            e.target.value.split(",").map((t) => t.trim()).filter((t) => t)
-                          )
-                        }
+                        value={tagsInput[index]}
+                        onChange={(e) => {
+                          const raw = e.target.value;
+                          // Update the tags input state to preserve what user typed
+                          const newTagsInput = [...tagsInput];
+                          newTagsInput[index] = raw;
+                          setTagsInput(newTagsInput);
+                          
+                          // Split on common separators: comma, Arabic comma،, Chinese comma，, Japanese 、, semicolon, and newlines
+                          const parts = raw
+                            .split(/[\,\u060C;，、;\n]+/)
+                            .map(t => t.trim())
+                            .filter(Boolean)
+                            .slice(0, 10); // cap number of tags
+                          
+                          // Deduplicate while preserving order and cap tag length
+                          const seen = new Set<string>();
+                          const tags = parts
+                            .map(t => t.slice(0, 50))
+                            .filter(t => {
+                              const lower = t.toLowerCase();
+                              if (seen.has(lower)) return false;
+                              seen.add(lower);
+                              return true;
+                            });
+                          
+                          handleChange(index, "tags", tags);
+                        }}
                         placeholder="Leadership, Innovation"
                         className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[#00ffaa] focus:ring-2 focus:ring-[#00ffaa]/20 transition-all"
                       />
+                      <p className="text-xs text-gray-400 mt-2">
+                        Separate tags with commas (, ، ， 、) or semicolons
+                      </p>
                       {blog.tags.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-2">
                           {blog.tags.map((tag, tagIndex) => (
