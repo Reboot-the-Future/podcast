@@ -429,7 +429,7 @@ export default function AdminBlogsPage() {
                         type="date"
                         value={blog.date}
                         onChange={(e) => handleChange(index, "date", e.target.value)}
-                        className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc] focus:ring-2 focus:ring-[#ffa9fc]/20 transition-all"
+                        className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc] focus:ring-2 focus:ring-[#ffa9fc]/20 transition-all [color-scheme:dark]"
                       />
                     </div>
 

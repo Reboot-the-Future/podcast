@@ -1480,7 +1480,7 @@ export default function PodcastSite() {
               <div className="mb-4 sm:mb-6">
                 <a
                   href="mailto:hello@rebootthefuture.org"
-                  className="inline-block text-base sm:text-lg lg:text-xl font-semibold hover:text-[#FFA9FC] transition-colors focus:outline-none focus:ring-2 focus:ring-[#FFA9FC] rounded break-all"
+                  className="inline-flex items-center text-base sm:text-lg lg:text-xl font-semibold hover:text-[#FFA9FC] transition-colors focus:outline-none focus:ring-2 focus:ring-[#FFA9FC] rounded break-all"
                 >
                   hello@rebootthefuture.org
                 </a>
@@ -1536,7 +1536,7 @@ export default function PodcastSite() {
                 <div>
                   <a
                     href="https://www.rebootthefuture.org/pages/policies"
-                    className="text-base sm:text-lg font-bold hover:text-[#FFA9FC] transition-colors focus:outline-none focus:ring-2 focus:ring-[#FFA9FC] inline-block rounded"
+                    className="text-base sm:text-lg font-bold hover:text-[#FFA9FC] transition-colors focus:outline-none focus:ring-2 focus:ring-[#FFA9FC] inline-flex items-center rounded"
                   >
                     Our Policies
                   </a>

@@ -857,7 +857,7 @@ export default function AdminEpisodes() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="w-full md:w-48 pl-12 pr-4 py-3 bg-[#1a2828] border border-[#2a3838] rounded-xl text-white appearance-none focus:outline-none focus:border-[#ffa9fc]"
+            className="w-full md:w-48 pl-12 pr-4 py-3 bg-[#1a2828] border border-[#2a3838] rounded-xl text-white appearance-none focus:outline-none focus:border-[#ffa9fc] [color-scheme:dark]"
           >
             <option value="all">All</option>
             <option value="published">Published</option>
@@ -930,17 +930,14 @@ export default function AdminEpisodes() {
 
                 <div>
                   <label className="block text-sm font-semibold mb-2 text-gray-300">
-                    Slug *
+                    Slug (auto-generated from title)
                   </label>
                   <input
                     type="text"
                     value={formData.slug}
-                    onChange={(e) => {
-                      setFormData({ ...formData, slug: e.target.value });
-                      markDirty();
-                    }}
+                    readOnly
                     placeholder="episode-slug"
-                    className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
+                    className="w-full px-4 py-3 bg-[#0f1c1c]/50 border border-[#2a3838] rounded-xl text-gray-400 cursor-not-allowed"
                   />
                   {isSlugDuplicate && (
                     <p className="text-xs text-red-400 mt-2">Slug already exists. Please choose a unique slug.</p>
@@ -1090,7 +1087,7 @@ export default function AdminEpisodes() {
                         });
                         markDirty();
                       }}
-                      className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
+                      className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc] [color-scheme:dark]"
                     />
                   </div>
                 </div>
@@ -1190,7 +1187,7 @@ export default function AdminEpisodes() {
                       setFormData({ ...formData, status: e.target.value });
                       markDirty();
                     }}
-                    className="px-6 py-3 bg-[#1a2828] border border-[#2a3838] rounded-xl text-white font-semibold focus:outline-none focus:border-[#ffa9fc]"
+                    className="px-6 py-3 bg-[#1a2828] border border-[#2a3838] rounded-xl text-white font-semibold focus:outline-none focus:border-[#ffa9fc] [color-scheme:dark]"
                   >
                     <option value="draft">Draft</option>
                     <option value="published">Published</option>
