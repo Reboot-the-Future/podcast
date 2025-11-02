@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { authenticateRequest } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 // GET - Fetch coming soon section (public)
 export async function GET(request: NextRequest) {
   try {

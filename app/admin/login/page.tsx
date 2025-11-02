@@ -54,7 +54,10 @@ export default function AdminLogin() {
         return;
       }
 
-      localStorage.setItem("admin_token", data.token as string);
+      // Store token for this browser tab only so closing the tab logs you out
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("admin_token", data.token as string);
+      }
       router.replace("/admin");
     } catch (error) {
       console.error("Login error:", error);

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
 import prisma from '@/lib/prisma';
 import { authenticateRequest } from '@/lib/auth';
 
@@ -115,6 +116,35 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Normalize and sanitize tags to a string[]
+    const normalizeTags = (value: any): string[] => {
+      try {
+        let arr: any[] = [];
+        if (Array.isArray(value)) arr = value;
+        else if (typeof value === 'string') {
+          try {
+            const parsed = JSON.parse(value);
+            if (Array.isArray(parsed)) arr = parsed;
+            else arr = String(value).split(/[\,\u060C;，、\n]+/);
+          } catch {
+            arr = String(value).split(/[\,\u060C;，、\n]+/);
+          }
+        }
+        const seen = new Set<string>();
+        const out: string[] = [];
+        for (const t of arr) {
+          if (typeof t !== 'string') continue;
+          const s = t.trim().slice(0, 50);
+          const k = s.toLowerCase();
+          if (s && !seen.has(k)) { seen.add(k); out.push(s); }
+          if (out.length >= 20) break;
+        }
+        return out;
+      } catch { return []; }
+    };
+
+    const safeTags = normalizeTags(tags);
+
     const episode = await prisma.episode.create({
       data: {
         title,
@@ -123,7 +153,7 @@ export async function POST(request: NextRequest) {
         excerpt,
         content,
         duration,
-        tags: tags || [],
+        tags: safeTags,
         hero_image_url,
         thumb_image_url,
         audio_url,

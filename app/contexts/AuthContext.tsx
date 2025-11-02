@@ -16,8 +16,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Load token from localStorage on mount
-    const storedToken = localStorage.getItem('admin_token');
+    // Load token from sessionStorage on mount (per-tab session)
+    const storedToken = typeof window !== 'undefined' ? sessionStorage.getItem('admin_token') : null;
     if (storedToken) {
       setTokenState(storedToken);
     }
@@ -27,9 +27,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const setToken = (newToken: string | null) => {
     setTokenState(newToken);
     if (newToken) {
-      localStorage.setItem('admin_token', newToken);
+      if (typeof window !== 'undefined') sessionStorage.setItem('admin_token', newToken);
     } else {
-      localStorage.removeItem('admin_token');
+      if (typeof window !== 'undefined') sessionStorage.removeItem('admin_token');
     }
   };
 

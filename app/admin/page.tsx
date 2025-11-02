@@ -45,7 +45,7 @@ export default function AdminDashboard() {
   }, []);
 
   useEffect(() => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("admin_token") : null;
+  const token = typeof window !== "undefined" ? sessionStorage.getItem("admin_token") : null;
     if (!token) {
       router.replace("/admin/login");
       return;
@@ -63,7 +63,7 @@ export default function AdminDashboard() {
     setError(null);
 
     try {
-      const token = typeof window !== "undefined" ? localStorage.getItem("admin_token") : null;
+    const token = typeof window !== "undefined" ? sessionStorage.getItem("admin_token") : null;
       if (!token) {
         router.replace("/admin/login");
         return;
@@ -76,7 +76,7 @@ export default function AdminDashboard() {
 
       if (episodesRes.status === 401) {
         if (typeof window !== "undefined") {
-          localStorage.removeItem("admin_token");
+          sessionStorage.removeItem("admin_token");
         }
         router.replace("/admin/login");
         return;

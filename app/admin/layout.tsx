@@ -23,7 +23,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   useEffect(() => {
     setMounted(true);
     if (!isLoginPage) {
-      const token = typeof window !== 'undefined' ? localStorage.getItem("admin_token") : null;
+      const token = typeof window !== 'undefined' ? sessionStorage.getItem("admin_token") : null;
       if (token) {
         setIsAuthenticated(true);
       } else {
@@ -49,7 +49,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const confirmLogout = () => {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem("admin_token");
+      sessionStorage.removeItem("admin_token");
     }
     setShowLogoutConfirm(false);
     router.replace("/admin/login?logged_out=1");

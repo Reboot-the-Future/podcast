@@ -64,6 +64,8 @@ export default function AdminEpisodes() {
   const excerptRef = useRef<HTMLTextAreaElement | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [previewTheme, setPreviewTheme] = useState<'light' | 'dark'>('light');
+  // Separate state for tags input so we preserve user-typed separators (commas)
+  const [tagsInput, setTagsInput] = useState<string>("");
 
   const markDirty = () => setIsDirty(true);
 
@@ -152,7 +154,7 @@ export default function AdminEpisodes() {
 
   const fetchEpisodes = async () => {
     try {
-      const token = localStorage.getItem("admin_token");
+  const token = sessionStorage.getItem("admin_token");
       if (!token) {
         showAlert("error", "No authentication token found. Please log in again.");
         router.push("/admin/login");
@@ -165,7 +167,7 @@ export default function AdminEpisodes() {
       
       if (res.status === 401) {
         showAlert("error", "Session expired. Please log in again.");
-        localStorage.removeItem("admin_token");
+  sessionStorage.removeItem("admin_token");
         router.push("/admin/login");
         return;
       }
@@ -239,6 +241,7 @@ export default function AdminEpisodes() {
       spotify_url: "",
       apple_url: "",
     });
+    setTagsInput("");
     setDurationInput("");
     setEditingEpisode(null);
     setCurrentStep(1);
@@ -252,7 +255,7 @@ export default function AdminEpisodes() {
     }
 
     try {
-      const token = localStorage.getItem("admin_token");
+  const token = sessionStorage.getItem("admin_token");
       const url = editingEpisode
         ? `/api/admin/episodes/${editingEpisode.id}`
         : "/api/admin/episodes";
@@ -331,7 +334,7 @@ export default function AdminEpisodes() {
       confirmTone: "danger",
       onConfirm: async () => {
         try {
-          const token = localStorage.getItem("admin_token");
+          const token = sessionStorage.getItem("admin_token");
           const res = await fetch(`/api/admin/episodes/${episode.id}`, {
             method: "DELETE",
             headers: { Authorization: `Bearer ${token}` },
@@ -364,6 +367,7 @@ export default function AdminEpisodes() {
       spotify_url: episode.spotify_url || "",
       apple_url: episode.apple_url || "",
     });
+    setTagsInput((episode.tags || []).join(", "));
     // Pre-fill minutes as a string so user can edit freely
     setDurationInput(String(Math.round(episode.duration / 60)));
     setIsDirty(false);
@@ -469,7 +473,7 @@ export default function AdminEpisodes() {
 
   const fetchComingSoon = async () => {
     try {
-      const token = localStorage.getItem("admin_token");
+  const token = sessionStorage.getItem("admin_token");
       const res = await fetch("/api/admin/coming-soon", {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -496,7 +500,7 @@ export default function AdminEpisodes() {
     }
 
     try {
-      const token = localStorage.getItem("admin_token");
+  const token = sessionStorage.getItem("admin_token");
       const res = await fetch("/api/admin/coming-soon", {
         method: "POST",
         headers: {
@@ -520,7 +524,7 @@ export default function AdminEpisodes() {
     if (!comingSoon) return;
 
     try {
-      const token = localStorage.getItem("admin_token");
+  const token = sessionStorage.getItem("admin_token");
       const res = await fetch("/api/admin/coming-soon", {
         method: "POST",
         headers: {
@@ -553,7 +557,7 @@ export default function AdminEpisodes() {
       confirmTone: "danger",
       onConfirm: async () => {
         try {
-          const token = localStorage.getItem("admin_token");
+          const token = sessionStorage.getItem("admin_token");
           const res = await fetch("/api/admin/coming-soon", {
             method: "DELETE",
             headers: {
@@ -1102,22 +1106,34 @@ export default function AdminEpisodes() {
                   </label>
                   <input
                     type="text"
-                    value={formData.tags.join(", ")}
+                    value={tagsInput}
                     onChange={(e) => {
-                      setFormData({
-                        ...formData,
-                        tags: e.target.value
-                          .split(",")
-                          .map((t) => t.trim())
-                          .filter(Boolean),
-                      });
+                      const raw = e.target.value;
+                      setTagsInput(raw);
+                      // Split on common separators: comma, Arabic comma،, Chinese comma，, Japanese 、, semicolon, and newlines
+                      const parts = raw
+                        .split(/[\,\u060C;，、;\n]+/)
+                        .map(t => t.trim())
+                        .filter(Boolean)
+                        .slice(0, 20); // cap number of tags
+                      // Deduplicate while preserving order and cap tag length
+                      const seen = new Set<string>();
+                      const tags = parts
+                        .map(t => t.slice(0, 50))
+                        .filter(t => {
+                          const lower = t.toLowerCase();
+                          if (seen.has(lower)) return false;
+                          seen.add(lower);
+                          return true;
+                        });
+                      setFormData({ ...formData, tags });
                       markDirty();
                     }}
                     placeholder="Technology, Leadership, Innovation"
                     className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
                   />
                   <p className="text-xs text-gray-400 mt-2">
-                    Separate tags with commas
+                    Separate tags with commas (, ، ， 、) or semicolons
                   </p>
                 </div>
 
@@ -1139,9 +1155,24 @@ export default function AdminEpisodes() {
                     className="w-full px-4 py-3 bg-[#0f1c1c] border border-[#2a3838] rounded-xl text-white focus:outline-none focus:border-[#ffa9fc]"
                   />
                   <p className="text-xs text-gray-400 mt-2">
-                    Optional: Link to Buzzsprout episode. Get the ID from the Buzzsprout URL<br />
-                    Example: https://www.buzzsprout.com/<span className="text-[#ffa9fc]">2416731</span>/<span className="text-[#00ffaa] font-semibold">16360662</span> → Use <span className="text-[#00ffaa] font-semibold">16360662</span>
+                    Optional: Link to Buzzsprout episode. Get the numeric ID from the Buzzsprout URL<br />
+                    Example: https://www.buzzsprout.com/<span className="text-[#ffa9fc]">2416731</span>/episodes/<span className="text-[#00ffaa] font-semibold">16360662</span> → Enter <span className="text-[#00ffaa] font-semibold">16360662</span>
                   </p>
+
+                  {/* Preview of the Buzzsprout episode page URL */}
+                  {process.env.NEXT_PUBLIC_BUZZSPROUT_ID && formData.buzzsprout_episode_id && (
+                    <div className="mt-2 text-xs text-gray-400">
+                      Episode page:{" "}
+                      <a
+                        href={`https://www.buzzsprout.com/${process.env.NEXT_PUBLIC_BUZZSPROUT_ID}/episodes/${formData.buzzsprout_episode_id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline text-[#ffa9fc] hover:text-brand-primary-hover"
+                      >
+                        https://www.buzzsprout.com/{process.env.NEXT_PUBLIC_BUZZSPROUT_ID}/episodes/{formData.buzzsprout_episode_id}
+                      </a>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center justify-between p-6 bg-[#0f1c1c] rounded-xl border border-[#2a3838]">

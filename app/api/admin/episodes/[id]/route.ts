@@ -80,10 +80,36 @@ export async function PUT(
       }
     }
 
+    // Normalize tags similarly to POST
+    const normalizeTags = (value: any): string[] => {
+      try {
+        let arr: any[] = [];
+        if (Array.isArray(value)) arr = value;
+        else if (typeof value === 'string') {
+          try {
+            const parsed = JSON.parse(value);
+            if (Array.isArray(parsed)) arr = parsed; else arr = String(value).split(/[\,\u060C;，、\n]+/);
+          } catch { arr = String(value).split(/[\,\u060C;，、\n]+/); }
+        }
+        const seen = new Set<string>();
+        const out: string[] = [];
+        for (const t of arr) {
+          if (typeof t !== 'string') continue;
+          const s = t.trim().slice(0, 50);
+          const k = s.toLowerCase();
+          if (s && !seen.has(k)) { seen.add(k); out.push(s); }
+          if (out.length >= 20) break;
+        }
+        return out;
+      } catch { return []; }
+    };
+    const safeTags = body && 'tags' in body ? normalizeTags(body.tags) : undefined;
+
     const episode = await prisma.episode.update({
       where: { id: episodeId },
       data: {
         ...body,
+        ...(safeTags ? { tags: safeTags } : {}),
         date_published: body.date_published
           ? new Date(body.date_published)
           : undefined,

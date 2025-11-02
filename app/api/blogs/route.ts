@@ -3,6 +3,8 @@ import { z } from 'zod';
 import prisma from '@/lib/prisma';
 import { authenticateRequest } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 // Constants
 const MAX_BLOGS = 3;
 const MAX_TITLE_LENGTH = 500;

@@ -42,7 +42,7 @@ export default function AdminSettings() {
 
   const fetchSettings = async () => {
     try {
-      const token = localStorage.getItem("admin_token");
+  const token = sessionStorage.getItem("admin_token");
       if (!token) {
         throw new Error('No authentication token found');
       }
@@ -75,7 +75,7 @@ export default function AdminSettings() {
       formData.append('file', file);
       formData.append('type', 'audio');
 
-      const token = localStorage.getItem("admin_token");
+  const token = sessionStorage.getItem("admin_token");
       if (!token) {
         throw new Error('No authentication token found');
       }
@@ -106,7 +106,7 @@ export default function AdminSettings() {
     setSaving(true);
 
     try {
-      const token = localStorage.getItem("admin_token");
+  const token = sessionStorage.getItem("admin_token");
       if (!token) {
         throw new Error('No authentication token found');
       }

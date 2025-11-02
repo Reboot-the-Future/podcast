@@ -37,7 +37,7 @@ export default function AdminBlogsPage() {
 
   // Check authentication on mount
   useEffect(() => {
-    const storedToken = localStorage.getItem("admin_token");
+  const storedToken = sessionStorage.getItem("admin_token");
     if (!storedToken) {
       router.push("/admin/login");
       return;
@@ -198,7 +198,7 @@ export default function AdminBlogsPage() {
       const data = await res.json();
       if (!res.ok) {
         if (res.status === 401) {
-          localStorage.removeItem("admin_token");
+          sessionStorage.removeItem("admin_token");
           router.push("/admin/login");
           return;
         }

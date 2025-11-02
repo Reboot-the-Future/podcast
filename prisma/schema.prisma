@@ -8,35 +8,37 @@ datasource db {
 }
 
 model Admin {
-  id            Int      @id @default(autoincrement())
-  name          String
-  email         String   @unique
-  password_hash String
-  role          String   @default("admin")
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
+  id                 Int       @id @default(autoincrement())
+  name               String
+  email              String    @unique
+  password_hash      String
+  role               String    @default("admin")
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+  reset_token        String?   @unique
+  reset_token_expiry DateTime?
 }
 
 model Episode {
-  id                    Int         @id @default(autoincrement())
+  id                    Int      @id @default(autoincrement())
   title                 String
-  slug                  String      @unique
+  slug                  String   @unique
   date_published        DateTime
   excerpt               String
   content               String?
   duration              Int
-  tags                  Json        @default("[]")
+  tags                  Json     @default("[]")
   hero_image_url        String?
   thumb_image_url       String?
   audio_url             String?
   spotify_url           String?
   apple_url             String?
   webplayer_url         String?
-  is_hero               Boolean     @default(false)
-  status                String      @default("draft")
-  created_at            DateTime    @default(now())
-  updated_at            DateTime    @updatedAt
-  buzzsprout_episode_id String?     @db.VarChar(255)
+  is_hero               Boolean  @default(false)
+  status                String   @default("draft")
+  created_at            DateTime @default(now())
+  updated_at            DateTime @updatedAt
+  buzzsprout_episode_id String?  @db.VarChar(255)
 
   @@index([slug])
   @@index([date_published])
@@ -53,9 +55,9 @@ model GlobalSettings {
 model Blog {
   id        Int      @id @default(autoincrement())
   title     String   @db.VarChar(500)
-  excerpt   String   @db.Text
+  excerpt   String
   date      String   @db.VarChar(50)
-  tags      String   @db.Text
+  tags      String
   link      String   @db.VarChar(1000)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -66,7 +68,7 @@ model Blog {
 model ComingSoon {
   id          Int      @id @default(autoincrement())
   title       String   @db.VarChar(500)
-  description String?  @db.Text
+  description String?
   is_visible  Boolean  @default(false)
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
