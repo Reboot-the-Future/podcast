@@ -1028,6 +1028,14 @@ export default function PodcastSite() {
             </a>
             <nav className="hidden lg:flex gap-4 xl:gap-8 flex-shrink-0" role="navigation" aria-label="Main navigation">
               <a
+                href="https://www.rebootthefuture.org/"
+                className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#FFA9FC] hover:bg-[#FFA9FC]/10' : 'text-[#0F1C1C] font-medium hover:text-white hover:bg-[#FFA9FC]'
+                  } transition-all py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFA9FC]`}
+                aria-label="Navigate to Home page"
+              >
+                Home
+              </a>
+              <a
                 href="https://www.rebootthefuture.org/who-we-are"
                 className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#FFA9FC] hover:bg-[#FFA9FC]/10' : 'text-[#0F1C1C] font-medium hover:text-white hover:bg-[#FFA9FC]'
                   } transition-all py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFA9FC]`}
@@ -1094,6 +1102,15 @@ export default function PodcastSite() {
                 role="navigation"
                 aria-label="Mobile navigation"
               >
+                <a
+                  href="https://www.rebootthefuture.org/"
+                  className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#FFA9FC] hover:bg-[#FFA9FC]/10' : 'text-[#0F1C1C] font-medium hover:text-white hover:bg-[#FFA9FC]'
+                    } transition-all py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFA9FC]`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  aria-label="Navigate to Home page"
+                >
+                  Home
+                </a>
                 <a
                   href="https://www.rebootthefuture.org/who-we-are"
                   className={`block ${isDark ? 'text-[#efe8e6] hover:text-[#FFA9FC] hover:bg-[#FFA9FC]/10' : 'text-[#0F1C1C] font-medium hover:text-white hover:bg-[#FFA9FC]'
